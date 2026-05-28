@@ -217,6 +217,20 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 .hero-desc{font-size:1.25rem;font-weight:400;letter-spacing:-0.01em;color:var(--text);margin-bottom:32px;max-width:520px}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
 
+/* ── Image placeholder (replaces gradient card backgrounds & orbital nodes) ── */
+.ph-rect{
+  width:100%;height:100%;
+  background:#EDEDED;
+  display:flex;align-items:center;justify-content:center;
+}
+.ph-circ{
+  width:100%;height:100%;
+  background:#D9D9D9;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.ph-rect svg,.ph-circ svg{opacity:.5}
+
 /* ── Orbital hero illustration (matches Figma exactly) ── */
 .hero-illustration{display:flex;align-items:center;justify-content:center}
 
