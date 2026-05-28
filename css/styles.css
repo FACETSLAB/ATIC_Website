@@ -217,40 +217,84 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 .hero-desc{font-size:1.25rem;font-weight:400;letter-spacing:-0.01em;color:var(--text);margin-bottom:32px;max-width:520px}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
 
-/* Network illustration */
+/* ── Orbital hero illustration (matches Figma exactly) ── */
 .hero-illustration{display:flex;align-items:center;justify-content:center}
-.hero-network{position:relative;width:320px;height:320px}
-.hero-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.node-center{
-  width:90px;height:90px;
-  background:#FBFBFB;
-  box-shadow:0 4px 200px #0F91D7,0 0 0 1px #D9D9D9;
-  color:var(--purple);
-  font-size:1.25rem;font-weight:400;font-family:'IBM Plex Sans',sans-serif;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  z-index:2;
+
+.hero-orb{
+  position:relative;
+  width:400px;height:400px;
+  flex-shrink:0;
 }
-/* satellite nodes */
-.node-sm{
-  width:80px;height:80px;
+
+/* SVG backdrop: rings, lines, dots */
+.orb-svg{
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  overflow:visible;
+}
+
+/* Conic gradient inner ellipse (Ellipse 635 from Figma)
+   conic-gradient from 179.11deg at 53.79% 50.24% */
+.orb-conic{
+  position:absolute;
+  width:210px;height:226px;
+  left:95px;top:87px;
+  background:conic-gradient(
+    from 179.11deg at 53.79% 50.24%,
+    #F1E0FF -0.73deg,
+    #F1E0FF 33.82deg,
+    #FAF4FF 145.38deg,
+    #FAF4FF 226.29deg,
+    #FAF4FF 231.86deg,
+    #F1E0FF 359.27deg,
+    #F1E0FF 393.82deg
+  );
+  border-radius:50%;
+  opacity:.75;
+  pointer-events:none;
+}
+
+/* Center ATIC circle (from Figma: FBFBFB bg, box-shadow 0 4px 200px #0F91D7) */
+.orb-center{
+  position:absolute;
+  width:100px;height:100px;
+  left:150px;top:150px;
+  background:#FBFBFB;
+  border-radius:50%;
+  box-shadow:0 4px 60px rgba(15,145,215,.25), 0 0 0 1px #eee;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:400;letter-spacing:0;
+  color:var(--purple);
+  z-index:3;
+}
+
+/* Base orbital node */
+.orb-node{
+  position:absolute;
+  border-radius:50%;
+  overflow:hidden;
   background:#fff;
   border:1px solid #D9D9D9;
-  overflow:hidden;
-  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  display:flex;align-items:center;justify-content:center;
+  z-index:2;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  animation:float-orb 3.5s ease-in-out infinite;
 }
-.node-sm img{width:100%;height:100%;object-fit:cover}
-.node-sm .ni{font-size:1.6rem}
-/* Ring borders matching Figma colors */
-.n1{top:2%;left:50%;transform:translateX(-50%);border:3px solid #2BB7B1}
-.n2{top:28%;left:2%;border:3px solid #9D4CDB}
-.n3{top:28%;right:2%;border:3px solid #2D77E5}
-.n4{bottom:6%;left:10%;border:3px solid #9D4CDB}
-.n5{bottom:6%;right:10%;border:3px solid #2BB7B1}
+.orb-node img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 
-.node-sm{animation:float-nd 3.5s ease-in-out infinite}
-.n1{animation-delay:.2s}.n2{animation-delay:.6s}.n3{animation-delay:1s}.n4{animation-delay:.4s}.n5{animation-delay:.8s}
-@keyframes float-nd{0%,100%{margin-top:0}50%{margin-top:-7px}}
+/* Large nodes: 74px, with colored ring borders */
+.on-tl{width:74px;height:74px;border:3px solid #2BB7B1;left:37px; top:4px;  animation-delay:0s}
+.on-tr{width:74px;height:74px;border:3px solid #2D77E5;left:270px;top:-2px; animation-delay:.5s}
+.on-bl{width:74px;height:74px;border:3px solid #9D4CDB;left:-28px;top:234px;animation-delay:.3s}
+
+/* Small nodes: 52px, gray border */
+.on-lm{width:52px;height:52px;border:1px solid #D9D9D9;left:58px; top:137px;animation-delay:1s}
+.on-rm{width:52px;height:52px;border:1px solid #D9D9D9;left:268px;top:142px;animation-delay:1.5s}
+.on-bc{width:52px;height:52px;border:1px solid #D9D9D9;left:174px;top:281px;animation-delay:.8s}
+
+@keyframes float-orb{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
 /* ================================================================
    HERO — INNER PAGES
@@ -647,6 +691,10 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
   .hero-illustration{display:none}
   .what-who-grid{grid-template-columns:1fr;gap:40px}
   .process-step{min-width:95px}
+}
+/* Scale down orb on mid-range screens */
+@media(max-width:1200px) and (min-width:901px){
+  .hero-orb{transform:scale(.85);transform-origin:center center}
 }
 
 /* ================================================================
