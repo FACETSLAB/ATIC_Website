@@ -217,29 +217,38 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 .hero-desc{font-size:1.25rem;font-weight:400;letter-spacing:-0.01em;color:var(--text);margin-bottom:32px;max-width:520px}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
 
-/* ── Image placeholder (replaces gradient card backgrounds & orbital nodes) ── */
-.ph-rect{
-  width:100%;height:100%;
-  background:#EDEDED;
-  display:flex;align-items:center;justify-content:center;
+/* ================================================================
+   IMAGE FILL — all <img> tags sit directly in their container.
+   To swap a placeholder for a real photo just change src="...".
+   ================================================================ */
+
+/* Rectangular image containers */
+.r-img, .w-img, .u-img, .ev-banner, .ws-img, .part-img {
+  overflow: hidden;
+  background: #EDEDED;   /* shows while image loads */
 }
-.ph-circ{
-  width:100%;height:100%;
-  background:#D9D9D9;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+.r-img img, .w-img img, .u-img img,
+.ev-banner img, .ws-img img, .part-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
 }
-/* Works for both inline SVG and external <img> references */
-.ph-rect svg,.ph-circ svg,
-.ph-rect img,.ph-circ img{
-  opacity:.5;
-  width:auto;height:auto;
-  max-width:55%;max-height:55%;
-  display:block;flex-shrink:0;
+
+/* Circular image containers */
+.orb-node, .lab-circle, .prod-circle { overflow: hidden; }
+.orb-node img, .lab-circle img, .prod-circle img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
 }
-/* Member placeholder & participate way-photo */
-.mem-placeholder img{opacity:.5;width:auto;height:auto;max-width:65%}
-.way-photo img{opacity:.5;width:auto;height:auto;max-width:55%}
+
+/* Team member photo (slightly rounded rect) */
+.mem-placeholder { overflow: hidden; }
+.mem-placeholder img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* ── Orbital hero illustration (matches Figma exactly) ── */
 .hero-illustration{display:flex;align-items:center;justify-content:center}
