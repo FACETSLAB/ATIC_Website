@@ -598,9 +598,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 .events-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
 .ev-card{border:1px solid var(--border);overflow:hidden;transition:var(--ease)}
 .ev-card:hover{box-shadow:var(--shadow)}
-.ev-banner{height:160px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
-.ev-banner-1{background:linear-gradient(135deg,#7C2D12,#EA580C)}
-.ev-banner-2{background:linear-gradient(135deg,#1E3A8A,#1D4ED8)}
+.ev-banner{height:160px;display:flex;align-items:center;justify-content:center;background:#EDEDED;overflow:hidden}
 .ev-body{padding:20px;display:flex;flex-direction:column;gap:10px}
 .ev-body .h-card{font-size:1.125rem}
 .ev-body p{font-size:.9375rem}
@@ -608,7 +606,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 /* Workshops */
 .workshop-card{display:flex;gap:24px;align-items:flex-start;padding:24px;border:1px solid var(--border);margin-bottom:16px;transition:var(--ease)}
 .workshop-card:hover{box-shadow:var(--shadow)}
-.ws-img{width:200px;height:130px;border-radius:var(--r-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1E3A5F,#2D5986);font-size:2.5rem}
+.ws-img{width:200px;height:130px;border-radius:var(--r-sm);flex-shrink:0;overflow:hidden}
 .ws-body p{font-size:.9375rem}
 
 /* Work CTA bottom */
