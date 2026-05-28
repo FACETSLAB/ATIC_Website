@@ -9,37 +9,28 @@
 </head>
 <body class="page-body">
 
-<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="navbar">
   <div class="container nav-inner">
+
+    <!-- Logo: "ATIC" large + small subtitle beside it (from Figma) -->
     <a href="index.html" class="nav-logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="10" cy="10" r="3" fill="#6D28D9"/>
-          <circle cx="10" cy="3"  r="1.5" fill="#6D28D9" opacity=".6"/>
-          <circle cx="10" cy="17" r="1.5" fill="#6D28D9" opacity=".6"/>
-          <circle cx="3"  cy="10" r="1.5" fill="#6D28D9" opacity=".6"/>
-          <circle cx="17" cy="10" r="1.5" fill="#6D28D9" opacity=".6"/>
-          <line x1="10" y1="7"  x2="10" y2="4.5" stroke="#6D28D9" stroke-width="1" opacity=".4"/>
-          <line x1="10" y1="13" x2="10" y2="15.5" stroke="#6D28D9" stroke-width="1" opacity=".4"/>
-          <line x1="7"  y1="10" x2="4.5" y2="10" stroke="#6D28D9" stroke-width="1" opacity=".4"/>
-          <line x1="13" y1="10" x2="15.5" y2="10" stroke="#6D28D9" stroke-width="1" opacity=".4"/>
-        </svg>
-      </div>
-      <div class="logo-text-wrap">
-        <span class="logo-name">ATIC</span>
+      <span class="logo-atic">ATIC</span>
+      <div class="logo-sub-wrap">
         <span class="logo-sub">Accessibility Technology &amp; Innovation Center</span>
       </div>
     </a>
+
+    <!-- Nav links: active = #46166B -->
     <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
+      <a href="index.html"                  class="active">Home</a>
       <a href="our-team.html">Our Team</a>
       <a href="our-work.html">Our Work</a>
       <a href="participate.html">Participate</a>
       <a href="community-resources.html">Community Resources</a>
       <a href="atic-testing-laboratory.html">ATIC Testing Laboratory</a>
     </div>
-    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="mobile-nav">
@@ -51,33 +42,44 @@
   <a href="atic-testing-laboratory.html">ATIC Testing Laboratory</a>
 </div>
 
-<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<!-- ═══════════ HERO ═══════════
+     bg: linear-gradient(111.95deg,#FFFFFF 37.01%,#FAF4FF 55%)
+     heading: font-weight 300, 64px
+     buttons: #46166B filled + #46166B outline
+-->
 <section class="hero-home">
   <div class="container hero-grid">
 
     <div class="hero-content">
-      <h1>Advancing<br><span>Accessibility</span><br>Through Innovation</h1>
-      <p class="hero-desc">ATIC advances accessibility through AI-powered technology, assistive technology, neurodiversity, XR, and mental health innovation. We collaborate with individuals, community research, the industries, and academia to achieve a more inclusive future.</p>
+      <h1 class="h-hero">Advancing<br>Accessibility<br>Through Innovation</h1>
+      <p class="hero-desc">ATIC advances accessibility through AI, assistive technology and community-centered research. We collaborate with individuals, organizations, and communities to build a more inclusive future.</p>
       <div class="hero-actions">
-        <a href="our-work.html"   class="btn btn-primary">Learn More →</a>
-        <a href="participate.html" class="btn btn-outline">Participate</a>
+        <a href="our-work.html"    class="btn-primary">Learn More →</a>
+        <a href="participate.html" class="btn-outline">Participate
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
     </div>
 
+    <!-- Network illustration matching Figma colors -->
     <div class="hero-illustration">
       <div class="hero-network">
-        <!-- connector lines -->
-        <svg class="hero-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          <line x1="150" y1="150" x2="150" y2="20"  stroke="#6D28D9" stroke-width="1.2" stroke-dasharray="4 4" opacity=".35"/>
-          <line x1="150" y1="150" x2="25"  y2="97"  stroke="#6D28D9" stroke-width="1.2" stroke-dasharray="4 4" opacity=".35"/>
-          <line x1="150" y1="150" x2="275" y2="97"  stroke="#6D28D9" stroke-width="1.2" stroke-dasharray="4 4" opacity=".35"/>
-          <line x1="150" y1="150" x2="60"  y2="248" stroke="#6D28D9" stroke-width="1.2" stroke-dasharray="4 4" opacity=".35"/>
-          <line x1="150" y1="150" x2="240" y2="248" stroke="#6D28D9" stroke-width="1.2" stroke-dasharray="4 4" opacity=".35"/>
+        <svg class="hero-svg" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+          <!-- dashed connector lines: stroke #CFBAFF -->
+          <line x1="160" y1="160" x2="160" y2="15"  stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="160" y1="160" x2="15"  y2="102" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="160" y1="160" x2="305" y2="102" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="160" y1="160" x2="60"  y2="278" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="160" y1="160" x2="260" y2="278" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 4"/>
+          <!-- dot accents -->
+          <circle cx="160" cy="16"  r="3" fill="#D9D9D9"/>
+          <circle cx="15"  cy="102" r="3" fill="#D9D9D9"/>
+          <circle cx="305" cy="102" r="3" fill="#CFBAFF"/>
         </svg>
-        <!-- center -->
+        <!-- Center node: white circle with ATIC text, box-shadow blue (from Figma) -->
         <div class="node node-center">ATIC</div>
-        <!-- satellites -->
-        <div class="node node-sm n1"><img src="assets/images/sanjay-goel.png" alt="Director" /></div>
+        <!-- Satellite nodes with matching Figma border colors -->
+        <div class="node node-sm n1"><img src="assets/images/sanjay-goel.png" alt="Director"/></div>
         <div class="node node-sm n2"><span class="ni">🧠</span></div>
         <div class="node node-sm n3"><span class="ni">♿</span></div>
         <div class="node node-sm n4"><span class="ni">🥽</span></div>
@@ -88,49 +90,55 @@
   </div>
 </section>
 
-<!-- ═══════════════════════ WHAT WE DO / WHO WE ARE ═══════════════════════ -->
+<!-- ═══════════ WHAT WE DO / WHO WE ARE ═══════════
+     Items: border:1px solid #A9ACB0 (from Figma)
+     Who We Are panel: background:#F9F9F9; border-radius:12px
+-->
 <section class="what-who-section">
   <div class="container">
     <div class="what-who-grid">
 
       <!-- LEFT: What We Do -->
       <div class="what-col">
-        <h2>What We Do</h2>
+        <h2 class="h-section" style="margin-bottom:28px;">What We Do</h2>
         <div class="what-list">
+
           <div class="what-item">
-            <h3>Our Work</h3>
-            <p>Conduct accessibility, assistive technology, neurodiversity, and aging population initiatives.</p>
-            <a href="our-work.html" class="link-arrow">Learn More</a>
+            <p class="h-item">Our Work</p>
+            <p>Research projects, publications, workshops, and ongoing accessibility initiatives.</p>
+            <a href="our-work.html" class="link-btn mt-12" style="display:inline-flex;margin-top:12px;">Learn More</a>
           </div>
+
           <div class="what-item">
-            <h3>Participate</h3>
-            <p>Conduct accessibility, assistive technology, pilot testing, product evaluations, and feedback options.</p>
-            <a href="participate.html" class="link-arrow">Learn More</a>
+            <p class="h-item">Participate</p>
+            <p>Volunteer opportunities, testing studies, product evaluations, and feedback options.</p>
+            <a href="participate.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
           </div>
+
           <div class="what-item">
-            <h3>Community Resources</h3>
-            <p>Find tools, resources, organizations, and agencies to support ATIC initiatives, community access, and learning.</p>
-            <a href="community-resources.html" class="link-arrow">Learn More</a>
+            <p class="h-item">Community Resources</p>
+            <p>Assistive technology resources, partner organizations, and NYS accessibility ecosystem information.</p>
+            <a href="community-resources.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
           </div>
+
           <div class="what-item">
-            <h3>ATIC Testing Laboratory</h3>
-            <p>Evaluate and test emerging and assistive technology across diverse, community environments.</p>
-            <a href="atic-testing-laboratory.html" class="link-arrow">Learn More</a>
+            <p class="h-item">ATIC Testing Laboratory</p>
+            <p>Technologies being tested, accessibility reviews, and community-centered evaluation results.</p>
+            <a href="atic-testing-laboratory.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
           </div>
+
         </div>
       </div>
 
-      <!-- RIGHT: Who We Are -->
+      <!-- RIGHT: Who We Are — F9F9F9 panel, centered content -->
       <div class="who-col">
-        <h2>Who We Are</h2>
-        <div class="who-card">
-          <img src="assets/images/sanjay-goel.png" alt="Sanjay Goel, PhD" class="who-photo" />
-          <div class="who-info">
-            <h3>Sanjay Goel, PhD</h3>
-            <p class="who-role">Director at ATIC</p>
-            <p>Sanjay Goel is the Morris Mossey Endowed Professor and Chair of Information Security and Digital Forensics at the University at Albany. His work focuses on cybersecurity, AI, accessibility innovation, and community-centered technology research. Through interdisciplinary partnerships, he leads research and educational programs to support responsible technology development, advance solutions, and real-world impact across diverse communities.</p>
-            <a href="our-team.html" class="link-arrow mt-12" style="display:inline-flex;">View Our Team</a>
-          </div>
+        <h2 class="h-section" style="margin-bottom:28px;">Who We Are</h2>
+        <div class="who-panel">
+          <img src="assets/images/sanjay-goel.png" alt="Sanjay Goel, PhD" class="who-photo"/>
+          <p class="who-name">Sanjay Goel, PhD</p>
+          <p class="who-role">Director of ATIC</p>
+          <p class="who-bio">Sanjay Goel is the Morris Massry Endowed Professor and Chair of Information Security and Digital Forensics at the University at Albany. His work focuses on cybersecurity, AI, accessibility innovation, and community-centered technology research. Through interdisciplinary collaboration with government, industry, and academic partners, he leads initiatives that advance inclusive technologies, assistive systems, and real-world impact across diverse communities.</p>
+          <a href="our-team.html" class="btn-outline btn-sm mt-16">View Our Team →</a>
         </div>
       </div>
 
@@ -138,115 +146,123 @@
   </div>
 </section>
 
-<!-- ═══════════════════════ FEATURED RESEARCH ═══════════════════════ -->
+<!-- ═══════════ FEATURED RESEARCH & PROJECTS ═══════════
+     4 cols, border:1px solid #A9ACB0, image #EDEDED
+     Card title: 28px 600, desc: 18px 400, "Research" badge tag
+-->
 <section class="featured-research">
   <div class="container">
     <div class="section-header">
-      <h2>Featured Research &amp; Projects</h2>
+      <h2 class="h-section">Featured Research &amp; Projects</h2>
     </div>
     <div class="research-grid">
+
       <div class="r-card">
-        <div class="r-img r-img-1"></div>
+        <div class="r-img"><div class="r-img-placeholder ri-1"></div></div>
         <div class="r-body">
-          <h4>Neurodiversonary AI Systems</h4>
-          <p>AI-powered curriculum and learning systems designed for neurodivergent individuals in education and employment settings.</p>
-          <a href="our-work.html" class="link-arrow">Read More</a>
+          <p class="h-card">Neurodiverse AI Systems</p>
+          <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+          <span class="tag tag-research" style="align-self:flex-start;margin-top:auto;">Research</span>
         </div>
       </div>
+
       <div class="r-card">
-        <div class="r-img r-img-2"></div>
+        <div class="r-img"><div class="r-img-placeholder ri-2"></div></div>
         <div class="r-body">
-          <h4>XR for SSD Interventions</h4>
-          <p>Extended reality applications supporting social interaction and adaptive skill-building for individuals with SSD.</p>
-          <a href="our-work.html" class="link-arrow">Read More</a>
+          <p class="h-card">XR for IDD Interventions</p>
+          <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+          <span class="tag tag-research" style="align-self:flex-start;margin-top:auto;">Research</span>
         </div>
       </div>
+
       <div class="r-card">
-        <div class="r-img r-img-3"></div>
+        <div class="r-img"><div class="r-img-placeholder ri-3"></div></div>
         <div class="r-body">
-          <h4>Mental Health AI</h4>
-          <p>AI-driven tools supporting mental health, early detection, and community access across diverse populations.</p>
-          <a href="our-work.html" class="link-arrow">Read More</a>
+          <p class="h-card">Mental Health AI</p>
+          <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+          <span class="tag tag-research" style="align-self:flex-start;margin-top:auto;">Research</span>
         </div>
       </div>
+
       <div class="r-card">
-        <div class="r-img r-img-4"></div>
+        <div class="r-img"><div class="r-img-placeholder ri-4"></div></div>
         <div class="r-body">
-          <h4>Esports Accessibility</h4>
-          <p>Inclusive esports environments and adaptive gaming for individuals with cognitive and physical differences.</p>
-          <a href="our-work.html" class="link-arrow">Read More</a>
+          <p class="h-card">Esports Accessibility</p>
+          <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+          <span class="tag tag-research" style="align-self:flex-start;margin-top:auto;">Research</span>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════ CTA BANNER ═══════════════════════ -->
+<!-- ═══════════ CTA BANNER ═══════════
+     background:#FDCC48, text:#040404, buttons:#46166B
+-->
 <div class="cta-banner">
   <div class="container cta-inner">
-    <div class="cta-text">
-      <h2>Help us test, evaluate, and<br>improve accessibility technologies</h2>
-    </div>
+    <h2>Help us test, evaluate, and improve accessibility technologies</h2>
     <div class="cta-btns">
-      <a href="participate.html" class="btn btn-white">Join Now</a>
-      <a href="participate.html" class="btn-outline-white">Participate</a>
+      <a href="participate.html" class="btn-primary">Join Now</a>
+      <a href="participate.html" class="btn-outline">Participate →</a>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════ LATEST UPDATES ═══════════════════════ -->
+<!-- ═══════════ LATEST UPDATES ═══════════
+     border:1px solid #A9ACB0, image:#EDEDED
+     "Workshop" tag: #166B5A | "Event" tag: #DEA303
+-->
 <section class="latest-updates">
   <div class="container">
-    <h2 class="mb-32">Latest Updates</h2>
+    <h2 class="h-section">Latest Updates</h2>
     <div class="updates-grid">
 
-      <!-- Card 1 -->
+      <!-- Card 1: Workshop -->
       <div class="u-card">
         <div class="u-img u-img-1">
           <div class="poster">
-            <p class="p-small">THE 21ST ANNUAL SYMPOSIUM</p>
+            <p class="p-sm">THE 21ST ANNUAL SYMPOSIUM</p>
             <p class="p-title">on Information<br>Assurance</p>
           </div>
         </div>
         <div class="u-body">
-          <span class="u-tag">Workshop</span>
-          <h4>The 21st Annual Symposium on Information Assurance</h4>
-          <p>The 21st Annual Symposium on Information Assurance focuses on cutting-edge research at the intersection of AI and cybersecurity.</p>
-          <a href="our-work.html" class="link-arrow mt-8" style="display:inline-flex;margin-top:10px;">Read More</a>
+          <p class="h-card">The 21st Annual Symposium on Information Assurance (ASIA '26)</p>
+          <p>The 21st Annual Symposium on Information Assurance (ASIA '26) will be held in conjunction with the 28th New York State Cyber Security Conference (NYSCSC) June 2 to 3, 2026 ...</p>
+          <span class="tag tag-workshop" style="align-self:flex-start;margin-top:auto;">Workshop</span>
         </div>
       </div>
 
-      <!-- Card 2 -->
+      <!-- Card 2: Event -->
       <div class="u-card">
         <div class="u-img u-img-2">
           <div class="poster">
-            <p class="p-small p-gold">2nd Annual OPWDD</p>
+            <p class="p-sm p-gold">2nd Annual OPWDD</p>
             <p class="p-title">Cybersecurity Summit</p>
             <p class="p-date">March 26, 2026 | 8:00am – 4:30pm</p>
           </div>
         </div>
         <div class="u-body">
-          <span class="u-tag">Event</span>
-          <h4>The 2nd Annual OPWDD Cybersecurity Summit</h4>
-          <p>Hosted in partnership with OPWDD, UAlbany, and NYSTEC, the Summit brings together students, educators, researchers, and industry professionals.</p>
-          <a href="our-work.html" class="link-arrow mt-8" style="display:inline-flex;margin-top:10px;">Read More</a>
+          <p class="h-card">The 2nd Annual OPWDD Cybersecurity Summit</p>
+          <p>Hosted in partnership with OPWDD, Utica University, and NYSTEC, the OPWDD Cybersecurity and Technology Summit brought together students, educators, healthcare ...</p>
+          <span class="tag tag-event" style="align-self:flex-start;margin-top:auto;">Event</span>
         </div>
       </div>
 
-      <!-- Card 3 -->
+      <!-- Card 3: Event -->
       <div class="u-card">
         <div class="u-img u-img-3">
           <div class="poster">
-            <p class="p-small" style="color:#FBBF24;">2025 NEW YORK STATE</p>
+            <p class="p-sm" style="color:#FBBF24;">2025 NEW YORK STATE</p>
             <p class="p-dream">DREAM</p>
-            <p class="p-title" style="color:#fff;font-size:.85rem;font-weight:700;letter-spacing:1px;">SYMPOSIUM</p>
+            <p class="p-title" style="font-size:.85rem;font-weight:700;letter-spacing:1px;">SYMPOSIUM</p>
           </div>
         </div>
         <div class="u-body">
-          <span class="u-tag">Event</span>
-          <h4>2025 DREAM Symposium</h4>
-          <p>Hosted by the Office of the Chief Disability Officer and New York State partners, bringing together community members and accessibility advocates.</p>
-          <a href="our-work.html" class="link-arrow mt-8" style="display:inline-flex;margin-top:10px;">Read More</a>
+          <p class="h-card">2025 DREAM Symposium</p>
+          <p>The DREAM Event, hosted by the Office of the Chief Disability Officer (CDO) and New York State partners, brought together community members, employers, educators, researchers ...</p>
+          <span class="tag tag-event" style="align-self:flex-start;margin-top:auto;">Event</span>
         </div>
       </div>
 
@@ -254,76 +270,88 @@
   </div>
 </section>
 
-<!-- ═══════════════════════ COMMUNITY RESOURCES ═══════════════════════ -->
+<!-- ═══════════ COMMUNITY RESOURCES ═══════════
+     background:#F9F9F9 cards, no border
+-->
 <section class="community-section">
   <div class="container">
-    <h2 class="mb-32">Community Resources</h2>
+    <h2 class="h-section">Community Resources</h2>
     <div class="comm-grid">
+
       <div class="comm-card">
-        <h4>Assistive Technology Resources</h4>
-        <p>Find tools, devices, apps, and services to support independence, communication, learning, and mobility for people of all abilities.</p>
-        <a href="community-resources.html" class="link-arrow">Learn More</a>
+        <p class="h-card">Assistive Technology Resources</p>
+        <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+        <a href="community-resources.html" class="link-btn" style="display:inline-flex;margin-top:auto;">Learn More</a>
       </div>
+
       <div class="comm-card">
-        <h4>Partner Organizations</h4>
-        <p>Explore our network of partner organizations working together to advance accessibility, inclusion, and community well-being.</p>
-        <a href="community-resources.html" class="link-arrow">Learn More</a>
+        <p class="h-card">Partner Organizations</p>
+        <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+        <a href="community-resources.html" class="link-btn" style="display:inline-flex;margin-top:auto;">Learn More</a>
       </div>
+
       <div class="comm-card">
-        <h4>NYS Accessibility Ecosystem</h4>
-        <p>Navigate New York State's accessibility ecosystem, including agencies, programs, and resources that support individuals with disabilities.</p>
-        <a href="community-resources.html" class="link-arrow">Learn More</a>
+        <p class="h-card">NYS Accessibility Ecosystem</p>
+        <p>Lorem ipsum dolor sit amet consectetur. Sociis purus pretium praesent enim ultrices. Consectetur mag ...</p>
+        <a href="community-resources.html" class="link-btn" style="display:inline-flex;margin-top:auto;">Learn More</a>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════ ATIC TESTING LAB PREVIEW ═══════════════════════ -->
+<!-- ═══════════ ATIC TESTING LAB PREVIEW ═══════════
+     border:1px solid #A9ACB0, circular 80px photo left
+-->
 <section class="lab-preview">
   <div class="container">
-    <h2 class="mb-32">ATIC Testing Laboratory</h2>
+    <h2 class="h-section">ATIC Testing Laboratory</h2>
     <div class="lab-grid">
+
       <div class="lab-card">
-        <div class="lab-icon">🥽</div>
+        <div class="lab-circle">🥽</div>
         <div class="lab-body">
-          <h4>Meta Smart Glasses</h4>
-          <p>Hands-free accessibility and cognitive support tools for communication, prompting, and adaptive interaction.</p>
-          <span class="badge badge-green mt-8" style="display:inline-flex;">Completed</span>
+          <p class="h-card" style="font-size:1.125rem;">Meta Smart Glasses</p>
+          <p style="font-size:.9375rem;margin-bottom:8px;">Hands-free accessibility and cognitive support tools for communication, prompting, and adaptive interaction.</p>
+          <a href="atic-testing-laboratory.html" class="link-btn">Learn More</a>
         </div>
       </div>
+
       <div class="lab-card">
-        <div class="lab-icon">💍</div>
+        <div class="lab-circle">💍</div>
         <div class="lab-body">
-          <h4>Lotus Ring</h4>
-          <p>Wearable assistive interaction technology supporting accessibility, adaptive input, and independent device control.</p>
-          <span class="badge badge-blue mt-8" style="display:inline-flex;">In Progress</span>
+          <p class="h-card" style="font-size:1.125rem;">Lotus Ring</p>
+          <p style="font-size:.9375rem;margin-bottom:8px;">Wearable assistive interaction technology supporting accessibility, adaptive input, and independent device control.</p>
+          <a href="atic-testing-laboratory.html" class="link-btn">Learn More</a>
         </div>
       </div>
+
       <div class="lab-card">
-        <div class="lab-icon">📚</div>
+        <div class="lab-circle">📚</div>
         <div class="lab-body">
-          <h4>Assistive &amp; Adaptive Reading Support</h4>
-          <p>Assistive technologies supporting reading accessibility, cognitive support, and adaptive learning for individuals.</p>
-          <span class="badge badge-blue mt-8" style="display:inline-flex;">In Progress</span>
+          <p class="h-card" style="font-size:1.125rem;">Assistive &amp; Adaptive Reading Support</p>
+          <p style="font-size:.9375rem;margin-bottom:8px;">Assistive technologies supporting reading accessibility, cognitive support, and adaptive learning for individuals.</p>
+          <a href="atic-testing-laboratory.html" class="link-btn">Learn More</a>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════ PARTNERS ═══════════════════════ -->
+<!-- ═══════════ PARTNERS ═══════════ -->
 <section class="partners-section">
   <div class="container">
-    <h2 class="partners-title">Partners</h2>
+    <h2 class="h-section text-center" style="margin-bottom:40px;">Partners</h2>
 
-    <!-- Government logos -->
+    <!-- Govt / Founded logos -->
     <div class="govt-logos">
       <div class="govt-logo">
         <div class="govt-seal seal-blue">NEW<br>YORK<br>STATE</div>
         <span class="govt-name c-blue">Office for People With Developmental Disabilities</span>
       </div>
       <div class="govt-logo">
-        <div class="govt-seal seal-dark" style="font-size:.48rem;">OFFICE<br>OF THE<br>CHIEF</div>
+        <div class="govt-seal seal-dark" style="font-size:.42rem;">OFFICE<br>OF THE<br>CHIEF</div>
         <span class="govt-name c-dark">Office of the Chief Disability Officer, State Auditors, and Others</span>
       </div>
       <div class="govt-logo">
@@ -337,36 +365,27 @@
       <span class="il">
         <span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span>
       </span>
-      <span class="il" style="font-size:1.6rem;">🍎</span>
+      <span class="il" style="font-size:1.5rem;">🍎</span>
       <span class="il" style="color:#FF9900;">amazon</span>
-      <span class="il" style="color:#737373;font-size:1.1rem;">Microsoft</span>
+      <span class="il" style="color:#737373;">Microsoft</span>
       <span class="il" style="color:#00338D;">KPMG</span>
       <span class="il" style="font-size:1rem;font-weight:600;color:#0077B6;">Cloud<span style="color:#00B4D8;">of</span>Things</span>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<!-- ═══════════ FOOTER ═══════════
+     background:#46166B (same as primary purple — from Figma)
+     ATIC 42px 600, subtitle 12px, nav 12px, copyright 12px
+     All centered
+-->
 <footer>
   <div class="container">
     <div class="footer-logo-wrap">
-      <div class="logo-icon" style="margin:0 auto 8px;">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="10" cy="10" r="3" fill="rgba(255,255,255,.8)"/>
-          <circle cx="10" cy="3"  r="1.5" fill="rgba(255,255,255,.5)"/>
-          <circle cx="10" cy="17" r="1.5" fill="rgba(255,255,255,.5)"/>
-          <circle cx="3"  cy="10" r="1.5" fill="rgba(255,255,255,.5)"/>
-          <circle cx="17" cy="10" r="1.5" fill="rgba(255,255,255,.5)"/>
-          <line x1="10" y1="7"  x2="10" y2="4.5" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
-          <line x1="10" y1="13" x2="10" y2="15.5" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
-          <line x1="7"  y1="10" x2="4.5" y2="10" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
-          <line x1="13" y1="10" x2="15.5" y2="10" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="logo-name" style="color:#fff;font-size:1.1rem;">ATIC</div>
-      <div class="logo-sub" style="color:rgba(255,255,255,.5);font-size:.7rem;max-width:none;">Accessibility Technology &amp; Innovation Center</div>
+      <span class="footer-atic">ATIC</span>
+      <span class="footer-sub">Accessibility Technology &amp; Innovation Center</span>
     </div>
-    <nav class="footer-nav-row">
+    <nav class="footer-nav">
       <a href="index.html">Home</a>
       <a href="our-team.html">Our Team</a>
       <a href="our-work.html">Our Work</a>
