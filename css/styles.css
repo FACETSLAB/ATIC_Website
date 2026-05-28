@@ -441,6 +441,7 @@ section{padding:72px 0}
 .industry-logos{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
 .il{display:flex;align-items:center;gap:2px;font-weight:700;font-size:1.3rem;transition:var(--ease);opacity:.7;filter:grayscale(1)}
 .il:hover{opacity:1;filter:none}
+.il svg{transition:var(--ease)}
 
 /* ================================================================
    FOOTER  (from Figma: background:#46166B, centered)
