@@ -433,7 +433,8 @@ section{padding:72px 0}
 /* Card: border:1px solid #A9ACB0 (from Figma) */
 .u-card{border:1px solid var(--border);display:flex;flex-direction:column;transition:var(--ease)}
 .u-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
-.u-img{height:220px;overflow:hidden;flex-shrink:0;background:var(--ededed)}
+/* aspect-ratio matches the 440x200 image exactly — no cropping at any viewport */
+.u-img{aspect-ratio:11/5;overflow:hidden;flex-shrink:0;background:var(--ededed)}
 /* Event poster image backgrounds */
 /* u-img gradient fallbacks (shown only if image fails to load) */
 .u-img-1{background:#1B3A5C}
