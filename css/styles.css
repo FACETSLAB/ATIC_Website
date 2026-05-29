@@ -433,11 +433,12 @@ section{padding:72px 0}
 /* Card: border:1px solid #A9ACB0 (from Figma) */
 .u-card{border:1px solid var(--border);display:flex;flex-direction:column;transition:var(--ease)}
 .u-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
-.u-img{height:200px;background:var(--ededed);display:flex;align-items:center;justify-content:center;padding:20px;flex-shrink:0}
+.u-img{height:220px;overflow:hidden;flex-shrink:0;background:var(--ededed)}
 /* Event poster image backgrounds */
-.u-img-1{background:linear-gradient(160deg,#0D1B2A 30%,#1B3A5C)}
-.u-img-2{background:linear-gradient(135deg,#7C2D12,#EA580C)}
-.u-img-3{background:linear-gradient(135deg,#1E3A8A,#1D4ED8)}
+/* u-img gradient fallbacks (shown only if image fails to load) */
+.u-img-1{background:#1B3A5C}
+.u-img-2{background:#7C2D12}
+.u-img-3{background:#1E3A8A}
 .u-body{padding:24px 28px;display:flex;flex-direction:column;gap:12px;flex:1}
 .u-body .h-card{margin-bottom:4px}
 .u-body p{font-size:1.125rem;line-height:1.33}
@@ -610,7 +611,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 .events-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
 .ev-card{border:1px solid var(--border);overflow:hidden;transition:var(--ease)}
 .ev-card:hover{box-shadow:var(--shadow)}
-.ev-banner{height:160px;display:flex;align-items:center;justify-content:center;background:#EDEDED;overflow:hidden}
+.ev-banner{height:280px;overflow:hidden;background:var(--ededed)}
 .ev-body{padding:20px;display:flex;flex-direction:column;gap:10px}
 .ev-body .h-card{font-size:1.125rem}
 .ev-body p{font-size:.9375rem}
