@@ -156,11 +156,23 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
   line-height:1.5;
 }
 .tag-research{border:1px solid var(--purple-tag);color:var(--purple-tag)}
-/* All tags match Research badge — same purple border & text, hug content */
+/* All tags match Research badge — hug text, never stretch */
 .tag-workshop,
 .tag-event,
 .tag-purple,
-.badge-tag    { border:1px solid #6615A4; color:#6615A4; border-radius:16px; padding:2px 14px; font-size:1rem; font-weight:500; display:inline-block; width:fit-content; align-self:flex-start; }
+.badge-tag {
+  border:1px solid #6615A4;
+  color:#6615A4;
+  border-radius:16px;
+  padding:2px 14px;
+  font-size:1rem;
+  font-weight:500;
+  display:inline-block !important;
+  width:auto !important;
+  max-width:max-content !important;
+  align-self:flex-start !important;
+  flex-shrink:0;
+}
 
 /* Completed / In Progress */
 .badge-done{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;background:#D1FAE5;color:#059669}
@@ -669,7 +681,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 .ev-card{border:1px solid var(--border);overflow:hidden;transition:var(--ease)}
 .ev-card:hover{box-shadow:var(--shadow)}
 .ev-banner{height:280px;overflow:hidden;background:var(--ededed)}
-.ev-body{padding:20px;display:flex;flex-direction:column;gap:10px}
+.ev-body{padding:20px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .ev-body .h-card{font-size:1.125rem}
 .ev-body p{font-size:.9375rem}
 
