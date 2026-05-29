@@ -345,16 +345,21 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
   background:linear-gradient(111.95deg,#FFFFFF 37.01%,#FAF4FF 55%);
   padding:calc(var(--nav-h) + 60px) 0 60px; /* top includes nav-h so gradient shows behind transparent nav */
 }
-/* Override h-hero for inner pages: 40px, IBM Plex Sans Light */
-.hero-inner .h-hero{
-  font-size:2.5rem; /* 40px per feedback */
-  font-weight:300;
+/* Standardised subpage header — feedback: 40px / 18px / Light / 60px padding
+   Covers both plain <h1> and <h1 class="h-hero"> variants */
+.hero-inner h1,
+.hero-inner .h-hero {
+  font-size:2.5rem !important; /* 40px */
+  font-weight:300 !important;
+  line-height:1.25;
   margin-bottom:16px;
 }
-/* Inner page subtitle: 18px, weight 300 (Light) */
-.hero-inner .hero-desc,.hero-inner p{
-  font-size:1.125rem; /* 18px per feedback */
-  font-weight:300;
+/* Subtitle: 18px, IBM Plex Sans Light */
+.hero-inner .hero-desc,
+.hero-inner .hero-desc-lg,
+.hero-inner > .container > p {
+  font-size:1.125rem !important; /* 18px */
+  font-weight:300 !important;
   max-width:720px;
   color:var(--text);
 }

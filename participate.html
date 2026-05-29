@@ -10,18 +10,25 @@
     /* ── Participate-page overrides (from Figma CSS) ── */
 
     /* Hero: different gradient direction */
+    /* Standardised subpage hero — 40px title / 18px subtitle / 60px padding */
     .hero-participate {
       background: linear-gradient(348.74deg, #FFFFFF 17.06%, #FAF4FF 53.49%);
-      padding: calc(80px + 56px) 0 52px; /* 80px nav-h + content spacing */
+      padding: calc(80px + 60px) 0 60px;
     }
-    /* Description is weight 300, 24px (Figma spec) */
-    .hero-participate .hero-desc-lg {
-      font-size: clamp(1.1rem, 2vw, 1.5rem);
-      font-weight: 300;
+    .hero-participate h1,
+    .hero-participate .h-hero {
+      font-size: 2.5rem !important; /* 40px */
+      font-weight: 300 !important;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .hero-participate .hero-desc-lg,
+    .hero-participate p {
+      font-size: 1.125rem !important; /* 18px */
+      font-weight: 300 !important;
+      max-width: 720px;
       color: var(--text);
-      max-width: 860px;
-      line-height: 1.3;
-      margin-top: 16px;
+      line-height: 1.6;
     }
 
     /* 3-column grid */
