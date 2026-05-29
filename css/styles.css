@@ -101,17 +101,18 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 }
 .btn-primary:hover{background:#341153;transform:translateY(-1px)}
 
-/* Outline: NO border — subtle bg tint instead */
+/* Outline: completely borderless, no background box */
 .btn-outline{
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 20px;
-  background:rgba(70,22,107,.09);color:var(--purple);
+  background:transparent;
+  color:var(--purple);
   font-size:1rem;font-weight:500;letter-spacing:-0.01em;
   border:0;
-  border-radius:var(--r-sm);
+  border-radius:0;
   transition:var(--ease);
 }
-.btn-outline:hover{background:var(--purple);color:#fff}
+.btn-outline:hover{color:#341153;gap:10px;}
 
 /* Text arrow link — "Button →" style from Figma */
 .link-btn{
