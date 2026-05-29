@@ -37,11 +37,12 @@ body{
   background:#fff;
   -webkit-font-smoothing:antialiased;
   line-height:1.6;
+  overflow-x:hidden; /* feedback: remove horizontal scrollbar */
 }
 img{max-width:100%;height:auto;display:block}
 a{text-decoration:none;color:inherit}
 ul{list-style:none}
-button{cursor:pointer;border:none;background:none;font-family:inherit}
+button{cursor:pointer;border:0;background:none;font-family:inherit} /* feedback: border:0 on all buttons */
 .page-body{padding-top:var(--nav-h)}
 
 /* ── Container ── */
@@ -58,9 +59,9 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
   letter-spacing:-0.01em;
   color:var(--text);
 }
-/* Section headings: weight 400, 42px */
+/* Section headings: feedback → IBM Plex Sans Regular 32px */
 .h-section{
-  font-size:clamp(1.5rem,3vw,2.625rem);
+  font-size:2rem; /* 32px fixed per feedback */
   font-weight:400;
   line-height:1.2;
   letter-spacing:-0.01em;
@@ -152,31 +153,31 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 /* ================================================================
    NAVBAR
    ================================================================ */
+/* feedback: transparent navbar blends with hero, turns opaque on scroll */
 .navbar{
   position:fixed;top:0;left:0;right:0;
   height:var(--nav-h);
+  background:transparent;
+  border-bottom:none;
+  z-index:1000;
+  transition:background .3s ease, border-bottom .3s ease, box-shadow .3s ease;
+}
+.navbar.scrolled{
   background:rgba(255,255,255,.97);
   backdrop-filter:blur(10px);
   border-bottom:1px solid #eee;
-  z-index:1000;
-  transition:box-shadow .2s;
+  box-shadow:var(--shadow);
 }
-.navbar.scrolled{box-shadow:var(--shadow)}
 
 .nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%}
 
-/* ATIC Logo — "ATIC" large left + subtitle right (from Figma) */
-.nav-logo{display:flex;align-items:flex-start;gap:8px;flex-shrink:0;text-decoration:none}
-.logo-atic{
-  font-size:2rem;font-weight:500;line-height:1;
-  color:var(--text);letter-spacing:0;
-}
+/* ATIC Logo — feedback: use img file so it stays consistent on responsive */
+.nav-logo{display:flex;align-items:center;flex-shrink:0;text-decoration:none}
+.nav-logo-img{height:44px;width:auto;display:block}
+/* Keep text fallbacks for footer */
+.logo-atic{font-size:2rem;font-weight:500;line-height:1;color:var(--text);letter-spacing:0}
 .logo-sub-wrap{display:flex;align-items:center;padding-top:4px}
-.logo-sub{
-  font-size:0.625rem;font-weight:500;
-  color:var(--text);line-height:1.3;
-  max-width:130px;
-}
+.logo-sub{font-size:0.625rem;font-weight:500;color:var(--text);line-height:1.3;max-width:130px}
 
 /* Nav links */
 .nav-links{display:flex;align-items:center;gap:4px}
@@ -253,9 +254,10 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 /* ── Orbital hero illustration (matches Figma exactly) ── */
 .hero-illustration{display:flex;align-items:center;justify-content:center}
 
+/* feedback: enlarge hero illustration */
 .hero-orb{
   position:relative;
-  width:400px;height:400px;
+  width:520px;height:520px; /* enlarged from 400px */
   flex-shrink:0;
 }
 
@@ -268,12 +270,11 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
   overflow:visible;
 }
 
-/* Conic gradient inner ellipse (Ellipse 635 from Figma)
-   conic-gradient from 179.11deg at 53.79% 50.24% */
+/* Conic gradient inner ellipse — more prominent, centered in 520px container */
 .orb-conic{
   position:absolute;
-  width:210px;height:226px;
-  left:95px;top:87px;
+  width:280px;height:300px;
+  left:120px;top:110px;
   background:conic-gradient(
     from 179.11deg at 53.79% 50.24%,
     #F1E0FF -0.73deg,
@@ -285,20 +286,21 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
     #F1E0FF 393.82deg
   );
   border-radius:50%;
-  opacity:.75;
+  opacity:.85; /* more visible per feedback */
   pointer-events:none;
+  z-index:0;
 }
 
-/* Center ATIC circle (from Figma: FBFBFB bg, box-shadow 0 4px 200px #0F91D7) */
+/* Center ATIC circle — centred in 520px container */
 .orb-center{
   position:absolute;
-  width:100px;height:100px;
-  left:150px;top:150px;
+  width:120px;height:120px;
+  left:200px;top:200px; /* (520-120)/2 = 200 */
   background:#FBFBFB;
   border-radius:50%;
-  box-shadow:0 4px 60px rgba(15,145,215,.25), 0 0 0 1px #eee;
+  box-shadow:0 4px 80px rgba(15,145,215,.3), 0 0 0 1px #eee;
   display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem;font-weight:400;letter-spacing:0;
+  font-size:1.6rem;font-weight:400;letter-spacing:0;
   color:var(--purple);
   z-index:3;
 }
@@ -317,27 +319,40 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 }
 .orb-node img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 
-/* Large nodes: 74px, with colored ring borders */
-.on-tl{width:74px;height:74px;border:3px solid #2BB7B1;left:37px; top:4px;  animation-delay:0s}
-.on-tr{width:74px;height:74px;border:3px solid #2D77E5;left:270px;top:-2px; animation-delay:.5s}
-.on-bl{width:74px;height:74px;border:3px solid #9D4CDB;left:-28px;top:234px;animation-delay:.3s}
+/* Large nodes: 90px (scaled up from 74px) */
+.on-tl{width:90px;height:90px;border:3px solid #2BB7B1;left:46px; top:5px;   animation-delay:0s}
+.on-tr{width:90px;height:90px;border:3px solid #2D77E5;left:348px;top:0px;   animation-delay:.5s}
+.on-bl{width:90px;height:90px;border:3px solid #9D4CDB;left:-35px;top:302px; animation-delay:.3s}
 
 /* Small nodes: 52px, gray border */
-.on-lm{width:52px;height:52px;border:1px solid #D9D9D9;left:58px; top:137px;animation-delay:1s}
-.on-rm{width:52px;height:52px;border:1px solid #D9D9D9;left:268px;top:142px;animation-delay:1.5s}
-.on-bc{width:52px;height:52px;border:1px solid #D9D9D9;left:174px;top:281px;animation-delay:.8s}
+/* Small nodes repositioned for 520px container */
+.on-lm{width:64px;height:64px;border:1px solid #D9D9D9;left:72px; top:178px;animation-delay:1s}
+.on-rm{width:64px;height:64px;border:1px solid #D9D9D9;left:348px;top:185px;animation-delay:1.5s}
+.on-bc{width:64px;height:64px;border:1px solid #D9D9D9;left:228px;top:364px;animation-delay:.8s}
 
 @keyframes float-orb{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
 /* ================================================================
    HERO — INNER PAGES
+   feedback: title 40px weight 300, subtitle 18px weight 300, padding 60px
    ================================================================ */
 .hero-inner{
   background:linear-gradient(111.95deg,#FFFFFF 37.01%,#FAF4FF 55%);
-  padding:56px 0 48px;
+  padding:60px 0; /* feedback: 60px top and bottom */
 }
-.hero-inner .h-hero{margin-bottom:16px}
-.hero-inner .hero-desc{font-size:1.125rem;max-width:720px}
+/* Override h-hero for inner pages: 40px, IBM Plex Sans Light */
+.hero-inner .h-hero{
+  font-size:2.5rem; /* 40px per feedback */
+  font-weight:300;
+  margin-bottom:16px;
+}
+/* Inner page subtitle: 18px, weight 300 (Light) */
+.hero-inner .hero-desc,.hero-inner p{
+  font-size:1.125rem; /* 18px per feedback */
+  font-weight:300;
+  max-width:720px;
+  color:var(--text);
+}
 
 /* ================================================================
    SECTION WRAPPER
@@ -495,11 +510,12 @@ section{padding:72px 0}
    PARTNERS  (Home)
    ================================================================ */
 .partners-section{background:#fff;padding:72px 0}
+/* feedback: increase spacing between rows, full colour on ALL logos */
 .govt-logos{
   display:flex;align-items:center;justify-content:center;
-  gap:48px;flex-wrap:wrap;margin-bottom:40px;
+  gap:60px;flex-wrap:wrap;
+  margin-bottom:56px; /* more space between govt and industry rows */
 }
-/* Real logo images — just display them as-is, no card wrapper */
 .govt-logo{
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
@@ -509,15 +525,15 @@ section{padding:72px 0}
   max-width:340px;
   display:block;
   object-fit:contain;
-  filter:grayscale(0);
   opacity:1;
   transition:opacity .2s;
 }
 .govt-logo img:hover{opacity:.85}
 
-.industry-logos{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
-.il{display:flex;align-items:center;gap:2px;font-weight:700;font-size:1.3rem;transition:var(--ease);opacity:.7;filter:grayscale(1)}
-.il:hover{opacity:1;filter:none}
+/* feedback: full colour (no grayscale), full opacity on industry logos too */
+.industry-logos{display:flex;align-items:center;justify-content:center;gap:56px;flex-wrap:wrap}
+.il{display:flex;align-items:center;gap:4px;font-weight:700;font-size:1.3rem;transition:var(--ease);opacity:1;filter:none}
+.il:hover{opacity:.8}
 .il svg{transition:var(--ease)}
 
 /* ================================================================
@@ -720,7 +736,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 }
 /* Scale down orb on mid-range screens */
 @media(max-width:1200px) and (min-width:901px){
-  .hero-orb{transform:scale(.85);transform-origin:center center}
+  .hero-orb{transform:scale(.75);transform-origin:center center}
 }
 
 /* ================================================================
