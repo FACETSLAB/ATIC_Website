@@ -613,31 +613,43 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
    OUR WORK PAGE
    ================================================================ */
 .work-section{background:#fff;padding:72px 0}
-.tabs-bar{display:flex;border-bottom:1.5px solid #eee;margin-bottom:36px;overflow-x:auto}
+/* Tabs — Figma: centered, 14px Regular, inactive #A8A8A8, active #46166B underline */
+.tabs-bar{
+  display:flex;justify-content:center;gap:56px;
+  border-bottom:1px solid #eee;
+  margin-bottom:40px;
+  overflow-x:auto;
+}
 .tab-btn{
-  padding:11px 22px;font-size:.875rem;font-weight:400;
-  color:var(--text-muted);
+  padding:20px 0;
+  font-size:.875rem;font-weight:400;
+  color:#A8A8A8;
   border-bottom:2px solid transparent;
-  margin-bottom:-1.5px;transition:var(--ease);
+  margin-bottom:-1px;
+  transition:var(--ease);
   white-space:nowrap;background:none;
   border-top:none;border-left:none;border-right:none;cursor:pointer;
+  letter-spacing:-0.01em;
 }
 .tab-btn:hover{color:var(--purple)}
-.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple);font-weight:500}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-/* Research Projects: 2-col */
+/* Research Projects — 2-col grid, Figma spec */
 .work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
-.w-card{border:1px solid var(--border);display:flex;flex-direction:column;transition:var(--ease)}
+.w-card{border:1px solid var(--border);display:flex;flex-direction:column;transition:var(--ease);background:#fff}
 .w-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
-.w-img{height:280px;background:var(--ededed);overflow:hidden;flex-shrink:0}
-.w-card.full-width{grid-column:1/-1}
-.w-card.full-width .w-img{height:320px}
-.w-body{padding:24px 28px;display:flex;flex-direction:column;gap:8px;flex:1}
-.w-lead{font-size:.875rem;color:var(--text-muted);font-style:italic;margin-bottom:4px}
-.w-body .h-card{margin-bottom:4px}
-.w-body p{font-size:1rem}
+/* Image: 300px (Figma: height:300px, overflow hidden) */
+.w-img{height:300px;background:#E6E6E6;overflow:hidden;flex-shrink:0}
+/* Content area: padding 28px sides, 32px bottom — matches Figma */
+.w-body{padding:20px 28px 32px;display:flex;flex-direction:column;gap:12px;flex:1}
+/* Title: 28px weight 600 */
+.w-body h4,.w-body .h-card{font-size:1.75rem!important;font-weight:600;line-height:1.15;color:#000;margin-bottom:0}
+/* Lead: 18px weight 400, black */
+.w-lead{font-size:1.125rem;font-weight:400;color:#000;font-style:normal;margin-bottom:0}
+/* Description: 18px weight 400, black */
+.w-body p{font-size:1.125rem;font-weight:400;color:#000;line-height:1.33}
 
 /* Publications */
 .pub-list{display:flex;flex-direction:column;gap:14px}
@@ -665,11 +677,23 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 .ws-img{width:200px;height:130px;border-radius:var(--r-sm);flex-shrink:0;overflow:hidden}
 .ws-body p{font-size:.9375rem}
 
-/* Work CTA bottom */
-.work-cta{background:var(--card-f9);padding:56px 0}
-.work-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
-.work-cta-inner .h-section{font-size:clamp(1rem,2vw,1.5rem)}
-.work-cta-inner p{font-size:.9375rem;max-width:500px}
+/* Work CTA — Figma: background #F3E9FF, title 32px/500, button 20px */
+.work-cta{background:#F3E9FF;padding:56px 0}
+.work-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.work-cta-title{font-size:2rem;font-weight:500;letter-spacing:-.5px;color:#1B1B1B;margin-bottom:8px}
+.work-cta-inner p{font-size:1rem;font-weight:400;color:#454545;max-width:600px}
+/* CTA button — 20px, 226px min-width */
+.btn-collab{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:12px 24px;
+  background:var(--purple);color:#fff;
+  font-size:1.25rem;font-weight:400;
+  border:0;border-radius:var(--r-sm);
+  min-width:200px;
+  flex-shrink:0;
+  transition:var(--ease);
+}
+.btn-collab:hover{background:#341153}
 
 /* ================================================================
    PARTICIPATE PAGE

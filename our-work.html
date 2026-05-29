@@ -4,13 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Our Work — ATIC</title>
+  <meta name="description" content="Our research focuses on AI, accessibility, assistive technology, neurodiversity, XR, adaptive learning, and mental health innovation." />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="page-body">
 
+<!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="navbar">
   <div class="container nav-inner">
-    <a href="index.html" class="nav-logo"><img src="assets/images/atic-logo-full.jpg" alt="ATIC - Accessibility Technology &amp; Innovation Center" class="nav-logo-img"></a>
+    <a href="index.html" class="nav-logo">
+      <img src="assets/images/atic-logo-full.jpg" alt="ATIC - Accessibility Technology &amp; Innovation Center" class="nav-logo-img">
+    </a>
     <div class="nav-links">
       <a href="index.html">Home</a>
       <a href="our-team.html">Our Team</a>
@@ -19,7 +23,7 @@
       <a href="community-resources.html">Community Resources</a>
       <a href="atic-testing-laboratory.html">ATIC Testing Laboratory</a>
     </div>
-    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 <div class="mobile-nav">
@@ -31,7 +35,7 @@
   <a href="atic-testing-laboratory.html">ATIC Testing Laboratory</a>
 </div>
 
-<!-- HERO -->
+<!-- ═══════════ HERO ═══════════ -->
 <section class="hero-inner">
   <div class="container">
     <h1>Our Work</h1>
@@ -39,10 +43,11 @@
   </div>
 </section>
 
-<!-- TABBED CONTENT -->
+<!-- ═══════════ TABBED CONTENT ═══════════ -->
 <section class="work-section">
   <div class="container">
 
+    <!-- Tab bar: centered, inactive = #A8A8A8, active = #46166B underline -->
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="tab-research">Research Projects</button>
       <button class="tab-btn" data-tab="tab-publications">Publications</button>
@@ -50,67 +55,99 @@
       <button class="tab-btn" data-tab="tab-workshops">Workshops</button>
     </div>
 
-    <!-- ── Research Projects ── -->
+    <!-- ══ Research Projects ══
+         2-column grid | 300px images | 28px side padding
+         title 28px/600 | lead 18px/400 | desc 18px/400
+         "Research" tag: border #6615A4, border-radius 16px
+         No Read More button
+    -->
     <div id="tab-research" class="tab-panel active">
       <div class="work-grid">
+
+        <!-- Card 1: Neurodiversity -->
         <div class="w-card">
-          <div class="w-img"><img src="assets/images/image 80.svg" alt=""></div>
+          <div class="w-img">
+            <img src="assets/images/image 80.svg" alt="Neurodiversity-Aware Curriculum Optimization">
+          </div>
           <div class="w-body">
-            <p class="w-lead">Lead: Yujung Hwang</p>
             <h4>Neurodiversity-Aware Curriculum Optimization</h4>
-            <p>An AI-powered adaptive curriculum learning system that creates personalized education for neurodivergent individuals with adaptive content and learning pathways.</p>
-          </div>
-        </div>
-
-        <div class="w-card">
-          <div class="w-img"><img src="assets/images/image 81.svg" alt=""></div>
-          <div class="w-body">
-            <p class="w-lead">Lead: Jingyi (Jenny) Huang, PhD</p>
-            <h4>XR for SSD Interventions</h4>
-            <p>AI-powered XR intervention supporting social communication and adaptive skill-building through virtual reality for individuals with SSD.</p>
-          </div>
-        </div>
-
-        <div class="w-card">
-          <div class="w-img"><img src="assets/images/image 88.svg" alt=""></div>
-          <div class="w-body">
             <p class="w-lead">Lead: Yujung Hwang</p>
-            <h4>Assistive Technology Hub</h4>
-            <p>Development of the ATIC Assistive Technology Hub to improve navigation, accessibility, and access to assistive technology resources for individuals across the community.</p>
+            <p>Research on neurodiversity-aware adaptive curriculum systems, accessibility-centered AI, and personalized learning environments.</p>
+            <span class="tag tag-research" style="align-self:flex-start;margin-top:4px;">Research</span>
           </div>
         </div>
 
+        <!-- Card 2: XR for IDD -->
         <div class="w-card">
-          <div class="w-img"><img src="assets/images/image 86 (1).svg" alt=""></div>
+          <div class="w-img">
+            <img src="assets/images/image 81.svg" alt="XR for IDD Interventions">
+          </div>
           <div class="w-body">
-            <p class="w-lead">Lead: Lakshika Vaishnav</p>
-            <h4>Esports-Based Accessibility Interventions</h4>
-            <p>Research on incorporating esports-based digital interventions to support community inclusion, accessibility, decreased isolation, and supportive health for individuals.</p>
+            <h4>XR for IDD Interventions</h4>
+            <p class="w-lead">Lead: Jingyi (Jenny) Huang, PhD</p>
+            <p>AI-powered XR interventions supporting social interaction, stress management, and job-readiness training for individuals with IDD.</p>
+            <span class="tag tag-research" style="align-self:flex-start;margin-top:4px;">Research</span>
           </div>
         </div>
 
-        <!-- Full-width last card -->
-        <div class="w-card full-width">
-          <div class="w-img"><img src="assets/images/image 87 (1).svg" alt=""></div>
+        <!-- Card 3: Assistive Technology Hub -->
+        <div class="w-card">
+          <div class="w-img">
+            <img src="assets/images/image 88.svg" alt="Assistive Technology Hub">
+          </div>
           <div class="w-body">
-            <p class="w-lead">Lead: Jaiganes Anandan, Jaigenesh Anandan</p>
-            <h4>Mental Health AI Systems</h4>
-            <p>Research on responsible AI systems for mental health support, including PTSD and depression detection using clinically grounded multi-modal AI approaches, as well as fine-tuned LLMs for mental health support using text and audio modalities.</p>
+            <h4>Assistive Technology Hub</h4>
+            <p class="w-lead">Lead: Yujung Hwang</p>
+            <p>Development of the NYS Assistive Technology Hub to improve accessibility, resource navigation, and community access to assistive technology services, organizations, and support systems across New York State.</p>
+            <span class="tag tag-research" style="align-self:flex-start;margin-top:4px;">Research</span>
           </div>
         </div>
+
+        <!-- Card 4: Esports -->
+        <div class="w-card">
+          <div class="w-img">
+            <img src="assets/images/image 86.svg" alt="Esports-Based Accessibility Interventions">
+          </div>
+          <div class="w-body">
+            <h4>Esports-Based Accessibility Interventions</h4>
+            <p class="w-lead">Lead: Lakshika Vaishnav</p>
+            <p>Research on structured esports and game-based interventions designed to support executive functioning, social interaction, accessibility, teamwork, and cognitive skill development for neurodiverse and disability communities.</p>
+            <span class="tag tag-research" style="align-self:flex-start;margin-top:4px;">Research</span>
+          </div>
+        </div>
+
+        <!-- Card 5: Mental Health AI — left-aligned, NOT full-width -->
+        <div class="w-card">
+          <div class="w-img">
+            <img src="assets/images/image 87.svg" alt="Mental Health AI Systems">
+          </div>
+          <div class="w-body">
+            <h4>Mental Health AI Systems</h4>
+            <p class="w-lead">Lead: Lakshika Vaishnav, Jaiganesh Anandan</p>
+            <p>Research on AI-driven mental health support systems, including longitudinal mental health tracking, explainable depression and PTSD detection, safety-aware AI architectures, and clinically grounded multimodal AI technologies.</p>
+            <span class="tag tag-research" style="align-self:flex-start;margin-top:4px;">Research</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- ── Publications ── -->
+    <!-- ══ Publications ══
+         PDF badge (red) ONLY on papers that have a PDF available
+    -->
     <div id="tab-publications" class="tab-panel">
       <div class="pub-list">
+
+        <!-- Has PDF → show red PDF badge -->
         <div class="pub-item">
           <p>P. Sharma, J. Anandan, H. Liu and J. Grover, "Synthetic Attack Dataset Generation with D2IT for AI-Based Intrusion Detection in Industrial V2I Network," IEEE Open Journal of Vehicular Technology, vol. 6, pp. 2599–2538, 2025. doi:10.1109/OJVT.2025.3609149</p>
           <div class="pub-tags">
-            <span class="badge-pdf">PDF</span>
+            <span class="tag-pdf">PDF</span>
             <span class="badge-tag">Mental Health</span>
           </div>
         </div>
+
+        <!-- No PDF → no PDF badge -->
         <div class="pub-item">
           <p>P. Sharma, J. Anandan, X. Lu, S. Goel, "Explainable Depression Detection: A DSM-5-Aligned Multimodal Framework," manuscript under review, submitted to IEEE Transactions on Affective Computing.</p>
           <div class="pub-tags">
@@ -118,6 +155,7 @@
             <span class="badge-tag">Mental Health</span>
           </div>
         </div>
+
         <div class="pub-item">
           <p>Y. Hwang and S. Goel, "Enhancing Attention and Executive Function in ADHD Learners through Adaptive AR/VR Systems in Education," accepted to the Americas Conference on Information Systems (AMCIS) 2026.</p>
           <div class="pub-tags">
@@ -125,6 +163,7 @@
             <span class="badge-tag">Neurodiversity-Aware Learning</span>
           </div>
         </div>
+
         <div class="pub-item">
           <p>Y. Hwang and S. Goel, "Toward Neurodiversity-Aware Curriculum Adaptation: A Multidimensional Evaluation Framework for Large Language Models," submitted to the Forty-Seventh International Conference on Information Systems (ICIS), Lisbon, Portugal, 2026.</p>
           <div class="pub-tags">
@@ -132,6 +171,7 @@
             <span class="badge-tag">Neurodiversity-Aware Learning</span>
           </div>
         </div>
+
         <div class="pub-item">
           <p>Vaishnav, L., &amp; Goel, S. (2026). Adaptive gaming and esports: Review of how gaming and esports can benefit people with cognitive difficulties. Under review at Information Systems Frontiers.</p>
           <div class="pub-tags">
@@ -139,6 +179,7 @@
             <span class="badge-tag">Esports</span>
           </div>
         </div>
+
         <div class="pub-item">
           <p>Vaishnav, L., &amp; Goel, S. (2026). Evaluating fine-tuned LLMs for mental health support: Text and audio modalities. Accepted at the AMCIS 2026.</p>
           <div class="pub-tags">
@@ -146,16 +187,19 @@
             <span class="badge-tag">Mental Health</span>
           </div>
         </div>
+
       </div>
-      <p class="pagination">6 results of 17</p>
+      <p class="pagination-bar">6 results of 17</p>
       <button class="load-more">Load more</button>
     </div>
 
-    <!-- ── Events ── -->
+    <!-- ══ Events ══ -->
     <div id="tab-events" class="tab-panel">
       <div class="events-grid">
         <div class="ev-card">
-          <div class="ev-banner"><img src="assets/images/image 93.svg" alt=""></div>
+          <div class="ev-banner">
+            <img src="assets/images/image 92.svg" alt="2nd Annual OPWDD Cybersecurity Summit">
+          </div>
           <div class="ev-body">
             <h4>The 2nd Annual OPWDD Cybersecurity Summit</h4>
             <span class="badge-tag" style="display:inline-block;margin:6px 0 10px;">Event</span>
@@ -163,7 +207,9 @@
           </div>
         </div>
         <div class="ev-card">
-          <div class="ev-banner"><img src="assets/images/image 92 (4).svg" alt=""></div>
+          <div class="ev-banner">
+            <img src="assets/images/image 92 (3).svg" alt="2025 DREAM Symposium">
+          </div>
           <div class="ev-body">
             <h4>2025 DREAM Symposium</h4>
             <span class="badge-tag" style="display:inline-block;margin:6px 0 10px;">Event</span>
@@ -173,14 +219,16 @@
       </div>
     </div>
 
-    <!-- ── Workshops ── -->
+    <!-- ══ Workshops ══ -->
     <div id="tab-workshops" class="tab-panel">
       <div class="workshop-card">
-        <div class="ws-img"><img src="assets/images/image 94.svg" alt=""></div>
+        <div class="ws-img">
+          <img src="assets/images/image 95.svg" alt="ASIA 26 Symposium">
+        </div>
         <div class="ws-body">
           <p class="w-lead">Workshop</p>
           <h4>The 21st Annual Symposium on Information Assurance (ASIA '26)</h4>
-          <p style="margin-top:8px;">The 21st Annual Symposium on Information Assurance (ASIA '26) will be held in conjunction with the 28th New York State Cyber Security Conference (NYSCSC) June 2 to 3, 2026. This joint event will attract over 3,200 participants, including practitioners, researchers and vendors. Special themes for this year's conference are threats from artificial intelligence, auditing artificial Intelligence and using artificial intelligence for cybersecurity and digital forensics.</p>
+          <p style="margin-top:8px;">The 21st Annual Symposium on Information Assurance (ASIA '26) will be held in conjunction with the 28th New York State Cyber Security Conference (NYSCSC) June 2 to 3, 2026. Special themes for this year's conference are threats from artificial intelligence, auditing artificial Intelligence and using artificial intelligence for cybersecurity and digital forensics.</p>
           <span class="badge-tag" style="display:inline-block;margin-top:14px;">Workshop</span>
         </div>
       </div>
@@ -189,28 +237,25 @@
   </div>
 </section>
 
-<!-- BOTTOM CTA -->
+<!-- ══ Bottom CTA — Figma: background #F3E9FF ══ -->
 <div class="work-cta">
   <div class="container work-cta-inner">
     <div>
-      <h2>Our research is user-centered and community-driven.</h2>
-      <p>We collaborate with individuals, families, educators, and organizations to co-design meaningful research.</p>
+      <p class="work-cta-title">Our research is user-centered and community-driven.</p>
+      <p>We collaborate with individuals, families, educators, and organizations to co-design meaningful researches.</p>
     </div>
-    <a href="participate.html" class="btn btn-primary">Collaborate With Us</a>
+    <a href="participate.html" class="btn-collab">Collaborate With Us</a>
   </div>
 </div>
 
-<!-- FOOTER -->
+<!-- ═══════════ FOOTER ═══════════ -->
 <footer>
   <div class="container">
     <div class="footer-logo-wrap">
-      <div class="logo-icon" style="margin:0 auto 8px;">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="rgba(255,255,255,.8)"/><circle cx="10" cy="3" r="1.5" fill="rgba(255,255,255,.5)"/><circle cx="10" cy="17" r="1.5" fill="rgba(255,255,255,.5)"/><circle cx="3" cy="10" r="1.5" fill="rgba(255,255,255,.5)"/><circle cx="17" cy="10" r="1.5" fill="rgba(255,255,255,.5)"/><line x1="10" y1="7" x2="10" y2="4.5" stroke="rgba(255,255,255,.4)" stroke-width="1"/><line x1="10" y1="13" x2="10" y2="15.5" stroke="rgba(255,255,255,.4)" stroke-width="1"/><line x1="7" y1="10" x2="4.5" y2="10" stroke="rgba(255,255,255,.4)" stroke-width="1"/><line x1="13" y1="10" x2="15.5" y2="10" stroke="rgba(255,255,255,.4)" stroke-width="1"/></svg>
-      </div>
-      <div class="logo-name" style="color:#fff;font-size:1.1rem;">ATIC</div>
-      <div class="logo-sub" style="color:rgba(255,255,255,.5);font-size:.7rem;max-width:none;">Accessibility Technology &amp; Innovation Center</div>
+      <span class="footer-atic">ATIC</span>
+      <span class="footer-sub">Accessibility Technology &amp; Innovation Center</span>
     </div>
-    <nav class="footer-nav-row">
+    <nav class="footer-nav">
       <a href="index.html">Home</a>
       <a href="our-team.html">Our Team</a>
       <a href="our-work.html">Our Work</a>
