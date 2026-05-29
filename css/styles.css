@@ -42,8 +42,9 @@ body{
 img{max-width:100%;height:auto;display:block}
 a{text-decoration:none;color:inherit}
 ul{list-style:none}
-button{cursor:pointer;border:0;background:none;font-family:inherit} /* feedback: border:0 on all buttons */
-.page-body{padding-top:var(--nav-h)}
+button{cursor:pointer;border:0;background:none;font-family:inherit}
+/* Navbar is transparent, hero sections include nav-h in their top padding */
+.page-body{padding-top:0}
 
 /* ── Container ── */
 .container{width:100%;max-width:var(--max-w);margin:0 auto;padding:0 40px}
@@ -88,25 +89,26 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 /* ================================================================
    BUTTONS & LINKS  (from Figma CSS)
    ================================================================ */
-/* Primary: #46166B filled */
+/* Primary: filled, NO border */
 .btn-primary{
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 20px;
   background:var(--purple);color:#fff;
   font-size:1rem;font-weight:500;letter-spacing:-0.01em;
+  border:0;
   border-radius:var(--r-sm);
   transition:var(--ease);
 }
 .btn-primary:hover{background:#341153;transform:translateY(-1px)}
 
-/* Outline: #46166B border */
+/* Outline: NO border — subtle bg tint instead */
 .btn-outline{
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 20px;
-  border:1px solid var(--purple);color:var(--purple);
+  background:rgba(70,22,107,.09);color:var(--purple);
   font-size:1rem;font-weight:500;letter-spacing:-0.01em;
+  border:0;
   border-radius:var(--r-sm);
-  background:transparent;
   transition:var(--ease);
 }
 .btn-outline:hover{background:var(--purple);color:#fff}
@@ -122,13 +124,15 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
 .link-btn:hover{gap:8px}
 
 /* White-on-purple outline (for footer/dark bg) */
+/* White variant on dark/coloured bg — NO border */
 .btn-outline-white{
   display:inline-flex;align-items:center;padding:8px 20px;
-  border:1px solid #fff;color:#fff;
+  border:0;
+  background:rgba(255,255,255,.18);color:#fff;
   font-size:1rem;font-weight:500;
   border-radius:var(--r-sm);transition:var(--ease);
 }
-.btn-outline-white:hover{background:rgba(255,255,255,.15)}
+.btn-outline-white:hover{background:rgba(255,255,255,.32)}
 
 /* Small util */
 .btn-sm{padding:6px 16px!important;font-size:0.875rem!important}
@@ -209,7 +213,7 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
    ================================================================ */
 .hero-home{
   background:linear-gradient(111.95deg,#FFFFFF 37.01%,#FAF4FF 55%);
-  padding:72px 0 64px;
+  padding:calc(var(--nav-h) + 72px) 0 64px; /* top includes nav-h so gradient shows behind transparent nav */
   overflow:hidden;
 }
 .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
@@ -338,7 +342,7 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
    ================================================================ */
 .hero-inner{
   background:linear-gradient(111.95deg,#FFFFFF 37.01%,#FAF4FF 55%);
-  padding:60px 0; /* feedback: 60px top and bottom */
+  padding:calc(var(--nav-h) + 60px) 0 60px; /* top includes nav-h so gradient shows behind transparent nav */
 }
 /* Override h-hero for inner pages: 40px, IBM Plex Sans Light */
 .hero-inner .h-hero{
@@ -776,7 +780,7 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
   :root{--nav-h:64px}
   .container{padding:0 16px}
   section{padding:40px 0}
-  .hero-home{padding:48px 0 36px}
+  .hero-home{padding:calc(var(--nav-h) + 32px) 0 36px}
   .hero-actions{flex-direction:column}
   .hero-actions .btn-primary,.hero-actions .btn-outline{justify-content:center}
   .metrics-grid{grid-template-columns:1fr 1fr}
