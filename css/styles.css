@@ -60,9 +60,18 @@ button{cursor:pointer;border:0;background:none;font-family:inherit}
   letter-spacing:-0.01em;
   color:var(--text);
 }
-/* Section headings: feedback → IBM Plex Sans Regular 32px */
+/* Global h2 baseline — feedback: IBM Plex Sans Regular, 32px, all pages */
+h2{
+  font-size:2rem; /* 32px */
+  font-weight:400; /* Regular */
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  line-height:1.2;
+  letter-spacing:-0.01em;
+  color:var(--text);
+}
+/* .h-section mirrors the same rule (kept for specificity) */
 .h-section{
-  font-size:2rem; /* 32px fixed per feedback */
+  font-size:2rem;
   font-weight:400;
   line-height:1.2;
   letter-spacing:-0.01em;
