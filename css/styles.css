@@ -534,11 +534,18 @@ section{padding:72px 0}
 }
 .govt-logo img:hover{opacity:.85}
 
-/* feedback: full colour (no grayscale), full opacity on industry logos too */
+/* Industry logos — always full colour, real PNG images */
 .industry-logos{display:flex;align-items:center;justify-content:center;gap:56px;flex-wrap:wrap}
-.il{display:flex;align-items:center;gap:4px;font-weight:700;font-size:1.3rem;transition:var(--ease);opacity:1;filter:none}
-.il:hover{opacity:.8}
-.il svg{transition:var(--ease)}
+.ind-logo{
+  height:48px;
+  width:auto;
+  object-fit:contain;
+  display:block;
+  opacity:1;
+  filter:none; /* always full colour — never greyscale */
+  transition:opacity .2s;
+}
+.ind-logo:hover{opacity:.8}
 
 /* ================================================================
    FOOTER  (from Figma: background:#46166B, centered)
