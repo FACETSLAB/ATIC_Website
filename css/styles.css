@@ -156,9 +156,11 @@ p{font-size:1rem;color:var(--text);line-height:1.6}
   line-height:1.5;
 }
 .tag-research{border:1px solid var(--purple-tag);color:var(--purple-tag)}
-.tag-workshop{border:1px solid var(--green-tag);color:var(--green-tag)}
-.tag-event   {border:1px solid var(--amber-tag);color:var(--amber-tag)}
-.tag-purple  {border:1px solid var(--purple);   color:var(--purple)}
+/* All tags match Research badge — same purple border & text */
+.tag-workshop,
+.tag-event,
+.tag-purple,
+.badge-tag    { border:1px solid #6615A4; color:#6615A4; border-radius:16px; padding:2px 14px; font-size:1rem; font-weight:500; display:inline-flex; align-items:center; }
 
 /* Completed / In Progress */
 .badge-done{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;background:#D1FAE5;color:#059669}
