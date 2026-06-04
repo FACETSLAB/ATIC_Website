@@ -56,131 +56,155 @@
       </div>
     </div>
 
-    <!-- Orbital illustration (matching Figma exactly) -->
-    <div class="hero-illustration">
+    <!-- Orbital illustration -->
+    <div class="hero-illustration" aria-hidden="true">
       <div class="hero-orb">
+        <svg class="orb-final" viewBox="0 0 686 623" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="clip-orbit-top"><circle cx="335" cy="61" r="55"/></clipPath>
+            <clipPath id="clip-orbit-left"><circle cx="61" cy="236" r="55"/></clipPath>
+            <clipPath id="clip-orbit-right"><circle cx="610.82" cy="253.82" r="55"/></clipPath>
+            <clipPath id="clip-orbit-bottom-left"><circle cx="121.82" cy="547.82" r="55"/></clipPath>
+            <clipPath id="clip-orbit-bottom-right"><circle cx="562.82" cy="539.82" r="55"/></clipPath>
+          </defs>
 
-        <!-- SVG layer: concentric rings + dashed lines + dot accents -->
-        <svg class="orb-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <image href="assets/images/circle/Ellipse%20622.svg" x="40.82" y="49.01" width="588.61" height="588.61"/>
+          <path
+            d="M121.82 547.82 A294.31 294.31 0 0 1 335.13 49.01 A294.31 294.31 0 0 1 562.82 539.82"
+            fill="none"
+            stroke="#D9D9D9"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <image href="assets/images/circle/Ellipse%20609.svg" x="114" y="123" width="441.46" height="441.46"/>
+          <image href="assets/images/circle/Ellipse%20635.svg" x="172.91" y="181.1" width="268.59" height="324.9"/>
+          <path
+            d="M335.13 505.54 A162.22 162.22 0 1 1 439.40 219.00"
+            fill="none"
+            stroke="#D9D9D9"
+            stroke-width="1"
+            stroke-linecap="round"
+          />
 
-          <!-- Outer faint purple blobs -->
-          <circle cx="260" cy="260" r="252" fill="#CFBAFF" opacity="0.05"/>
-          <circle cx="260" cy="260" r="190" fill="#CFBAFF" opacity="0.05"/>
+          <g stroke="#CFBAFF" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round" opacity="0.92">
+            <line x1="334.09" y1="357.5" x2="335" y2="61"/>
+            <line x1="334.09" y1="357.5" x2="61" y2="236"/>
+            <line x1="334.09" y1="357.5" x2="610.82" y2="253.82"/>
+            <line x1="334.09" y1="357.5" x2="121.82" y2="547.82"/>
+            <line x1="334.09" y1="357.5" x2="562.82" y2="539.82"/>
+            <line x1="334.09" y1="357.5" x2="206" y2="350"/>
+            <line x1="334.09" y1="357.5" x2="441.26" y2="221.26"/>
+            <line x1="334.09" y1="357.5" x2="337.54" y2="500.5"/>
+          </g>
 
-          <!-- Outer border ring -->
-          <circle cx="260" cy="260" r="250" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-          <!-- Inner border ring -->
-          <circle cx="260" cy="260" r="152" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+          <image href="assets/images/circle/Group%201707481581.svg" x="80.59" y="108" width="507" height="507"/>
 
-          <!-- Small satellite orbit rings -->
-          <circle cx="104" cy="210" r="34" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-          <circle cx="380" cy="217" r="34" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-          <circle cx="260" cy="396" r="34" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+          <g>
+            <circle cx="335" cy="61" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="335" cy="61" r="56" fill="none" stroke="#2BB7B1" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-top)">
+              <image href="assets/images/image%2084.svg" x="279" y="5" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
 
-          <!-- Dashed lines from center to each node -->
-          <line x1="260" y1="260" x2="104" y2="210" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 3"/>
-          <line x1="260" y1="260" x2="380" y2="217" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 3"/>
-          <line x1="260" y1="260" x2="260" y2="396" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 3"/>
-          <line x1="260" y1="260" x2="348" y2="20"  stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 3"/>
-          <line x1="260" y1="260" x2="36"  y2="322" stroke="#CFBAFF" stroke-width="1" stroke-dasharray="4 3"/>
+          <g>
+            <circle cx="61" cy="236" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="61" cy="236" r="56" fill="none" stroke="#9D4CDB" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-left)">
+              <image href="assets/images/image%2082.svg" x="5" y="180" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
 
-          <!-- Dot accents -->
-          <circle cx="348" cy="20"  r="3" fill="#CFBAFF"/>
-          <circle cx="104" cy="210" r="3" fill="#D9D9D9"/>
-          <circle cx="380" cy="217" r="3" fill="#CFBAFF"/>
-          <circle cx="260" cy="396" r="3" fill="#D9D9D9"/>
-          <circle cx="36"  cy="322" r="3" fill="#D9D9D9"/>
+          <g>
+            <circle cx="610.82" cy="253.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="610.82" cy="253.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-right)">
+              <image href="assets/images/image-83.svg" x="554.82" y="197.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="121.82" cy="547.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="121.82" cy="547.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-bottom-left)">
+              <image href="assets/images/image%2083%20(3).svg" x="65.82" y="491.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="562.82" cy="539.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="562.82" cy="539.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-bottom-right)">
+              <image href="assets/images/image%2083%20(2).svg" x="506.82" y="483.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="206" cy="350" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_research_testing%201.svg" x="171" y="315" width="70" height="70"/>
+          </g>
+
+          <g>
+            <circle cx="441.26" cy="221.26" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_community_partnership%201.svg" x="406.26" y="186.26" width="70" height="70"/>
+          </g>
+
+          <g>
+            <circle cx="337.54" cy="500.5" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_assistive_technology%201.svg" x="302.54" y="465.5" width="70" height="70"/>
+          </g>
         </svg>
-
-        <!-- Conic gradient inner glow (Ellipse 635 from Figma) -->
-        <div class="orb-conic"></div>
-
-        <!-- Center: white circle, ATIC text, blue box-shadow -->
-        <div class="orb-center">ATIC</div>
-
-        <!-- All satellite nodes: grey image placeholders -->
-        <div class="orb-node on-tl">
-          <img src="assets/images/image 82.svg" alt="">
-        </div>
-
-        <div class="orb-node on-tr">
-          <img src="assets/images/image-83.svg" alt="">
-        </div>
-
-        <div class="orb-node on-lm">
-          <img src="assets/images/atic_research_testing 1.svg" alt="">
-        </div>
-
-        <div class="orb-node on-rm">
-          <img src="assets/images/atic_community_partnership 1.svg" alt="">
-        </div>
-
-        <div class="orb-node on-bc">
-          <img src="assets/images/atic_assistive_technology 1.svg" alt="">
-        </div>
-
-        <div class="orb-node on-bl">
-          <img src="assets/images/image 84.svg" alt="">
-        </div>
-
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- ═══════════ WHAT WE DO / WHO WE ARE ═══════════
-     Items: border:1px solid #A9ACB0 (from Figma)
-     Who We Are panel: background:#F9F9F9; border-radius:12px
--->
-<section class="what-who-section">
+<!-- ═══════════ ABOUT ATIC ═══════════ -->
+<section class="about-home">
   <div class="container">
-    <div class="what-who-grid">
+    <div class="about-home-grid">
+      <div class="about-copy">
+        <h2 class="h-section">About ATIC</h2>
+        <p class="about-home-text">Assistive Technology Innovation Center brings together emerging technologies for advancing assistive technologies so that people with disabilities are able to lead more fulfilling and healthier life. It brings together leading technology firms, community organizations, and researchers for assistive technology advancement that is critical for both improving the quality of life and level of employment for people with disabilities. The Center develops new technologies, evaluates existing technology, supports innovation in the field of assistive technologies. Our priority is to improve the quality of lives of people with disabilities, support NY State in its efforts for support of people with disabilities and energize the community to do more research in this field.</p>
 
-      <!-- LEFT: What We Do -->
-      <div class="what-col">
-        <h2 class="h-section" style="margin-bottom:28px;">What We Do</h2>
-        <div class="what-list">
-
-          <div class="what-item">
+        <div class="about-links-grid">
+          <div class="about-link-card">
             <p class="h-item">Our Work</p>
             <p>Research projects, publications, workshops, and ongoing accessibility initiatives.</p>
-            <a href="our-work.html" class="link-btn mt-12" style="display:inline-flex;margin-top:12px;">Learn More</a>
+            <a href="our-work.html" class="link-btn">Learn More</a>
           </div>
 
-          <div class="what-item">
+          <div class="about-link-card">
             <p class="h-item">Participate</p>
             <p>Volunteer opportunities, testing studies, product evaluations, and feedback options.</p>
-            <a href="participate.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
+            <a href="participate.html" class="link-btn">Learn More</a>
           </div>
 
-          <div class="what-item">
+          <div class="about-link-card">
             <p class="h-item">Community Resources</p>
             <p>Assistive technology resources, partner organizations, and NYS accessibility ecosystem information.</p>
-            <a href="community-resources.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
+            <a href="community-resources.html" class="link-btn">Learn More</a>
           </div>
 
-          <div class="what-item">
+          <div class="about-link-card">
             <p class="h-item">ATIC Testing Laboratory</p>
-            <p>Technologies being tested, accessibility reviews, and community-centered evaluation results.</p>
-            <a href="atic-testing-laboratory.html" class="link-btn" style="display:inline-flex;margin-top:12px;">Learn More</a>
+            <p>Technologies being tested, accessibility reviews, and community-centered evaluation.</p>
+            <a href="atic-testing-laboratory.html" class="link-btn">Learn More</a>
           </div>
-
         </div>
       </div>
 
-      <!-- RIGHT: Who We Are — F9F9F9 panel, centered content -->
-      <div class="who-col">
-        <h2 class="h-section" style="margin-bottom:28px;">Who We Are</h2>
-        <div class="who-panel">
-          <img src="assets/images/sanjay-goel.png" alt="Sanjay Goel, PhD" class="who-photo"/>
-          <p class="who-name">Sanjay Goel, PhD</p>
-          <p class="who-role">Director of ATIC</p>
-          <p class="who-bio">Sanjay Goel is the Morris Massry Endowed Professor and Chair of Information Security and Digital Forensics at the University at Albany. His work focuses on cybersecurity, AI, accessibility innovation, and community-centered technology research. Through interdisciplinary collaboration with government, industry, and academic partners, he leads initiatives that advance inclusive technologies, assistive systems, and real-world impact across diverse communities.</p>
+      <div class="about-profile">
+        <div class="about-profile-card">
+          <img src="assets/images/sanjay-goel.png" alt="Sanjay Goel, PhD" class="about-profile-photo"/>
+          <p class="about-profile-name">Sanjay Goel, PhD</p>
+          <p class="about-profile-role">Director of ATIC</p>
+          <p class="about-profile-bio">Sanjay Goel is the Morris Massry Endowed Professor and Chair of Information Security and Digital Forensics at the University at Albany. His work focuses on cybersecurity, AI, accessibility innovation, and community-centered technology research. Through interdisciplinary collaboration with government, industry, and academic partners, he leads initiatives that advance inclusive technologies, assistive systems, and real-world impact across diverse communities.</p>
           <a href="our-team.html" class="btn-outline btn-sm mt-16">View Our Team →</a>
         </div>
       </div>
-
     </div>
   </div>
 </section>

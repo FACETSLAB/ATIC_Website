@@ -1,0 +1,31 @@
+<svg width="604" height="596" viewBox="0 0 604 596" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="outerAura" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(309 301) rotate(90) scale(295)">
+      <stop offset="0" stop-color="#E9F1FF" stop-opacity="0.55"/>
+      <stop offset="0.52" stop-color="#E9E6FF" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#CFBAFF" stop-opacity="0.18"/>
+    </radialGradient>
+    <radialGradient id="innerAura" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(309 301) rotate(90) scale(221)">
+      <stop offset="0" stop-color="#F9FBFF" stop-opacity="0.95"/>
+      <stop offset="0.58" stop-color="#E7EEFF" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#CFBAFF" stop-opacity="0.2"/>
+    </radialGradient>
+    <linearGradient id="blueSector" x1="448" y1="219" x2="282" y2="462" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C8E9FF" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#6FA7FF" stop-opacity="0.48"/>
+    </linearGradient>
+  </defs>
+
+  <circle opacity="0.05" cx="309.122" cy="301.313" r="294.306" fill="#CFBAFF"/>
+  <circle cx="309.122" cy="301.313" r="294.306" fill="url(#outerAura)"/>
+  <circle opacity="0.05" cx="308.729" cy="301.729" r="220.729" fill="#CFBAFF"/>
+
+  <path d="M448.5 219.386C434 195.5 412.091 172.875 387.564 159.324C363.036 145.774 335.417 138.809 307.397 139.107C279.376 139.405 251.911 146.956 227.678 161.025C203.444 175.094 183.268 195.201 169.115 219.386C154.963 243.572 147.317 271.01 146.922 299.029C146.528 327.048 153.398 354.691 166.864 379.266C180.329 403.84 199.931 424.507 223.759 439.253C247.587 453.998 282.999 460.913 311 462V330.5C305.855 330.3 297.816 329.368 293.437 326.659C289.059 323.95 285.457 320.152 282.983 315.637C280.509 311.121 279.246 306.042 279.319 300.894C279.391 295.746 280.796 290.704 283.397 286.26C285.997 281.816 289.704 278.122 294.157 275.536C298.61 272.951 303.657 271.564 308.805 271.509C313.954 271.454 319.029 272.734 323.535 275.224C328.042 277.714 331.827 281.328 334.521 285.716L448.5 219.386Z" fill="url(#blueSector)" opacity="0.62"/>
+  <circle cx="309.122" cy="301.313" r="162.22" fill="url(#innerAura)"/>
+  <circle cx="309.122" cy="301.313" r="162.22" stroke="#D9D9D9"/>
+
+  <path d="M63.8265 463.029C25.4922 404.882 9.0604 335.008 17.462 265.871C25.8637 196.733 58.5523 132.828 109.697 85.5552C160.842 38.2819 227.117 10.7144 296.701 7.77001C366.285 4.82559 434.652 26.6957 489.608 69.4793" stroke="#D9D9D9" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="294.15" cy="333.93" r="53.5" fill="#FBFBFB"/>
+  <text x="294.15" y="343.93" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="28" font-weight="400" fill="#46166B">ATIC</text>
+</svg>
