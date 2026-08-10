@@ -126,6 +126,7 @@
     /* ── Product cards ── */
     .prod-list { display: flex; flex-direction: column; gap: 40px; margin-top: 32px; }
     .prod-card-lab {
+      background: #fff;
       border: 1px solid var(--border);
       padding: 28px 32px;
     }
@@ -189,15 +190,146 @@
     }
     .check-row-lab svg { flex-shrink: 0; width: 24px; height: 24px; }
 
+    /* ── How We Evaluate: Three Tracks ── */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .track-card {
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--track-color, #0F5BC8);
+      padding: 28px 24px;
+    }
+    .track-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--track-color, #0F5BC8);
+      margin-bottom: 10px;
+    }
+    .track-title {
+      font-size: 1.375rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .track-desc {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .track-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .track-list li {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text);
+      padding-left: 18px;
+      position: relative;
+    }
+    .track-list li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 7px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--track-color, #0F5BC8);
+    }
+    .track-universal  { --track-color: #2BB7B1; }
+    .track-disability  { --track-color: #9D4CDB; }
+    .track-at          { --track-color: #2D77E5; }
+
+    .tracks-converge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+    }
+    .converge-box {
+      background: #EAF4FF;
+      border: 1px solid #0F5BC8;
+      border-radius: 6px;
+      padding: 16px 28px;
+      text-align: center;
+    }
+    .converge-box-alt {
+      background: #FAF4FF;
+      border-color: #46166B;
+    }
+    .converge-title { font-size: 1.0625rem; font-weight: 600; color: var(--text); }
+    .converge-sub   { font-size: 0.8125rem; color: var(--text-muted); margin-top: 2px; }
+    .converge-arrow { flex-shrink: 0; color: #A9ACB0; }
+
+    /* ── What We Test: Barrier Walkthrough ── */
+    .walkthrough-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .walkthrough-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 22px 24px;
+    }
+    .walkthrough-num {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #0F5BC8;
+      margin-bottom: 8px;
+    }
+    .walkthrough-title {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .walkthrough-q {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Standards & Expert Panel ── */
+    .standards-panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+    }
+    .standard-pills { display: flex; flex-wrap: wrap; gap: 12px; }
+    .standard-pill {
+      display: inline-flex; align-items: center;
+      padding: 8px 18px;
+      background: #EAF4FF;
+      border: 1px solid #0F5BC8;
+      border-radius: 20px;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #0F5BC8;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .metrics-grid-lab { grid-template-columns: repeat(2, 1fr); }
+      .tracks-grid { grid-template-columns: 1fr; }
+      .standards-panel-grid { grid-template-columns: 1fr; gap: 40px; }
     }
     @media (max-width: 768px) {
       .eval-flow { flex-direction: column; align-items: center; }
       .eval-arrow { padding-top: 0; transform: rotate(90deg); }
       .metrics-grid-lab { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .metric-box-lab { font-size: 1rem; min-height: 80px; }
+      .walkthrough-grid { grid-template-columns: 1fr; }
       .prod-header-lab { flex-direction: column; align-items: flex-start; }
       .prod-name { font-size: 1.375rem; }
       .prod-desc { font-size: 1rem; }
@@ -241,6 +373,25 @@
   <div class="container">
     <h1 class="h-hero">ATIC Testing Laboratory</h1>
     <p class="hero-desc-lg">The ATIC Testing Laboratory conducts structured evaluations of assistive and adaptive technologies across real-world environments including home, workplace, healthcare, and community settings.</p>
+  </div>
+</section>
+
+<!-- ═══════════ LAB TESTING & EVALUATIONS PROTOCOL ═══════════ -->
+<section style="background:#F9F9F9; padding:56px 0;">
+  <div class="container">
+    <div style="border:1px solid var(--border); background:#fff; padding:32px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px;">
+      <div style="max-width:640px;">
+        <p class="h-card" style="margin-bottom:8px;">Lab Testing &amp; Evaluations Protocol</p>
+        <p style="color:var(--text); font-size:1rem; line-height:1.5;">Our goal isn't to critique — it's to give an unbiased, evidence-based assessment that helps developers improve their products for people with disabilities. Read the full methodology behind expert heuristic review, disability-specific metrics, and automated testing.</p>
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="https://docs.google.com/document/d/1e9j__JBbrNRxvlhnJkBAOR5cU64zh4cR/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-outline">
+          View Document
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="https://docs.google.com/document/d/1e9j__JBbrNRxvlhnJkBAOR5cU64zh4cR/export?format=pdf" class="btn-primary">Download PDF</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -382,11 +533,74 @@
   </div>
 </section>
 
+<!-- ═══════════ HOW WE EVALUATE — THREE TRACKS ═══════════ -->
+<section style="background:#F9F9F9; padding:72px 0;">
+  <div class="container">
+    <h2 class="h-section">How We Evaluate</h2>
+    <p class="hero-desc" style="max-width:760px; font-size:1.0625rem; font-weight:300; margin-bottom:40px;">Every product moves through three parallel evaluation tracks that converge into a single accessibility-readiness score — covering broad web accessibility standards, the needs of specific disabilities, and real assistive technology compatibility.</p>
+
+    <div class="tracks-grid">
+      <div class="track-card track-universal">
+        <p class="track-label">Track 1</p>
+        <p class="track-title">Universal Accessibility</p>
+        <p class="track-desc">Applies the POUR principles from the Web Content Accessibility Guidelines (WCAG 2.2).</p>
+        <ul class="track-list">
+          <li>Perceivable</li>
+          <li>Operable</li>
+          <li>Understandable</li>
+          <li>Robust</li>
+          <li>Consistent</li>
+        </ul>
+      </div>
+
+      <div class="track-card track-disability">
+        <p class="track-label">Track 2</p>
+        <p class="track-title">Disability-Specific Accessibility</p>
+        <p class="track-desc">Evaluates the product separately against the needs of each disability category.</p>
+        <ul class="track-list">
+          <li>Cognitive</li>
+          <li>Physical</li>
+          <li>Sensory</li>
+          <li>Communication</li>
+          <li>Psychosocial</li>
+        </ul>
+      </div>
+
+      <div class="track-card track-at">
+        <p class="track-label">Track 3</p>
+        <p class="track-title">Assistive Technology Testing</p>
+        <p class="track-desc">Verifies compatibility with the specific tools people rely on every day.</p>
+        <ul class="track-list">
+          <li>Screen readers</li>
+          <li>Keyboard-only navigation</li>
+          <li>Switch access</li>
+          <li>Voice control</li>
+          <li>Magnification software</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tracks-converge">
+      <div class="converge-box">
+        <p class="converge-title">Accessibility Readiness</p>
+        <p class="converge-sub">Overall score + severity ratings</p>
+      </div>
+      <span class="converge-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M13 7l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <div class="converge-box converge-box-alt">
+        <p class="converge-title">Recommendations</p>
+        <p class="converge-sub">Critical · Major · Minor</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════ EVALUATION METRICS ═══════════
      Boxes: #EAF4FF bg, #0F5BC8 border, border-radius 6px
      Text: 20px weight 400 centered (from Figma)
 -->
-<section style="background:#F9F9F9; padding:72px 0;">
+<section style="background:#fff; padding:72px 0;">
   <div class="container">
     <h2 class="h-section">Evaluation Metrics</h2>
     <div class="metrics-grid-lab">
@@ -402,6 +616,69 @@
   </div>
 </section>
 
+<!-- ═══════════ WHAT WE TEST — BARRIER WALKTHROUGH ═══════════ -->
+<section style="background:#F9F9F9; padding:72px 0;">
+  <div class="container">
+    <h2 class="h-section">What We Test</h2>
+    <p class="hero-desc" style="max-width:760px; font-size:1.0625rem; font-weight:300;">Experts walk through each product step by step as a person with a specific disability would, documenting every barrier they encounter — across the everyday journeys real users take through any product.</p>
+
+    <div class="walkthrough-grid">
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">01 · User Registration</p>
+        <p class="walkthrough-q">Can someone with a screen reader fill out a sign-up form? Are the fields properly labeled?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">02 · Authentication</p>
+        <p class="walkthrough-q">Can a keyboard-only user log in? Does a CAPTCHA block someone who can't see images?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">03 · Navigation</p>
+        <p class="walkthrough-q">Can someone using only Tab and arrow keys move around the site without getting stuck?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">04 · Content Consumption</p>
+        <p class="walkthrough-q">Can a deaf user still get value from a video without sound? Is text readable at high zoom?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">05 · Form Completion</p>
+        <p class="walkthrough-q">Are error messages clear enough for someone with a cognitive disability to understand and fix their mistake?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">06 · Purchasing &amp; Transactions</p>
+        <p class="walkthrough-q">Can a user with a tremor complete a checkout without accidentally triggering the wrong button? Are time-out warnings accessible?</p>
+      </div>
+      <div class="walkthrough-card">
+        <p class="walkthrough-num">07 · Customer Support Access</p>
+        <p class="walkthrough-q">Can someone using a screen reader find and use the help chat or contact form?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STANDARDS & EXPERT PANEL ═══════════ -->
+<section style="background:#fff; padding:72px 0;">
+  <div class="container">
+    <div class="standards-panel-grid">
+      <div>
+        <h2 class="h-section" style="margin-bottom:16px;">Standards We Follow</h2>
+        <p class="hero-desc" style="font-size:1.0625rem; font-weight:300; margin-bottom:24px;">Evaluations are held to recognized, internationally referenced accessibility standards.</p>
+        <div class="standard-pills">
+          <span class="standard-pill">WCAG 2.2 Level AA</span>
+          <span class="standard-pill">Section 508</span>
+          <span class="standard-pill">EN 301 549</span>
+        </div>
+      </div>
+      <div>
+        <h2 class="h-section" style="margin-bottom:16px;">Our Expert Panel</h2>
+        <p class="hero-desc" style="font-size:1.0625rem; font-weight:300; margin-bottom:24px;">Every evaluation is conducted by a panel of accessibility evaluators, caregivers, users, and people with disabilities — not to criticize a product, but to help its developers improve it.</p>
+        <a href="participate.html" class="btn-outline">Join the Panel
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════ PRODUCTS IN DEVELOPMENT / TESTING ═══════════
      Cards: border: 1px solid #A9ACB0
      Icon: 80×80px circle placeholder
@@ -410,7 +687,7 @@
      In Progress: #FFF3EB / #D36B0F
      Checklist: green #00C853 / blue #2B6AC3 / yellow #EBC41B
 -->
-<section style="background:#fff; padding:72px 0;">
+<section style="background:#F9F9F9; padding:72px 0;">
   <div class="container">
     <h2 class="h-section">Products in Development / Testing</h2>
     <div class="prod-list">
