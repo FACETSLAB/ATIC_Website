@@ -51,21 +51,27 @@ const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3
    These words are decorative here — the same terms appear as real text in
    the About section below, so nothing is WebGL-only. */
 const BUBBLES = [
-  { label: 'AI',                    pos: [ 0.15,  1.95,  0.45], r: 0.72, float: 1.05, tint: '#F3EAFF' },
-  { label: 'Assistive\nTechnology', pos: [-2.30,  0.60, -0.20], r: 0.84, float: 1.35, tint: '#EFE2FF' },
-  { label: 'XR',                    pos: [ 2.45,  0.75,  0.20], r: 0.60, float: 0.95, tint: '#E8F0FF' },
-  { label: 'Neurodiversity',        pos: [-1.55, -1.70,  0.50], r: 0.80, float: 1.20, tint: '#F2E9FF' },
-  { label: 'Adaptive\nLearning',    pos: [ 2.05, -1.55, -0.25], r: 0.74, float: 1.10, tint: '#E6F7F4' },
-  { label: 'Mental\nHealth',        pos: [-2.55, -0.85, -1.10], r: 0.54, float: 1.55, tint: '#F1E8FF' }
+  { label: 'AI',                    pos: [ 0.20,  2.00,  0.45], r: 0.70, float: 1.05, tint: '#FFFFFF' },
+  { label: 'Assistive\nTechnology', pos: [-2.35,  0.70, -0.20], r: 0.84, float: 1.35, tint: '#FFFFFF' },
+  { label: 'Neurodiversity',        pos: [-1.45, -1.80,  0.50], r: 0.78, float: 1.20, tint: '#FCFAFF' },
+  { label: 'Adaptive\nLearning',    pos: [ 2.15, -1.45, -0.25], r: 0.72, float: 1.10, tint: '#FFFFFF' },
+  { label: 'Mental\nHealth',        pos: [-2.60, -0.95, -1.10], r: 0.52, float: 1.55, tint: '#FDFBFF' }
+];
+
+/* The three flat icons from the original illustration, kept as they are and
+   floated inside their own bubbles. */
+const ICON_BUBBLES = [
+  { src: 'assets/images/circle/atic_research_testing 1.svg',       pos: [ 2.40,  0.85,  0.25], r: 0.60, float: 0.95 },
+  { src: 'assets/images/circle/atic_community_partnership 1.svg',  pos: [ 1.15,  1.25, -1.15], r: 0.46, float: 1.45 },
+  { src: 'assets/images/circle/atic_assistive_technology 1.svg',   pos: [-0.35, -1.95, -0.95], r: 0.50, float: 1.30 }
 ];
 
 /* Empty bubbles — no label, pure glass. They carry the depth. */
 const PLAIN_BUBBLES = [
   { pos: [-0.95,  1.10, -1.45], r: 0.30, float: 1.8 },
-  { pos: [ 1.60, -0.55, -1.05], r: 0.23, float: 2.1 },
-  { pos: [-1.70, -0.30, -1.70], r: 0.26, float: 1.7 },
-  { pos: [ 1.45,  1.80, -1.20], r: 0.20, float: 2.3 },
-  { pos: [-0.55, -1.95, -0.85], r: 0.21, float: 1.95 }
+  { pos: [ 1.70, -0.60, -1.05], r: 0.23, float: 2.1 },
+  { pos: [-1.75, -0.30, -1.70], r: 0.26, float: 1.7 },
+  { pos: [ 1.50,  1.95, -1.25], r: 0.19, float: 2.3 }
 ];
 
 /* Only read when SHOW_PHOTOS is true. */
@@ -96,6 +102,27 @@ function shouldRun() {
 }
 
 /* ── canvas-drawn textures ─────────────────────────────────── */
+
+/* The icon SVGs are used exactly as they ship — drawn once, unmodified,
+   into a canvas so three can take them as a texture. They are plain paths
+   with no <image> or <foreignObject>, so the canvas stays untainted. */
+function svgToCanvas(url, size = 256) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.min(size / img.width, size / img.height) * 0.82;
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      resolve(canvas);
+    };
+    img.onerror = () => reject(new Error(`icon failed: ${url}`));
+    img.src = encodeURI(url);
+  });
+}
 
 /* Label text, drawn with the page's own font so it matches the site.
    A soft white halo sits under the glyphs: the bubble behind them is
@@ -191,6 +218,9 @@ async function start() {
   const labelTextures = BUBBLES.map(b => makeTexture(labelCanvas(b.label)));
   const highlightTexture = makeTexture(highlightCanvas());
   const wordmarkTexture = makeTexture(wordmarkCanvas());
+  const iconTextures = await Promise.all(
+    ICON_BUBBLES.map(b => svgToCanvas(b.src).then(makeTexture))
+  );
 
   let photoTextures = [];
   if (SHOW_PHOTOS) {
@@ -249,15 +279,17 @@ async function start() {
         transmission: 1,
         thickness: r * 1.6,
         ior: 1.42,
-        chromaticAberration: 0.28,
-        anisotropy: 0.25,
-        distortion: 0.35,
-        distortionScale: 0.45,
-        temporalDistortion: 0.12,
+        chromaticAberration: 0.2,
+        anisotropy: 0.2,
+        distortion: 0.3,
+        distortionScale: 0.4,
+        temporalDistortion: 0.1,
         roughness: 0.02,
         clearcoat: 1,
         clearcoatRoughness: 0.02,
-        attenuationDistance: r * 5,
+        // Attenuation is what tints the light passing through. Pushed far out
+        // so the glass stays white rather than picking up a purple cast.
+        attenuationDistance: r * 14,
         attenuationColor: tint,
         color: '#FFFFFF'
       })
@@ -339,6 +371,36 @@ async function start() {
     );
   }
 
+  /* The original flat icon, billboarded inside the glass so it never
+     distorts — same treatment the labels get. */
+  function IconBubble({ cfg, map }) {
+    return h(
+      Float,
+      { speed: cfg.float, rotationIntensity: 0.18, floatIntensity: 1.0, floatingRange: [-0.16, 0.16] },
+      h(
+        'group',
+        { position: cfg.pos },
+        h(Shell, { r: cfg.r, tint: '#FFFFFF' }),
+        h(
+          Billboard,
+          null,
+          h(
+            'mesh',
+            { position: [0, 0, cfg.r * 0.45], renderOrder: 2 },
+            h('planeGeometry', { args: [cfg.r * 1.15, cfg.r * 1.15] }),
+            h('meshBasicMaterial', {
+              map,
+              transparent: true,
+              depthWrite: false,
+              toneMapped: false
+            })
+          )
+        ),
+        h(Glint, { r: cfg.r })
+      )
+    );
+  }
+
   function PlainBubble({ cfg }) {
     return h(
       Float,
@@ -355,20 +417,26 @@ async function start() {
       Environment,
       { resolution: 256, frames: 1 },
       h(Lightformer, {
-        form: 'rect', intensity: 3, color: '#FFFFFF',
-        position: [0, 4, -6], scale: [12, 6, 1]
+        form: 'rect', intensity: 4, color: '#FFFFFF',
+        position: [0, 4, -6], scale: [14, 7, 1]
       }),
+      // The coloured panels stay, but barely tinted — enough to keep the
+      // glass from looking grey, not enough to read as purple.
       h(Lightformer, {
-        form: 'rect', intensity: 1.6, color: '#CFBAFF',
+        form: 'rect', intensity: 2, color: '#F4EDFF',
         position: [-6, 1, -2], scale: [8, 8, 1], rotation: [0, Math.PI / 2, 0]
       }),
       h(Lightformer, {
-        form: 'rect', intensity: 1.4, color: '#B9E4E0',
+        form: 'rect', intensity: 1.8, color: '#EFFAF8',
         position: [6, -2, -2], scale: [8, 8, 1], rotation: [0, -Math.PI / 2, 0]
       }),
       h(Lightformer, {
-        form: 'circle', intensity: 2.2, color: '#FFFFFF',
-        position: [2, 5, 3], scale: 4
+        form: 'circle', intensity: 3, color: '#FFFFFF',
+        position: [2, 5, 3], scale: 5
+      }),
+      h(Lightformer, {
+        form: 'rect', intensity: 1.6, color: '#FFFFFF',
+        position: [0, -5, 2], scale: [10, 5, 1], rotation: [Math.PI / 2, 0, 0]
       })
     );
   }
@@ -410,6 +478,7 @@ async function start() {
         'group',
         { ref: spin },
         content,
+        ICON_BUBBLES.map((cfg, i) => h(IconBubble, { key: `ic${i}`, cfg, map: iconTextures[i] })),
         PLAIN_BUBBLES.map((cfg, i) => h(PlainBubble, { key: `g${i}`, cfg }))
       ),
 
@@ -483,7 +552,7 @@ async function start() {
       h(LiquidMetal, {
         image: 'assets/images/atic-logo.svg',
         colorBack: '#00000000',
-        colorTint: '#CBB4F0',
+        colorTint: '#EDE3FA',
         speed: 0.7,
         softness: 0.3,
         repetition: 2.4,

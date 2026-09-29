@@ -62,9 +62,9 @@ async function start() {
     control: 'props',
     type: 'waterPlane',
     color1: '#FFFFFF',
-    color2: '#E7D7FF',
-    color3: '#C8A9F2',
-    brightness: 1.2,
+    color2: '#F6EEFF',
+    color3: '#DFC9F7',
+    brightness: 1.35,
     grain: 'on',
     uSpeed: 0.14,          // slow drift, not a distraction beside body copy
     uStrength: 1.3,
