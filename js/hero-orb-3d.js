@@ -347,7 +347,7 @@ async function start() {
      over the front and disappear around the back, and the reference leans
      on exactly this. They carry the same travelling highlight as the
      streams, so the flow appears to continue across the globe. */
-  function buildArcs(count = 15) {
+  function buildArcs(count = 9) {
     const arcs = [];
     for (let i = 0; i < count; i++) {
       const lat = (Math.random() - 0.5) * 1.5;
@@ -367,7 +367,7 @@ async function start() {
         rotation: [(Math.random() - 0.5) * 0.7, 0, (Math.random() - 0.5) * 0.5],
         seed: Math.random(),
         speed: 0.1 + Math.random() * 0.08,
-        base: 0.17 + Math.random() * 0.07,
+        base: 0.11 + Math.random() * 0.05,
         radius: 0.0028 + Math.random() * 0.0016
       });
     }
@@ -381,55 +381,137 @@ async function start() {
   const bodyVertex = `
     varying vec3 vNormal;
     varying vec3 vView;
+    varying vec3 vPos;
     void main() {
       vec4 mv = modelViewMatrix * vec4(position, 1.0);
       vNormal = normalize(normalMatrix * normal);
       vView = normalize(-mv.xyz);
+      vPos = position;
       gl_Position = projectionMatrix * mv;
     }
   `;
 
+  /* Soap-bubble colour is thin-film interference: light bouncing off the
+     front and back of a film only nanometres thick, the two paths cancelling
+     at some wavelengths and reinforcing at others. The film is thicker where
+     you see it at a glancing angle, which is why the rainbow crowds toward
+     the rim, and it drifts as the film flows — both of which fall out of the
+     maths below rather than being faked with a gradient. */
   const bodyFragment = `
-    uniform vec3 uCore;
-    uniform vec3 uEdge;
+    uniform float uTime;
+    uniform float uThickness;
+    uniform float uSwirl;
+    uniform float uSaturation;
     uniform float uOpacity;
+    uniform float uRim;
     varying vec3 vNormal;
     varying vec3 vView;
+    varying vec3 vPos;
+
+    // Pastel spectral ramp — a cosine palette standing in for the full
+    // wavelength sweep, which is far cheaper and reads the same at this size.
+    vec3 spectrum(float t) {
+      return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.33, 0.67)));
+    }
+
+    // Cheap flowing noise so the film marbles instead of banding evenly.
+    float flow(vec3 p) {
+      float a = sin(p.x * 2.1 + uTime * 0.21);
+      float b = sin(p.y * 2.7 - uTime * 0.17);
+      float c = sin((p.x + p.z) * 1.6 + uTime * 0.13);
+      float d = sin((p.y - p.z) * 3.1 - uTime * 0.11);
+      return (a + b + c * 0.7 + d * 0.5) * 0.25;
+    }
 
     void main() {
-      // 1 where the surface points at the camera, 0 at the silhouette
-      float facing = clamp(dot(normalize(vNormal), normalize(vView)), 0.0, 1.0);
+      vec3 N = normalize(vNormal);
+      vec3 V = normalize(vView);
 
-      vec3 col = mix(uEdge, uCore, pow(facing, 2.4));
+      // 1 facing the camera, 0 at the silhouette
+      float facing = clamp(dot(N, V), 0.0, 1.0);
+      float fres = pow(1.0 - facing, 2.2);
 
-      // Fade out before the silhouette so there is no hard rim
-      float alpha = smoothstep(0.0, 0.42, facing) * uOpacity;
+      // Optical path through the film grows at glancing angles
+      float path = uThickness / max(facing, 0.12) + flow(vPos) * uSwirl;
+
+      vec3 irid = spectrum(path);
+      // Lift toward white: a full saturation rainbow looks like oil, not soap
+      irid = mix(vec3(1.0), irid, uSaturation);
+
+      // The centre stays pale, the colour gathers toward the edge
+      vec3 col = mix(irid, vec3(1.0), pow(facing, 2.6) * 0.5);
+
+      // Bright interference bands hugging the rim
+      float bands = 0.5 + 0.5 * sin(path * 9.0 + fres * 5.0);
+      col += bands * fres * uRim;
+
+      float alpha = mix(uOpacity * 0.55, uOpacity, fres);
+      alpha *= smoothstep(0.0, 0.05, facing);
+
       gl_FragColor = vec4(col, alpha);
     }
   `;
 
   function SphereBody() {
+    const mat = useRef();
+    const ghost = useRef();
     const uniforms = useMemo(
       () => ({
-        uCore: { value: new THREE.Color('#FFFFFF') },
-        uEdge: { value: new THREE.Color('#B79BE8') },
-        uOpacity: { value: 0.9 }
+        uTime: { value: 0 },
+        uThickness: { value: 0.62 },
+        uSwirl: { value: 0.5 },
+        uSaturation: { value: 0.52 },
+        uOpacity: { value: 0.82 },
+        uRim: { value: 0.3 }
       }),
       []
     );
 
-    return h(
-      'mesh',
-      { renderOrder: 1 },
-      h('sphereGeometry', { args: [SPHERE.r, 64, 64] }),
+    // A second, wider film just outside the first. This is what produces the
+    // loose concentric arcs a real bubble shows around its own silhouette.
+    const ghostUniforms = useMemo(
+      () => ({
+        uTime: { value: 0 },
+        uThickness: { value: 0.78 },
+        uSwirl: { value: 0.75 },
+        uSaturation: { value: 0.6 },
+        uOpacity: { value: 0.16 },
+        uRim: { value: 0.5 }
+      }),
+      []
+    );
+
+    useFrame((state, delta) => {
+      if (mat.current) mat.current.uniforms.uTime.value += delta;
+      if (ghost.current) ghost.current.uniforms.uTime.value += delta * 0.7;
+    });
+
+    const shader = (ref, u, side) =>
       h('shaderMaterial', {
-        uniforms,
+        ref,
+        uniforms: u,
         vertexShader: bodyVertex,
         fragmentShader: bodyFragment,
         transparent: true,
         depthWrite: false,
-        side: THREE.FrontSide
-      })
+        side
+      });
+
+    return h(
+      'group',
+      null,
+      h(
+        'mesh',
+        { renderOrder: 1 },
+        h('sphereGeometry', { args: [SPHERE.r, 96, 96] }),
+        shader(mat, uniforms, THREE.FrontSide)
+      ),
+      h(
+        'mesh',
+        { renderOrder: 1, scale: 1.075 },
+        h('sphereGeometry', { args: [SPHERE.r, 64, 64] }),
+        shader(ghost, ghostUniforms, THREE.BackSide)
+      )
     );
   }
 
