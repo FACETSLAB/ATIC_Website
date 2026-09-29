@@ -193,20 +193,34 @@ function dotCanvas(size = 128) {
   return canvas;
 }
 
-function wordmarkCanvas(size = 512) {
+/* White mark over the sphere's bright core. A purple drop shadow does the
+   separating — white on white would vanish into the hot centre. */
+function wordmarkCanvas(size = 640) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size / 2;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = PURPLE;
-  ctx.font = '600 132px "IBM Plex Sans", system-ui, sans-serif';
+  ctx.font = '600 150px "IBM Plex Sans", system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.shadowColor = 'rgba(255,255,255,0.95)';
-  ctx.shadowBlur = 30;
-  ctx.fillText('ATIC', canvas.width / 2, canvas.height / 2);
-  ctx.shadowBlur = 0;
-  ctx.fillText('ATIC', canvas.width / 2, canvas.height / 2);
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+
+  // Two shadow passes: a wide soft one for lift, a tight one for the edge.
+  ctx.fillStyle = '#FFFFFF';
+  ctx.shadowColor = 'rgba(70, 22, 107, 0.45)';
+  ctx.shadowBlur = 46;
+  ctx.shadowOffsetY = 10;
+  ctx.fillText('ATIC', cx, cy);
+
+  ctx.shadowColor = 'rgba(70, 22, 107, 0.35)';
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 3;
+  ctx.fillText('ATIC', cx, cy);
+
+  ctx.shadowColor = 'transparent';
+  ctx.shadowOffsetY = 0;
+  ctx.fillText('ATIC', cx, cy);
   return canvas;
 }
 
@@ -269,7 +283,7 @@ async function start() {
       const z = s * Math.sin(th) * rad;
 
       // Reject points on the left so density climbs toward +x.
-      const keep = 0.18 + 0.82 * ((x / SPHERE.r + 1) / 2) ** 1.7;
+      const keep = 0.03 + 0.97 * ((x / SPHERE.r + 1) / 2) ** 3.2;
       if (Math.random() > keep) continue;
 
       pos[i * 3] = x;
@@ -277,7 +291,7 @@ async function start() {
       pos[i * 3 + 2] = z;
 
       const t = Math.min(1, Math.max(0, (x / SPHERE.r + 1) / 2));
-      const c = a.clone().lerp(b, t * 0.85);
+      const c = a.clone().lerp(b, 0.25 + t * 0.7);
       col[i * 3] = c.r;
       col[i * 3 + 1] = c.g;
       col[i * 3 + 2] = c.b;
@@ -353,11 +367,70 @@ async function start() {
         rotation: [(Math.random() - 0.5) * 0.7, 0, (Math.random() - 0.5) * 0.5],
         seed: Math.random(),
         speed: 0.1 + Math.random() * 0.08,
-        base: 0.07 + Math.random() * 0.06,
-        radius: 0.0045 + Math.random() * 0.003
+        base: 0.17 + Math.random() * 0.07,
+        radius: 0.0028 + Math.random() * 0.0016
       });
     }
     return arcs;
+  }
+
+  /* The body of the sphere. This is what makes it a volume rather than a
+     cloud: it burns white where the surface faces the camera and falls to
+     lavender toward the silhouette, then fades out entirely, so the sphere
+     has no cut edge and sits in the page instead of on top of it. */
+  const bodyVertex = `
+    varying vec3 vNormal;
+    varying vec3 vView;
+    void main() {
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      vNormal = normalize(normalMatrix * normal);
+      vView = normalize(-mv.xyz);
+      gl_Position = projectionMatrix * mv;
+    }
+  `;
+
+  const bodyFragment = `
+    uniform vec3 uCore;
+    uniform vec3 uEdge;
+    uniform float uOpacity;
+    varying vec3 vNormal;
+    varying vec3 vView;
+
+    void main() {
+      // 1 where the surface points at the camera, 0 at the silhouette
+      float facing = clamp(dot(normalize(vNormal), normalize(vView)), 0.0, 1.0);
+
+      vec3 col = mix(uEdge, uCore, pow(facing, 2.4));
+
+      // Fade out before the silhouette so there is no hard rim
+      float alpha = smoothstep(0.0, 0.42, facing) * uOpacity;
+      gl_FragColor = vec4(col, alpha);
+    }
+  `;
+
+  function SphereBody() {
+    const uniforms = useMemo(
+      () => ({
+        uCore: { value: new THREE.Color('#FFFFFF') },
+        uEdge: { value: new THREE.Color('#B79BE8') },
+        uOpacity: { value: 0.9 }
+      }),
+      []
+    );
+
+    return h(
+      'mesh',
+      { renderOrder: 1 },
+      h('sphereGeometry', { args: [SPHERE.r, 64, 64] }),
+      h('shaderMaterial', {
+        uniforms,
+        vertexShader: bodyVertex,
+        fragmentShader: bodyFragment,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.FrontSide
+      })
+    );
   }
 
   function SphereCore() {
@@ -367,7 +440,7 @@ async function start() {
     const uniforms = useMemo(
       () => ({
         uMap: { value: dotTexture },
-        uSize: { value: 0.055 },
+        uSize: { value: 0.042 },
         // The volume spans the camera distance give or take its radius.
         uNear: { value: 8.6 - SPHERE.r },
         uFar: { value: 8.6 + SPHERE.r }
@@ -383,12 +456,13 @@ async function start() {
       // Tilted axis: a sphere spinning dead upright reads as a flat wheel.
       'group',
       { position: [SPHERE.x, SPHERE.y, 0], rotation: [0.2, 0, 0.14] },
+      h(SphereBody, null),
       h(
         'group',
         { ref },
         h(
           'points',
-          { geometry: geo, renderOrder: 2 },
+          { geometry: geo, renderOrder: 3 },
           h('shaderMaterial', {
             uniforms,
             vertexShader: particleVertex,
@@ -402,29 +476,21 @@ async function start() {
           h(
             'group',
             { key: `a${i}`, rotation: a.rotation },
-            h(Stream, { curve: a.curve, seed: a.seed, speed: a.speed, base: a.base, radius: a.radius })
+            h(Stream, {
+              curve: a.curve,
+              seed: a.seed,
+              speed: a.speed,
+              base: a.base,
+              radius: a.radius,
+              // White latitude lines over the body, as in the reference.
+              colorA: '#FFFFFF',
+              colorB: '#FFFFFF'
+            })
           )
         )
-      ),
-      // The limb: a faint ring on the silhouette, which gives the volume a
-      // definite edge instead of letting it dissolve into the page.
-      h(
-        Billboard,
-        null,
-        h(
-          'mesh',
-          { renderOrder: 3 },
-          h('ringGeometry', { args: [SPHERE.r * 0.985, SPHERE.r * 1.0, 96] }),
-          h('meshBasicMaterial', {
-            color: LILAC,
-            transparent: true,
-            opacity: 0.35,
-            side: THREE.DoubleSide,
-            depthWrite: false,
-            toneMapped: false
-          })
-        )
       )
+      // No limb ring: the body shader already fades out before the
+      // silhouette, and a ring on top of that put the hard edge back.
     );
   }
 
@@ -441,7 +507,7 @@ async function start() {
           map: dotTexture,
           color: MIST,
           transparent: true,
-          opacity: 0.55,
+          opacity: 0.7,
           depthWrite: false,
           toneMapped: false
         })
@@ -484,7 +550,7 @@ async function start() {
     }
   `;
 
-  function Stream({ curve, seed, speed, base, radius }) {
+  function Stream({ curve, seed, speed, base, radius, colorA = '#FFFFFF', colorB = LILAC }) {
     const mat = useRef();
     const geo = useMemo(
       () => new THREE.TubeGeometry(curve, 72, radius, 4, false),
@@ -496,10 +562,10 @@ async function start() {
         uSeed: { value: seed },
         uSpeed: { value: speed },
         uBase: { value: base },
-        uColorA: { value: new THREE.Color(LILAC) },
-        uColorB: { value: new THREE.Color(VIOLET) }
+        uColorA: { value: new THREE.Color(colorA) },
+        uColorB: { value: new THREE.Color(colorB) }
       }),
-      [seed, speed, base]
+      [seed, speed, base, colorA, colorB]
     );
 
     useFrame((state, delta) => {
