@@ -1,17 +1,14 @@
 /* ============================================================
-   ATIC Website — 3D orbit (yujung branch)
+   ATIC Website — hero flow scene (yujung branch)
 
-   The original hero illustration, rebuilt in three.js: the same five
-   photo nodes, the same three icon nodes and the same ATIC centre,
-   sitting where the SVG put them, but as glass bubbles that float and
-   drift in real space.
+   A three.js scene in the shape of the reference: glass cards on the
+   left feeding streams of light into a glowing particle sphere, and a
+   single stream leaving it on the right.
 
-   Positions are the SVG's own coordinates (viewBox 0 0 686 623)
-   mapped into world units, so the composition is unchanged.
-
-   Photos and icons ride as FLAT discs billboarded at the camera
-   inside each bubble — never wrapped onto the sphere, which is what
-   produced the wide-angle stretch in an earlier pass.
+   Read as the Center's own story:
+     left cards   research, community, assistive technology — the inputs
+     sphere       ATIC, where the work is done
+     right card   accessible technology reaching people
 
    Built on react-three-fiber + drei, loaded as ES modules from the
    esm.sh CDN, so the site keeps its no-build static hosting.
@@ -24,16 +21,6 @@
      - the CDN modules fail to load
    ============================================================ */
 
-/* Centre mark drawn with @paper-design/shaders-react (the liquid-logo
-   project) instead of the plain wordmark. Off by default so the centre
-   matches the original; flip to true to see the liquid metal version. */
-const USE_LIQUID_LOGO = false;
-
-/* Every dependency is pinned so esm.sh hands back ONE instance of react,
-   three and @react-three/fiber across all modules on the page.
-   Left unpinned, drei resolves "@react-three/fiber@>=8.0" by itself and a
-   second fiber copy lands on the page, which breaks drei's hooks: its
-   components would look for a renderer context our <Canvas> never provided. */
 const PINS = 'deps=react@18.3.1,react-dom@18.3.1,three@0.170.0';
 const PINS_R3F = `${PINS},@react-three/fiber@8.17.10`;
 const REACT = 'https://esm.sh/react@18.3.1';
@@ -41,36 +28,27 @@ const REACT_DOM = 'https://esm.sh/react-dom@18.3.1/client';
 const THREE_URL = 'https://esm.sh/three@0.170.0';
 const FIBER = `https://esm.sh/@react-three/fiber@8.17.10?${PINS}`;
 const DREI = `https://esm.sh/@react-three/drei@9.114.3?${PINS_R3F}`;
-const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3.1,react-dom@18.3.1';
 
-/* Word bubbles, standing where the photo nodes stand in the SVG so the
-   composition is the familiar one. z is the only value invented here — the
-   flat artwork had no depth, and staggering it is what turns the ring into
-   an orbit. */
-const BUBBLES = [
-  { label: 'AI',                    pos: [-0.07,  2.33,  0.30], r: 0.68, float: 1.05 },
-  { label: 'Assistive\nTechnology', pos: [-2.63,  0.70, -0.25], r: 0.80, float: 1.35 },
-  { label: 'XR',                    pos: [ 2.50,  0.53,  0.22], r: 0.60, float: 0.95 },
-  { label: 'Neurodiversity',        pos: [-2.06, -2.21,  0.36], r: 0.78, float: 1.20 },
-  { label: 'Mental\nHealth',        pos: [ 2.05, -2.13, -0.30], r: 0.70, float: 1.10 }
+/* Palette — the site's own tokens, kept pale so hero copy stays dominant */
+const PURPLE = '#46166B';
+const VIOLET = '#8A5CD6';
+const LILAC = '#C8A9F2';
+const MIST = '#EDE3FA';
+
+const SPHERE = { x: 0.45, y: 0.1, r: 1.85 };
+
+/* Input cards, left. Two carry the site's own icons, the rest are the
+   small blank tiles of the reference. */
+const CARDS = [
+  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-3.05,  0.95, 0.35], s: 0.62, float: 1.1 },
+  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [-2.55, -0.35, 0.15], s: 0.56, float: 1.35 },
+  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-3.15, -1.35, 0.30], s: 0.58, float: 1.2 },
+  { src: null, pos: [-2.15,  1.75, -0.35], s: 0.32, float: 1.6 },
+  { src: null, pos: [-1.85,  0.45, -0.55], s: 0.26, float: 1.9 },
+  { src: null, pos: [-2.30, -1.85, -0.30], s: 0.30, float: 1.75 }
 ];
 
-/* The three icon nodes, inside the photo ring exactly as in the SVG. */
-const ICON_NODES = [
-  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-1.28, -0.36, 0.85], r: 0.40, float: 1.55 },
-  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [ 0.92,  0.84, 0.80], r: 0.40, float: 1.40 },
-  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-0.05, -1.77, 0.90], r: 0.40, float: 1.65 }
-];
-
-/* Centre of the composition, where the ATIC mark sits in the SVG. */
-const CENTRE = { pos: [-0.08, -0.43, 0], r: 0.72 };
-
-/* A few empty bubbles for depth. Nothing in the flat artwork corresponds
-   to these; they exist so the scene has something between the nodes. */
-const PLAIN_BUBBLES = [
-  { pos: [-1.35,  1.45, -1.30], r: 0.24, float: 1.8 },
-  { pos: [ 1.55, -0.95, -1.15], r: 0.20, float: 2.1 }
-];
+const OUTPUT_CARD = { pos: [3.15, 0.1, 0.2], s: 0.66, float: 0.9 };
 
 const orb = document.querySelector('.hero-orb');
 
@@ -90,21 +68,20 @@ function shouldRun() {
   return webglAvailable();
 }
 
-/* ── image loading ─────────────────────────────────────────── */
+/* ── canvas-drawn art ──────────────────────────────────────── */
 
-/* Draw any same-origin image — photo or icon SVG — into a square canvas.
-   Resolves null instead of rejecting: one missing file must never stall
+/* Resolves null rather than rejecting: one missing file must never stall
    the scene, which is what happened when this threw. */
 function imageToCanvas(url, size, inset) {
   return new Promise(resolve => {
     let settled = false;
-    const done = value => {
+    const done = v => {
       if (settled) return;
       settled = true;
-      resolve(value);
+      resolve(v);
     };
     const timer = setTimeout(() => {
-      console.warn('[hero-orb] timed out:', url);
+      console.warn('[hero] timed out:', url);
       done(null);
     }, 6000);
 
@@ -115,69 +92,101 @@ function imageToCanvas(url, size, inset) {
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = size;
         const ctx = canvas.getContext('2d');
-        // Some SVGs report no intrinsic size; fall back to the square box.
         const iw = img.naturalWidth || img.width || size;
         const ih = img.naturalHeight || img.height || size;
-        const scale = Math.max(size / iw, size / ih) * inset;
+        const scale = Math.min(size / iw, size / ih) * inset;
         const w = iw * scale;
         const hh = ih * scale;
         ctx.drawImage(img, (size - w) / 2, (size - hh) / 2, w, hh);
         done(canvas);
       } catch (err) {
-        console.warn('[hero-orb] draw failed:', url, err);
+        console.warn('[hero] draw failed:', url, err);
         done(null);
       }
     };
     img.onerror = () => {
       clearTimeout(timer);
-      console.warn('[hero-orb] failed to load:', url);
+      console.warn('[hero] failed to load:', url);
       done(null);
     };
     img.src = encodeURI(url);
   });
 }
 
-/* Label text, drawn with the page's own font so it matches the site. A soft
-   white halo sits under the glyphs: the bubble behind them is transparent,
-   and the halo keeps the purple readable whatever drifts past underneath. */
-function labelCanvas(text, size = 640) {
+/* A rounded glass tile, with the icon already composited into it so the
+   card is a single quad rather than a stack. */
+function cardCanvas(iconCanvas, size = 512) {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
-  const lines = text.split('\n');
+  const pad = size * 0.06;
+  const r = size * 0.19;
+  const box = size - pad * 2;
 
-  let font = size * 0.19;
-  const maxWidth = size * 0.74;
-  const fit = () => {
-    ctx.font = `600 ${font}px "IBM Plex Sans", system-ui, sans-serif`;
-    return Math.max(...lines.map(l => ctx.measureText(l).width));
+  const round = (x, y, w, hh, rad) => {
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.arcTo(x + w, y, x + w, y + hh, rad);
+    ctx.arcTo(x + w, y + hh, x, y + hh, rad);
+    ctx.arcTo(x, y + hh, x, y, rad);
+    ctx.arcTo(x, y, x + w, y, rad);
+    ctx.closePath();
   };
-  while (fit() > maxWidth && font > size * 0.06) font -= size * 0.008;
 
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const lineHeight = font * 1.16;
-  const top = size / 2 - ((lines.length - 1) * lineHeight) / 2;
+  // Body: a pale vertical wash, brighter at the top like frosted glass.
+  const g = ctx.createLinearGradient(0, pad, 0, size - pad);
+  g.addColorStop(0, 'rgba(255,255,255,0.96)');
+  g.addColorStop(1, 'rgba(244,238,253,0.88)');
+  ctx.shadowColor = 'rgba(88, 48, 140, 0.16)';
+  ctx.shadowBlur = size * 0.07;
+  ctx.shadowOffsetY = size * 0.025;
+  round(pad, pad, box, box, r);
+  ctx.fillStyle = g;
+  ctx.fill();
 
-  ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
-  ctx.shadowBlur = size * 0.05;
-  ctx.fillStyle = '#46166B';
-  // Two passes: the first lays down the halo, the second the crisp glyphs.
-  for (let pass = 0; pass < 2; pass++) {
-    if (pass === 1) ctx.shadowBlur = 0;
-    lines.forEach((line, i) => ctx.fillText(line, size / 2, top + i * lineHeight));
+  // Hairline rim
+  ctx.shadowColor = 'transparent';
+  ctx.lineWidth = size * 0.008;
+  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  round(pad, pad, box, box, r);
+  ctx.stroke();
+
+  if (iconCanvas) {
+    const inner = box * 0.56;
+    ctx.drawImage(iconCanvas, (size - inner) / 2, (size - inner) / 2, inner, inner);
   }
   return canvas;
 }
 
-/* The specular glint every real bubble has, up and to the left. */
-function highlightCanvas(size = 256) {
+/* The outcome tile on the right: a check, drawn rather than loaded. */
+function checkCanvas(size = 512) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const c = size / 2;
+  ctx.strokeStyle = PURPLE;
+  ctx.lineWidth = size * 0.045;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.arc(c, c, size * 0.3, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(c - size * 0.14, c);
+  ctx.lineTo(c - size * 0.03, c + size * 0.11);
+  ctx.lineTo(c + size * 0.15, c - size * 0.12);
+  ctx.stroke();
+  return canvas;
+}
+
+/* Soft round dot used for every particle and every glow. */
+function dotCanvas(size = 128) {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
   const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  g.addColorStop(0, 'rgba(255,255,255,0.95)');
-  g.addColorStop(0.45, 'rgba(255,255,255,0.35)');
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.75)');
   g.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, size, size);
@@ -189,12 +198,12 @@ function wordmarkCanvas(size = 512) {
   canvas.width = size;
   canvas.height = size / 2;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#46166B';
-  ctx.font = '600 128px "IBM Plex Sans", system-ui, sans-serif';
+  ctx.fillStyle = PURPLE;
+  ctx.font = '600 132px "IBM Plex Sans", system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.shadowColor = 'rgba(255,255,255,0.95)';
-  ctx.shadowBlur = 26;
+  ctx.shadowBlur = 30;
   ctx.fillText('ATIC', canvas.width / 2, canvas.height / 2);
   ctx.shadowBlur = 0;
   ctx.fillText('ATIC', canvas.width / 2, canvas.height / 2);
@@ -202,27 +211,20 @@ function wordmarkCanvas(size = 512) {
 }
 
 async function start() {
-  const [react, reactDom, THREE, fiber, drei, paper] = await Promise.all([
+  const [react, reactDom, THREE, fiber, drei] = await Promise.all([
     import(REACT),
     import(REACT_DOM),
     import(THREE_URL),
     import(FIBER),
-    import(DREI),
-    USE_LIQUID_LOGO ? import(PAPER).catch(() => null) : Promise.resolve(null)
+    import(DREI)
   ]);
 
   const React = react.default || react;
-  const { useRef } = React;
+  const { useRef, useMemo } = React;
   const { createRoot } = reactDom;
   const { Canvas, useFrame } = fiber;
-  const { Float, Billboard, MeshTransmissionMaterial, Environment, Lightformer } = drei;
-  const LiquidMetal = paper && paper.LiquidMetal;
-  const liquidLogoOn = USE_LIQUID_LOGO && !!LiquidMetal;
+  const { Float, Billboard } = drei;
   const h = React.createElement;
-
-  /* What each bubble's refraction falls back to. Built once and shared, so
-     the materials are not allocating a colour every frame. */
-  const REFRACT_BG = new THREE.Color('#FFFFFF');
 
   const makeTexture = canvas => {
     const tex = new THREE.CanvasTexture(canvas);
@@ -231,300 +233,288 @@ async function start() {
     return tex;
   };
 
-  // 640px keeps the icons crisp: at 320 they were being magnified on screen,
-  // which is what made them look broken.
-  const iconCanvases = await Promise.all(ICON_NODES.map(n => imageToCanvas(n.src, 640, 0.78)));
+  const iconCanvases = await Promise.all(
+    CARDS.map(c => (c.src ? imageToCanvas(c.src, 512, 0.9) : Promise.resolve(null)))
+  );
 
-  const labelTextures = BUBBLES.map(b => makeTexture(labelCanvas(b.label)));
-  const iconTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
-  const highlightTexture = makeTexture(highlightCanvas());
+  const cardTextures = CARDS.map((c, i) => makeTexture(cardCanvas(iconCanvases[i])));
+  const outputTexture = makeTexture(cardCanvas(checkCanvas()));
+  const dotTexture = makeTexture(dotCanvas());
   const wordmarkTexture = makeTexture(wordmarkCanvas());
 
   console.info(
-    `[hero-orb] labels ${labelTextures.length}, ` +
-      `icons ${iconTextures.filter(Boolean).length}/${ICON_NODES.length}`
+    `[hero] cards ${cardTextures.length}, icons ${iconCanvases.filter(Boolean).length}/3`
   );
 
-  /* ── pointer parallax ────────────────────────────────────── */
-  const pointer = { x: 0, y: 0 };
-  window.addEventListener(
-    'pointermove',
-    e => {
-      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-      pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
-    },
-    { passive: true }
-  );
+  /* ── the particle sphere ─────────────────────────────────── */
 
-  /* ── the glass ───────────────────────────────────────────── */
+  /* Points scattered through a sphere, thicker on the right the way the
+     reference thickens toward its trailing edge. */
+  function makeSphereGeometry(count = 2600) {
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    const scale = new Float32Array(count);
+    const a = new THREE.Color(LILAC);
+    const b = new THREE.Color(PURPLE);
 
-  /* Body plus rim. The body is clear so the contents and the background
-     read through it; the rim is a back-facing shell blended additively,
-     which lights up exactly where the surface turns away from the camera.
-     That bright pearl edge is what makes a transparent circle read as a
-     sphere — without it, the clearer the glass, the more it disappears. */
-  function Shell({ r, tint = '#FFFFFF' }) {
-    return h(
-      'group',
-      null,
-      h(
-        'mesh',
-        { renderOrder: 1 },
-        h('sphereGeometry', { args: [r, 64, 64] }),
-        h(MeshTransmissionMaterial, {
-          // transmissionSampler would refract whatever three has in its own
-          // scene buffer. On a transparent canvas with nothing behind the
-          // bubbles that buffer is empty — the glass refracts black and the
-          // whole thing reads grey. Rendering each bubble's own small buffer
-          // over an explicit white background is what keeps the glass white.
-          transmissionSampler: false,
-          background: REFRACT_BG,
-          backside: false,
-          samples: 2,
-          resolution: 128,
-          transmission: 1,
-          // Thin glass: a thick wall soaks up light and greys the bubble.
-          thickness: r * 0.45,
-          ior: 1.32,
-          chromaticAberration: 0.14,
-          anisotropy: 0.1,
-          distortion: 0.2,
-          distortionScale: 0.28,
-          temporalDistortion: 0.05,
-          roughness: 0,
-          clearcoat: 1,
-          clearcoatRoughness: 0,
-          attenuationDistance: r * 24,
-          attenuationColor: tint,
-          color: '#FFFFFF'
-        })
-      ),
-      h(
-        'mesh',
-        { renderOrder: 2, scale: 1.012 },
-        h('sphereGeometry', { args: [r, 48, 48] }),
-        h('meshPhysicalMaterial', {
-          color: '#FFFFFF',
-          side: THREE.BackSide,
-          transparent: true,
-          opacity: 0.4,
-          depthWrite: false,
-          blending: THREE.AdditiveBlending,
-          roughness: 0,
-          metalness: 0,
-          clearcoat: 1,
-          // Iridescence tinted the rim, which is part of what looked grey
-          // against a light page. Weakened and narrowed to a paler band.
-          iridescence: 0.5,
-          iridescenceIOR: 1.25,
-          iridescenceThicknessRange: [300, 620],
-          envMapIntensity: 2.6
-        })
-      )
-    );
+    let i = 0;
+    while (i < count) {
+      // Uniform direction, cube-root radius for an even fill.
+      const u = Math.random() * 2 - 1;
+      const th = Math.random() * Math.PI * 2;
+      const s = Math.sqrt(1 - u * u);
+      const rad = SPHERE.r * Math.cbrt(Math.random());
+      const x = s * Math.cos(th) * rad;
+      const y = u * rad;
+      const z = s * Math.sin(th) * rad;
+
+      // Reject points on the left so density climbs toward +x.
+      const keep = 0.18 + 0.82 * ((x / SPHERE.r + 1) / 2) ** 1.7;
+      if (Math.random() > keep) continue;
+
+      pos[i * 3] = x;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = z;
+
+      const t = Math.min(1, Math.max(0, (x / SPHERE.r + 1) / 2));
+      const c = a.clone().lerp(b, t * 0.85);
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+      scale[i] = 0.55 + Math.random() * 0.9;
+      i++;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    geo.setAttribute('aScale', new THREE.BufferAttribute(scale, 1));
+    return geo;
   }
 
-  /* Soft bloom around each bubble, faked with one sprite so we never have
-     to run a postprocessing pass. */
-  function Halo({ r }) {
-    return h(
-      Billboard,
-      null,
-      h(
-        'mesh',
-        { position: [0, 0, -r * 0.25], renderOrder: 0 },
-        h('planeGeometry', { args: [r * 3.2, r * 3.2] }),
-        h('meshBasicMaterial', {
-          map: highlightTexture,
-          transparent: true,
-          opacity: 0.2,
-          depthWrite: false,
-          blending: THREE.AdditiveBlending,
-          toneMapped: false
-        })
-      )
-    );
-  }
+  function ParticleSphere() {
+    const ref = useRef();
+    const geo = useMemo(() => makeSphereGeometry(), []);
 
-  function Glint({ r }) {
-    return h(
-      Billboard,
-      null,
-      h(
-        'mesh',
-        { position: [-r * 0.32, r * 0.4, r * 0.66], renderOrder: 4 },
-        h('planeGeometry', { args: [r * 0.78, r * 0.78] }),
-        h('meshBasicMaterial', {
-          map: highlightTexture,
-          transparent: true,
-          depthWrite: false,
-          blending: THREE.AdditiveBlending,
-          toneMapped: false
-        })
-      )
-    );
-  }
+    useFrame((state, delta) => {
+      if (ref.current) ref.current.rotation.y += delta * 0.075;
+    });
 
-  /* Whatever a bubble carries — a word or an icon — rides at the FRONT of
-     the glass, not inside it.
-
-     Sitting the content inside the sphere put it behind a refracting
-     surface, so the distortion chewed it up and the artwork looked broken.
-     Parked just past the silhouette it stays perfectly crisp, and because
-     it is billboarded it still reads as being held by the bubble. */
-  function Contents({ r, map, scale, opaque }) {
     return h(
-      Billboard,
-      null,
-      h(
-        'mesh',
-        { position: [0, 0, r * 1.02], renderOrder: 3 },
-        h('planeGeometry', { args: [r * scale, r * scale] }),
-        h('meshBasicMaterial', {
-          map,
-          transparent: !opaque,
-          depthWrite: false,
-          toneMapped: false
-        })
-      )
-    );
-  }
-
-  function LabelNode({ cfg, map }) {
-    return h(
-      Float,
-      { speed: cfg.float, rotationIntensity: 0.16, floatIntensity: 0.9, floatingRange: [-0.14, 0.14] },
-      h(
-        'group',
-        { position: cfg.pos },
-        h(Halo, { r: cfg.r }),
-        h(Shell, { r: cfg.r }),
-        h(Contents, { r: cfg.r, map, scale: 1.72 }),
-        h(Glint, { r: cfg.r })
-      )
-    );
-  }
-
-  function IconNode({ cfg, map }) {
-    return h(
-      Float,
-      { speed: cfg.float, rotationIntensity: 0.2, floatIntensity: 1.1, floatingRange: [-0.16, 0.16] },
-      h(
-        'group',
-        { position: cfg.pos },
-        h(Halo, { r: cfg.r }),
-        h(Shell, { r: cfg.r }),
-        h(Contents, { r: cfg.r, map, scale: 1.35 }),
-        h(Glint, { r: cfg.r })
-      )
-    );
-  }
-
-  function PlainBubble({ cfg }) {
-    return h(
-      Float,
-      { speed: cfg.float, rotationIntensity: 0.35, floatIntensity: 1.5, floatingRange: [-0.22, 0.22] },
-      h(
-        'group',
-        { position: cfg.pos },
-        h(Halo, { r: cfg.r }),
-        h(Shell, { r: cfg.r }),
-        h(Glint, { r: cfg.r })
-      )
-    );
-  }
-
-  /* Reflections come from a small environment built right here out of
-     lightformers — no HDR file is fetched. Glass with nothing to reflect
-     looks dead, and this is the cheapest way to give it something. */
-  function Studio() {
-    return h(
-      Environment,
-      { resolution: 256, frames: 1 },
-      h(Lightformer, {
-        form: 'rect', intensity: 4, color: '#FFFFFF',
-        position: [0, 4, -6], scale: [14, 7, 1]
-      }),
-      h(Lightformer, {
-        form: 'rect', intensity: 2, color: '#F4EDFF',
-        position: [-6, 1, -2], scale: [8, 8, 1], rotation: [0, Math.PI / 2, 0]
-      }),
-      h(Lightformer, {
-        form: 'rect', intensity: 1.8, color: '#EFFAF8',
-        position: [6, -2, -2], scale: [8, 8, 1], rotation: [0, -Math.PI / 2, 0]
-      }),
-      h(Lightformer, {
-        form: 'circle', intensity: 3, color: '#FFFFFF',
-        position: [2, 5, 3], scale: 5
-      }),
-      h(Lightformer, {
-        form: 'rect', intensity: 1.6, color: '#FFFFFF',
-        position: [0, -5, 2], scale: [10, 5, 1], rotation: [Math.PI / 2, 0, 0]
+      'points',
+      { ref, geometry: geo, position: [SPHERE.x, SPHERE.y, 0] },
+      h('pointsMaterial', {
+        map: dotTexture,
+        size: 0.055,
+        sizeAttenuation: true,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false
       })
+    );
+  }
+
+  /* A pale halo so the sphere sits in light rather than on the page. */
+  function SphereGlow() {
+    return h(
+      Billboard,
+      { position: [SPHERE.x, SPHERE.y, -0.4] },
+      h(
+        'mesh',
+        { renderOrder: 0 },
+        h('planeGeometry', { args: [SPHERE.r * 4.2, SPHERE.r * 4.2] }),
+        h('meshBasicMaterial', {
+          map: dotTexture,
+          color: MIST,
+          transparent: true,
+          opacity: 0.55,
+          depthWrite: false,
+          toneMapped: false
+        })
+      )
+    );
+  }
+
+  /* ── the light streams ───────────────────────────────────── */
+
+  /* Each stream is a tube. A band of brightness travels along it, which is
+     what makes the whole thing read as flow rather than as wiring. */
+  const streamVertex = `
+    varying float vT;
+    void main() {
+      vT = uv.x;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const streamFragment = `
+    uniform float uTime;
+    uniform float uSeed;
+    uniform float uSpeed;
+    uniform vec3 uColorA;
+    uniform vec3 uColorB;
+    uniform float uBase;
+    varying float vT;
+
+    void main() {
+      // Travelling highlight
+      float p = fract(vT - uTime * uSpeed + uSeed);
+      float pulse = pow(max(0.0, 1.0 - abs(p - 0.5) * 2.0), 10.0);
+
+      // Fade both ends so nothing terminates in a hard stub
+      float ends = smoothstep(0.0, 0.16, vT) * smoothstep(1.0, 0.82, vT);
+
+      float alpha = (uBase + pulse * 0.75) * ends;
+      vec3 col = mix(uColorA, uColorB, vT);
+      gl_FragColor = vec4(col, alpha);
+    }
+  `;
+
+  function Stream({ curve, seed, speed, base, radius }) {
+    const mat = useRef();
+    const geo = useMemo(
+      () => new THREE.TubeGeometry(curve, 72, radius, 4, false),
+      [curve, radius]
+    );
+    const uniforms = useMemo(
+      () => ({
+        uTime: { value: 0 },
+        uSeed: { value: seed },
+        uSpeed: { value: speed },
+        uBase: { value: base },
+        uColorA: { value: new THREE.Color(LILAC) },
+        uColorB: { value: new THREE.Color(VIOLET) }
+      }),
+      [seed, speed, base]
+    );
+
+    useFrame((state, delta) => {
+      if (mat.current) mat.current.uniforms.uTime.value += delta;
+    });
+
+    return h(
+      'mesh',
+      { geometry: geo, renderOrder: 1 },
+      h('shaderMaterial', {
+        ref: mat,
+        uniforms,
+        vertexShader: streamVertex,
+        fragmentShader: streamFragment,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      })
+    );
+  }
+
+  /* Curves fanning from the left edge into the sphere, then one bundle
+     leaving on the right. */
+  function buildStreams() {
+    const list = [];
+    const inCount = 26;
+    for (let i = 0; i < inCount; i++) {
+      const t = i / (inCount - 1);
+      const y0 = -2.3 + t * 4.6;
+      const spread = 1 - Math.abs(t - 0.5) * 2;
+      const start = new THREE.Vector3(-3.9, y0, -0.5 + Math.random());
+      const mid1 = new THREE.Vector3(-2.2, y0 * 0.85, (Math.random() - 0.5) * 0.9);
+      const mid2 = new THREE.Vector3(-0.9, y0 * 0.35 + SPHERE.y * 0.4, (Math.random() - 0.5) * 0.6);
+      const end = new THREE.Vector3(SPHERE.x - SPHERE.r * 0.72, SPHERE.y, 0);
+      list.push({
+        curve: new THREE.CatmullRomCurve3([start, mid1, mid2, end]),
+        seed: Math.random(),
+        speed: 0.16 + Math.random() * 0.12,
+        base: 0.1 + spread * 0.14,
+        radius: 0.006 + Math.random() * 0.005
+      });
+    }
+
+    const outCount = 10;
+    for (let i = 0; i < outCount; i++) {
+      const t = i / (outCount - 1);
+      const y1 = OUTPUT_CARD.pos[1] + (t - 0.5) * 0.5;
+      const start = new THREE.Vector3(SPHERE.x + SPHERE.r * 0.72, SPHERE.y, 0);
+      const mid = new THREE.Vector3(2.1, SPHERE.y * 0.6 + (t - 0.5) * 0.8, (Math.random() - 0.5) * 0.4);
+      const end = new THREE.Vector3(OUTPUT_CARD.pos[0] - 0.42, y1, 0);
+      list.push({
+        curve: new THREE.CatmullRomCurve3([start, mid, end]),
+        seed: Math.random(),
+        speed: 0.18 + Math.random() * 0.1,
+        base: 0.14,
+        radius: 0.007
+      });
+    }
+    return list;
+  }
+
+  /* ── the cards ───────────────────────────────────────────── */
+
+  function Card({ cfg, map }) {
+    return h(
+      Float,
+      { speed: cfg.float, rotationIntensity: 0.12, floatIntensity: 0.8, floatingRange: [-0.12, 0.12] },
+      h(
+        Billboard,
+        { position: cfg.pos },
+        h(
+          'mesh',
+          { renderOrder: 3 },
+          h('planeGeometry', { args: [cfg.s, cfg.s] }),
+          h('meshBasicMaterial', {
+            map,
+            transparent: true,
+            depthWrite: false,
+            toneMapped: false
+          })
+        )
+      )
     );
   }
 
   function Scene() {
     const root = useRef();
-    const spin = useRef();
+    const streams = useMemo(buildStreams, []);
+    const pointer = useRef({ x: 0, y: 0 });
 
     useFrame((state, delta) => {
-      // One slow revolution takes about 80 seconds — movement, not motion sickness.
-      if (spin.current) spin.current.rotation.y += delta * 0.078;
+      pointer.current.x = state.pointer.x;
+      pointer.current.y = state.pointer.y;
       if (root.current) {
         // Ease toward the pointer instead of snapping to it.
-        root.current.rotation.y += (pointer.x * 0.14 - root.current.rotation.y) * 0.04;
-        root.current.rotation.x += (pointer.y * 0.09 - root.current.rotation.x) * 0.04;
+        root.current.rotation.y += (pointer.current.x * 0.1 - root.current.rotation.y) * 0.04;
+        root.current.rotation.x += (-pointer.current.y * 0.06 - root.current.rotation.x) * 0.04;
       }
     });
 
     return h(
       'group',
       { ref: root },
-      h(Studio, null),
-      h('ambientLight', { intensity: 0.9 }),
-      h('directionalLight', { position: [4, 5, 6], intensity: 1.2 }),
-      h('pointLight', { position: [0, 1, 4], intensity: 16, distance: 14, color: '#FFFFFF' }),
+      h('ambientLight', { intensity: 1.2 }),
 
+      h(SphereGlow, null),
+      streams.map((s, i) => h(Stream, Object.assign({ key: `s${i}` }, s))),
+      h(ParticleSphere, null),
+
+      // The mark sits in front of the particles at the sphere's centre.
       h(
-        'group',
-        { ref: spin },
-        BUBBLES.map((cfg, i) => h(LabelNode, { key: `l${i}`, cfg, map: labelTextures[i] })),
-        ICON_NODES.map((cfg, i) =>
-          iconTextures[i] ? h(IconNode, { key: `i${i}`, cfg, map: iconTextures[i] }) : null
-        ),
-        PLAIN_BUBBLES.map((cfg, i) => h(PlainBubble, { key: `g${i}`, cfg }))
+        Billboard,
+        { position: [SPHERE.x, SPHERE.y, SPHERE.r * 0.5] },
+        h(
+          'mesh',
+          { renderOrder: 4 },
+          h('planeGeometry', { args: [1.15, 0.575] }),
+          h('meshBasicMaterial', {
+            map: wordmarkTexture,
+            transparent: true,
+            depthWrite: false,
+            toneMapped: false
+          })
+        )
       ),
 
-      // Centre mark stays out of the spin so the wordmark never turns away.
-      h(
-        Float,
-        { speed: 0.8, rotationIntensity: 0.1, floatIntensity: 0.5, floatingRange: [-0.08, 0.08] },
-        h(
-          'group',
-          { position: CENTRE.pos },
-          h(Halo, { r: CENTRE.r }),
-          h(Shell, { r: CENTRE.r }),
-          liquidLogoOn
-            ? null
-            : h(
-                Billboard,
-                null,
-                h(
-                  'mesh',
-                  { position: [0, 0, CENTRE.r * 1.02], renderOrder: 3 },
-                  h('planeGeometry', { args: [1.02, 0.51] }),
-                  h('meshBasicMaterial', {
-                    map: wordmarkTexture,
-                    transparent: true,
-                    depthWrite: false,
-                    toneMapped: false
-                  })
-                )
-              ),
-          h(Glint, { r: CENTRE.r })
-        )
-      )
+      CARDS.map((cfg, i) => h(Card, { key: `c${i}`, cfg, map: cardTextures[i] })),
+      h(Card, { cfg: OUTPUT_CARD, map: outputTexture })
     );
   }
 
@@ -542,7 +532,7 @@ async function start() {
       h(
         Canvas,
         {
-          camera: { position: [0, 0, 7.4], fov: 45 },
+          camera: { position: [0, 0, 8.6], fov: 42 },
           dpr: [1, 1.5],
           gl: { antialias: true, alpha: true },
           frameloop: inView ? 'always' : 'never',
@@ -555,34 +545,6 @@ async function start() {
 
   render();
   orb.classList.add('is-3d');
-
-  /* Liquid-metal centre mark, when switched on. It is a DOM canvas of its
-     own rather than a three.js material, so it rides above the bubble
-     canvas. The ATIC logo SVG is the mask the shader flows through. */
-  if (liquidLogoOn) {
-    const logoMount = document.createElement('div');
-    logoMount.id = 'hero-liquid-logo';
-    logoMount.setAttribute('aria-hidden', 'true');
-    orb.appendChild(logoMount);
-
-    createRoot(logoMount).render(
-      h(LiquidMetal, {
-        image: 'assets/images/atic-logo.svg',
-        colorBack: '#00000000',
-        colorTint: '#EDE3FA',
-        speed: 0.7,
-        softness: 0.3,
-        repetition: 2.4,
-        shiftRed: 0.25,
-        shiftBlue: 0.3,
-        distortion: 0.12,
-        contour: 0.5,
-        angle: 60,
-        scale: 0.58,
-        style: { width: '100%', height: '100%' }
-      })
-    );
-  }
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
@@ -599,14 +561,14 @@ async function start() {
 }
 
 if (shouldRun()) {
-  // Wait for IBM Plex Sans so the wordmark texture is not baked in the
-  // fallback font, but never let a slow font block the scene.
+  // Wait for IBM Plex Sans so the wordmark is not baked in the fallback
+  // font, but never let a slow font block the scene.
   const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
   Promise.race([fonts, new Promise(r => setTimeout(r, 2500))])
     .then(start)
     .catch(err => {
       // Fall back to the original SVG illustration, untouched.
-      console.warn('[hero-orb] 3D illustration unavailable:', err);
+      console.warn('[hero] 3D illustration unavailable:', err);
       if (orb) orb.classList.remove('is-3d');
       const mount = document.getElementById('hero-orb-3d');
       if (mount) mount.remove();
