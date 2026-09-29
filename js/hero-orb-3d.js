@@ -292,26 +292,139 @@ async function start() {
     return geo;
   }
 
-  function ParticleSphere() {
+  /* Points drawn with depth in mind. A plain pointsMaterial gives every
+     particle the same weight wherever it sits, which flattens the volume
+     into a disc. Here the ones nearer the camera are larger and more solid
+     and the far side falls away pale — the same atmospheric cue that tells
+     you a photographed sphere is a sphere. */
+  const particleVertex = `
+    attribute float aScale;
+    varying vec3 vColor;
+    varying float vFade;
+    uniform float uSize;
+    uniform float uNear;
+    uniform float uFar;
+
+    void main() {
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      float depth = -mv.z;
+      // 0 at the front of the volume, 1 at the back
+      float t = clamp((depth - uNear) / (uFar - uNear), 0.0, 1.0);
+      vFade = mix(1.0, 0.22, t);
+      vColor = color;
+      gl_PointSize = aScale * uSize * mix(1.25, 0.6, t) * (320.0 / depth);
+      gl_Position = projectionMatrix * mv;
+    }
+  `;
+
+  const particleFragment = `
+    uniform sampler2D uMap;
+    varying vec3 vColor;
+    varying float vFade;
+
+    void main() {
+      vec4 tex = texture2D(uMap, gl_PointCoord);
+      gl_FragColor = vec4(vColor, tex.a * vFade * 0.95);
+      if (gl_FragColor.a < 0.01) discard;
+    }
+  `;
+
+  /* Arcs wrapping the surface. Nothing says "sphere" like lines that ride
+     over the front and disappear around the back, and the reference leans
+     on exactly this. They carry the same travelling highlight as the
+     streams, so the flow appears to continue across the globe. */
+  function buildArcs(count = 15) {
+    const arcs = [];
+    for (let i = 0; i < count; i++) {
+      const lat = (Math.random() - 0.5) * 1.5;
+      const radius = SPHERE.r * Math.cos(lat) * (0.97 + Math.random() * 0.05);
+      const y = SPHERE.r * Math.sin(lat);
+      const span = Math.PI * (0.75 + Math.random() * 0.7);
+      const from = Math.random() * Math.PI * 2;
+
+      const pts = [];
+      for (let s = 0; s <= 40; s++) {
+        const a = from + span * (s / 40);
+        pts.push(new THREE.Vector3(Math.cos(a) * radius, y, Math.sin(a) * radius));
+      }
+
+      arcs.push({
+        curve: new THREE.CatmullRomCurve3(pts),
+        rotation: [(Math.random() - 0.5) * 0.7, 0, (Math.random() - 0.5) * 0.5],
+        seed: Math.random(),
+        speed: 0.1 + Math.random() * 0.08,
+        base: 0.07 + Math.random() * 0.06,
+        radius: 0.0045 + Math.random() * 0.003
+      });
+    }
+    return arcs;
+  }
+
+  function SphereCore() {
     const ref = useRef();
     const geo = useMemo(() => makeSphereGeometry(), []);
+    const arcs = useMemo(() => buildArcs(), []);
+    const uniforms = useMemo(
+      () => ({
+        uMap: { value: dotTexture },
+        uSize: { value: 0.055 },
+        // The volume spans the camera distance give or take its radius.
+        uNear: { value: 8.6 - SPHERE.r },
+        uFar: { value: 8.6 + SPHERE.r }
+      }),
+      []
+    );
 
     useFrame((state, delta) => {
       if (ref.current) ref.current.rotation.y += delta * 0.075;
     });
 
     return h(
-      'points',
-      { ref, geometry: geo, position: [SPHERE.x, SPHERE.y, 0] },
-      h('pointsMaterial', {
-        map: dotTexture,
-        size: 0.055,
-        sizeAttenuation: true,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.9,
-        depthWrite: false
-      })
+      // Tilted axis: a sphere spinning dead upright reads as a flat wheel.
+      'group',
+      { position: [SPHERE.x, SPHERE.y, 0], rotation: [0.2, 0, 0.14] },
+      h(
+        'group',
+        { ref },
+        h(
+          'points',
+          { geometry: geo, renderOrder: 2 },
+          h('shaderMaterial', {
+            uniforms,
+            vertexShader: particleVertex,
+            fragmentShader: particleFragment,
+            vertexColors: true,
+            transparent: true,
+            depthWrite: false
+          })
+        ),
+        arcs.map((a, i) =>
+          h(
+            'group',
+            { key: `a${i}`, rotation: a.rotation },
+            h(Stream, { curve: a.curve, seed: a.seed, speed: a.speed, base: a.base, radius: a.radius })
+          )
+        )
+      ),
+      // The limb: a faint ring on the silhouette, which gives the volume a
+      // definite edge instead of letting it dissolve into the page.
+      h(
+        Billboard,
+        null,
+        h(
+          'mesh',
+          { renderOrder: 3 },
+          h('ringGeometry', { args: [SPHERE.r * 0.985, SPHERE.r * 1.0, 96] }),
+          h('meshBasicMaterial', {
+            color: LILAC,
+            transparent: true,
+            opacity: 0.35,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+            toneMapped: false
+          })
+        )
+      )
     );
   }
 
@@ -494,7 +607,7 @@ async function start() {
 
       h(SphereGlow, null),
       streams.map((s, i) => h(Stream, Object.assign({ key: `s${i}` }, s))),
-      h(ParticleSphere, null),
+      h(SphereCore, null),
 
       // The mark sits in front of the particles at the sphere's centre.
       h(
