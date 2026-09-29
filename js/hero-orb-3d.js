@@ -43,15 +43,16 @@ const FIBER = `https://esm.sh/@react-three/fiber@8.17.10?${PINS}`;
 const DREI = `https://esm.sh/@react-three/drei@9.114.3?${PINS_R3F}`;
 const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3.1,react-dom@18.3.1';
 
-/* The five photo nodes, with the ring colour each one carries in the SVG.
-   z is the only value invented here — the flat artwork had no depth, and
-   staggering it is what turns the ring into an orbit. */
-const PHOTO_NODES = [
-  { src: 'assets/images/orb/node-ai.jpg',        pos: [-0.07,  2.33,  0.30], r: 0.56, ring: '#2BB7B1', float: 1.05 },
-  { src: 'assets/images/orb/node-lab.jpg',       pos: [-2.63,  0.70, -0.25], r: 0.56, ring: '#9D4CDB', float: 1.35 },
-  { src: 'assets/images/orb/node-xr.jpg',        pos: [ 2.50,  0.53,  0.22], r: 0.56, ring: '#2D77E5', float: 0.95 },
-  { src: 'assets/images/orb/node-community.jpg', pos: [-2.06, -2.21,  0.36], r: 0.56, ring: '#2D77E5', float: 1.20 },
-  { src: 'assets/images/orb/node-learning.jpg',  pos: [ 2.05, -2.13, -0.30], r: 0.56, ring: '#2D77E5', float: 1.10 }
+/* Word bubbles, standing where the photo nodes stand in the SVG so the
+   composition is the familiar one. z is the only value invented here — the
+   flat artwork had no depth, and staggering it is what turns the ring into
+   an orbit. */
+const BUBBLES = [
+  { label: 'AI',                    pos: [-0.07,  2.33,  0.30], r: 0.68, float: 1.05 },
+  { label: 'Assistive\nTechnology', pos: [-2.63,  0.70, -0.25], r: 0.80, float: 1.35 },
+  { label: 'XR',                    pos: [ 2.50,  0.53,  0.22], r: 0.60, float: 0.95 },
+  { label: 'Neurodiversity',        pos: [-2.06, -2.21,  0.36], r: 0.78, float: 1.20 },
+  { label: 'Mental\nHealth',        pos: [ 2.05, -2.13, -0.30], r: 0.70, float: 1.10 }
 ];
 
 /* The three icon nodes, inside the photo ring exactly as in the SVG. */
@@ -137,6 +138,39 @@ function imageToCanvas(url, size, inset) {
   });
 }
 
+/* Label text, drawn with the page's own font so it matches the site. A soft
+   white halo sits under the glyphs: the bubble behind them is transparent,
+   and the halo keeps the purple readable whatever drifts past underneath. */
+function labelCanvas(text, size = 640) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const lines = text.split('\n');
+
+  let font = size * 0.19;
+  const maxWidth = size * 0.74;
+  const fit = () => {
+    ctx.font = `600 ${font}px "IBM Plex Sans", system-ui, sans-serif`;
+    return Math.max(...lines.map(l => ctx.measureText(l).width));
+  };
+  while (fit() > maxWidth && font > size * 0.06) font -= size * 0.008;
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const lineHeight = font * 1.16;
+  const top = size / 2 - ((lines.length - 1) * lineHeight) / 2;
+
+  ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+  ctx.shadowBlur = size * 0.05;
+  ctx.fillStyle = '#46166B';
+  // Two passes: the first lays down the halo, the second the crisp glyphs.
+  for (let pass = 0; pass < 2; pass++) {
+    if (pass === 1) ctx.shadowBlur = 0;
+    lines.forEach((line, i) => ctx.fillText(line, size / 2, top + i * lineHeight));
+  }
+  return canvas;
+}
+
 /* The specular glint every real bubble has, up and to the left. */
 function highlightCanvas(size = 256) {
   const canvas = document.createElement('canvas');
@@ -194,19 +228,17 @@ async function start() {
     return tex;
   };
 
-  /* Photos fill their disc (inset 1.0), icons sit inside theirs (0.8). */
-  const [photoCanvases, iconCanvases] = await Promise.all([
-    Promise.all(PHOTO_NODES.map(n => imageToCanvas(n.src, 512, 1.0))),
-    Promise.all(ICON_NODES.map(n => imageToCanvas(n.src, 320, 0.8)))
-  ]);
+  // 640px keeps the icons crisp: at 320 they were being magnified on screen,
+  // which is what made them look broken.
+  const iconCanvases = await Promise.all(ICON_NODES.map(n => imageToCanvas(n.src, 640, 0.78)));
 
-  const photoTextures = photoCanvases.map(c => (c ? makeTexture(c) : null));
+  const labelTextures = BUBBLES.map(b => makeTexture(labelCanvas(b.label)));
   const iconTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
   const highlightTexture = makeTexture(highlightCanvas());
   const wordmarkTexture = makeTexture(wordmarkCanvas());
 
   console.info(
-    `[hero-orb] photos ${photoTextures.filter(Boolean).length}/${PHOTO_NODES.length}, ` +
+    `[hero-orb] labels ${labelTextures.length}, ` +
       `icons ${iconTextures.filter(Boolean).length}/${ICON_NODES.length}`
   );
 
@@ -322,22 +354,24 @@ async function start() {
     );
   }
 
-  /* The coloured ring each node carries in the SVG, kept as a ring that
-     faces the camera so it always reads as a circle. It sits just outside
-     the sphere silhouette, so the glass never covers it. */
-  function NodeRing({ r, color }) {
+  /* Whatever a bubble carries — a word or an icon — rides at the FRONT of
+     the glass, not inside it.
+
+     Sitting the content inside the sphere put it behind a refracting
+     surface, so the distortion chewed it up and the artwork looked broken.
+     Parked just past the silhouette it stays perfectly crisp, and because
+     it is billboarded it still reads as being held by the bubble. */
+  function Contents({ r, map, scale, opaque }) {
     return h(
       Billboard,
       null,
       h(
         'mesh',
-        { renderOrder: 3 },
-        h('ringGeometry', { args: [r * 1.03, r * 1.09, 64] }),
+        { position: [0, 0, r * 1.02], renderOrder: 3 },
+        h('planeGeometry', { args: [r * scale, r * scale] }),
         h('meshBasicMaterial', {
-          color,
-          transparent: true,
-          opacity: 0.9,
-          side: THREE.DoubleSide,
+          map,
+          transparent: !opaque,
           depthWrite: false,
           toneMapped: false
         })
@@ -345,9 +379,7 @@ async function start() {
     );
   }
 
-  /* A photo node. The picture is a flat disc facing the camera, so it keeps
-     its own proportions — mapping it onto the sphere is what stretched it. */
-  function PhotoNode({ cfg, map }) {
+  function LabelNode({ cfg, map }) {
     return h(
       Float,
       { speed: cfg.float, rotationIntensity: 0.16, floatIntensity: 0.9, floatingRange: [-0.14, 0.14] },
@@ -356,24 +388,12 @@ async function start() {
         { position: cfg.pos },
         h(Halo, { r: cfg.r }),
         h(Shell, { r: cfg.r }),
-        h(
-          Billboard,
-          null,
-          h(
-            'mesh',
-            { position: [0, 0, cfg.r * 0.4], renderOrder: 3 },
-            h('circleGeometry', { args: [cfg.r * 0.82, 64] }),
-            h('meshBasicMaterial', { map, toneMapped: false })
-          )
-        ),
-        h(NodeRing, { r: cfg.r, color: cfg.ring }),
+        h(Contents, { r: cfg.r, map, scale: 1.72 }),
         h(Glint, { r: cfg.r })
       )
     );
   }
 
-  /* An icon node. Same treatment, but the icon keeps its transparency so
-     the glass shows through around the artwork. */
   function IconNode({ cfg, map }) {
     return h(
       Float,
@@ -383,21 +403,7 @@ async function start() {
         { position: cfg.pos },
         h(Halo, { r: cfg.r }),
         h(Shell, { r: cfg.r }),
-        h(
-          Billboard,
-          null,
-          h(
-            'mesh',
-            { position: [0, 0, cfg.r * 0.4], renderOrder: 3 },
-            h('planeGeometry', { args: [cfg.r * 1.3, cfg.r * 1.3] }),
-            h('meshBasicMaterial', {
-              map,
-              transparent: true,
-              depthWrite: false,
-              toneMapped: false
-            })
-          )
-        ),
+        h(Contents, { r: cfg.r, map, scale: 1.35 }),
         h(Glint, { r: cfg.r })
       )
     );
@@ -472,9 +478,7 @@ async function start() {
       h(
         'group',
         { ref: spin },
-        PHOTO_NODES.map((cfg, i) =>
-          photoTextures[i] ? h(PhotoNode, { key: `p${i}`, cfg, map: photoTextures[i] }) : null
-        ),
+        BUBBLES.map((cfg, i) => h(LabelNode, { key: `l${i}`, cfg, map: labelTextures[i] })),
         ICON_NODES.map((cfg, i) =>
           iconTextures[i] ? h(IconNode, { key: `i${i}`, cfg, map: iconTextures[i] }) : null
         ),
@@ -497,7 +501,7 @@ async function start() {
                 null,
                 h(
                   'mesh',
-                  { position: [0, 0, CENTRE.r * 0.45], renderOrder: 3 },
+                  { position: [0, 0, CENTRE.r * 1.02], renderOrder: 3 },
                   h('planeGeometry', { args: [1.02, 0.51] }),
                   h('meshBasicMaterial', {
                     map: wordmarkTexture,
