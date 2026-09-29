@@ -106,20 +106,46 @@ function shouldRun() {
 /* The icon SVGs are used exactly as they ship — drawn once, unmodified,
    into a canvas so three can take them as a texture. They are plain paths
    with no <image> or <foreignObject>, so the canvas stays untainted. */
-function svgToCanvas(url, size = 256) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const scale = Math.min(size / img.width, size / img.height) * 0.82;
-      const w = img.width * scale;
-      const h = img.height * scale;
-      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+function svgToCanvas(url, size = 320) {
+  return new Promise(resolve => {
+    let settled = false;
+    const done = canvas => {
+      if (settled) return;
+      settled = true;
       resolve(canvas);
     };
-    img.onerror = () => reject(new Error(`icon failed: ${url}`));
+
+    // Never let one icon hold up the scene: resolve null and carry on.
+    const timer = setTimeout(() => {
+      console.warn('[hero-orb] icon timed out:', url);
+      done(null);
+    }, 5000);
+
+    const img = new Image();
+    img.onload = () => {
+      clearTimeout(timer);
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        // Some SVGs report no intrinsic size; fall back to the square box.
+        const iw = img.naturalWidth || img.width || size;
+        const ih = img.naturalHeight || img.height || size;
+        const scale = Math.min(size / iw, size / ih) * 0.82;
+        const w = iw * scale;
+        const h = ih * scale;
+        ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+        done(canvas);
+      } catch (err) {
+        console.warn('[hero-orb] icon draw failed:', url, err);
+        done(null);
+      }
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      console.warn('[hero-orb] icon failed to load:', url);
+      done(null);
+    };
     img.src = encodeURI(url);
   });
 }
@@ -218,8 +244,11 @@ async function start() {
   const labelTextures = BUBBLES.map(b => makeTexture(labelCanvas(b.label)));
   const highlightTexture = makeTexture(highlightCanvas());
   const wordmarkTexture = makeTexture(wordmarkCanvas());
-  const iconTextures = await Promise.all(
-    ICON_BUBBLES.map(b => svgToCanvas(b.src).then(makeTexture))
+  // null entries are simply skipped when the scene is built.
+  const iconCanvases = await Promise.all(ICON_BUBBLES.map(b => svgToCanvas(b.src)));
+  const iconTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
+  console.info(
+    `[hero-orb] icons loaded: ${iconTextures.filter(Boolean).length}/${ICON_BUBBLES.length}`
   );
 
   let photoTextures = [];
@@ -268,31 +297,83 @@ async function start() {
      liquid glass look. */
   function Shell({ r, tint = '#FFFFFF' }) {
     return h(
-      'mesh',
-      { renderOrder: 1 },
-      h('sphereGeometry', { args: [r, 64, 64] }),
-      h(MeshTransmissionMaterial, {
-        transmissionSampler: true,
-        backside: false,
-        samples: 4,
-        resolution: 256,
-        transmission: 1,
-        thickness: r * 1.6,
-        ior: 1.42,
-        chromaticAberration: 0.2,
-        anisotropy: 0.2,
-        distortion: 0.3,
-        distortionScale: 0.4,
-        temporalDistortion: 0.1,
-        roughness: 0.02,
-        clearcoat: 1,
-        clearcoatRoughness: 0.02,
-        // Attenuation is what tints the light passing through. Pushed far out
-        // so the glass stays white rather than picking up a purple cast.
-        attenuationDistance: r * 14,
-        attenuationColor: tint,
-        color: '#FFFFFF'
-      })
+      'group',
+      null,
+      // 1. The body of the glass: clear, so whatever is behind shows through.
+      h(
+        'mesh',
+        { renderOrder: 1 },
+        h('sphereGeometry', { args: [r, 64, 64] }),
+        h(MeshTransmissionMaterial, {
+          transmissionSampler: true,
+          backside: false,
+          samples: 4,
+          resolution: 256,
+          transmission: 1,
+          // Thin glass: a thick wall soaks up light and greys the bubble.
+          thickness: r * 0.55,
+          ior: 1.35,
+          chromaticAberration: 0.16,
+          anisotropy: 0.1,
+          distortion: 0.25,
+          distortionScale: 0.35,
+          temporalDistortion: 0.08,
+          roughness: 0,
+          clearcoat: 1,
+          clearcoatRoughness: 0,
+          // Attenuation tints light passing through. Pushed far out so the
+          // glass stays white instead of picking up a purple cast.
+          attenuationDistance: r * 18,
+          attenuationColor: tint,
+          color: '#FFFFFF'
+        })
+      ),
+      // 2. The rim. A back-facing shell blended additively lights up exactly
+      //    where the surface turns away from camera, which is the bright
+      //    pearl edge every soap bubble has. This is what makes the circle
+      //    read as a sphere while the middle stays clear.
+      h(
+        'mesh',
+        { renderOrder: 2, scale: 1.012 },
+        h('sphereGeometry', { args: [r, 48, 48] }),
+        h('meshPhysicalMaterial', {
+          color: '#FFFFFF',
+          side: THREE.BackSide,
+          transparent: true,
+          opacity: 0.55,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          roughness: 0,
+          metalness: 0,
+          clearcoat: 1,
+          iridescence: 1,
+          iridescenceIOR: 1.3,
+          iridescenceThicknessRange: [180, 900],
+          envMapIntensity: 2.2
+        })
+      )
+    );
+  }
+
+  /* A soft bloom around each bubble, faked with one sprite so we never have
+     to run a postprocessing pass. */
+  function Halo({ r }) {
+    return h(
+      Billboard,
+      null,
+      h(
+        'mesh',
+        { position: [0, 0, -r * 0.25], renderOrder: 0 },
+        h('planeGeometry', { args: [r * 3.4, r * 3.4] }),
+        h('meshBasicMaterial', {
+          map: highlightTexture,
+          transparent: true,
+          opacity: 0.22,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          toneMapped: false
+        })
+      )
     );
   }
 
@@ -303,8 +384,8 @@ async function start() {
       null,
       h(
         'mesh',
-        { position: [-r * 0.34, r * 0.38, r * 0.62], renderOrder: 3 },
-        h('planeGeometry', { args: [r * 0.62, r * 0.62] }),
+        { position: [-r * 0.32, r * 0.40, r * 0.66], renderOrder: 4 },
+        h('planeGeometry', { args: [r * 0.78, r * 0.78] }),
         h('meshBasicMaterial', {
           map: highlightTexture,
           transparent: true,
@@ -340,6 +421,7 @@ async function start() {
             })
           )
         ),
+        h(Halo, { r: cfg.r }),
         h(Glint, { r: cfg.r })
       )
     );
@@ -366,6 +448,7 @@ async function start() {
             h('meshBasicMaterial', { map, toneMapped: false })
           )
         ),
+        h(Halo, { r: cfg.r }),
         h(Glint, { r: cfg.r })
       )
     );
@@ -396,6 +479,7 @@ async function start() {
             })
           )
         ),
+        h(Halo, { r: cfg.r }),
         h(Glint, { r: cfg.r })
       )
     );
@@ -405,7 +489,8 @@ async function start() {
     return h(
       Float,
       { speed: cfg.float, rotationIntensity: 0.35, floatIntensity: 1.5, floatingRange: [-0.22, 0.22] },
-      h('group', { position: cfg.pos }, h(Shell, { r: cfg.r }), h(Glint, { r: cfg.r }))
+      h('group', { position: cfg.pos }, h(Shell, { r: cfg.r }), h(Halo, { r: cfg.r }),
+        h(Glint, { r: cfg.r }))
     );
   }
 
@@ -478,7 +563,9 @@ async function start() {
         'group',
         { ref: spin },
         content,
-        ICON_BUBBLES.map((cfg, i) => h(IconBubble, { key: `ic${i}`, cfg, map: iconTextures[i] })),
+        ICON_BUBBLES.map((cfg, i) =>
+          iconTextures[i] ? h(IconBubble, { key: `ic${i}`, cfg, map: iconTextures[i] }) : null
+        ),
         PLAIN_BUBBLES.map((cfg, i) => h(PlainBubble, { key: `g${i}`, cfg }))
       ),
 
@@ -506,6 +593,7 @@ async function start() {
                 })
               )
             ),
+        h(Halo, { r: 0.86 }),
         h(Glint, { r: 0.86 })
       )
     );
