@@ -56,11 +56,13 @@
 #hero-orb-3d canvas { display: block; }
 
 /* Liquid-metal centre mark — its own canvas, centred over the bubble field */
+/* Centred on the sphere, not on the box: the frustum is 7.27 x 6.6 world
+   units at z = 0 and the sphere sits at (0.45, 0.1). */
 #hero-liquid-logo {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 34%;
+  top: 48.5%;
+  left: 56.2%;
+  width: 26%;
   aspect-ratio: 240 / 64;
   transform: translate(-50%, -50%);
   z-index: 2;

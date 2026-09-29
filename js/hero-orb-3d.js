@@ -21,6 +21,12 @@
      - the CDN modules fail to load
    ============================================================ */
 
+/* Centre mark drawn with LiquidMetal from @paper-design/shaders-react — the
+   liquid-logo project — with the ATIC logo as the mask the shader flows
+   through. Off by default: the white mark with its purple shadow is the one
+   currently in the design. Flip to true to see the metal version. */
+const USE_LIQUID_LOGO = false;
+
 const PINS = 'deps=react@18.3.1,react-dom@18.3.1,three@0.170.0';
 const PINS_R3F = `${PINS},@react-three/fiber@8.17.10`;
 const REACT = 'https://esm.sh/react@18.3.1';
@@ -28,6 +34,7 @@ const REACT_DOM = 'https://esm.sh/react-dom@18.3.1/client';
 const THREE_URL = 'https://esm.sh/three@0.170.0';
 const FIBER = `https://esm.sh/@react-three/fiber@8.17.10?${PINS}`;
 const DREI = `https://esm.sh/@react-three/drei@9.114.3?${PINS_R3F}`;
+const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3.1,react-dom@18.3.1';
 
 /* Palette — the site's own tokens, kept pale so hero copy stays dominant */
 const PURPLE = '#46166B';
@@ -225,13 +232,17 @@ function wordmarkCanvas(size = 640) {
 }
 
 async function start() {
-  const [react, reactDom, THREE, fiber, drei] = await Promise.all([
+  const [react, reactDom, THREE, fiber, drei, paper] = await Promise.all([
     import(REACT),
     import(REACT_DOM),
     import(THREE_URL),
     import(FIBER),
-    import(DREI)
+    import(DREI),
+    USE_LIQUID_LOGO ? import(PAPER).catch(() => null) : Promise.resolve(null)
   ]);
+
+  const LiquidMetal = paper && paper.LiquidMetal;
+  const liquidLogoOn = USE_LIQUID_LOGO && !!LiquidMetal;
 
   const React = react.default || react;
   const { useRef, useMemo } = React;
@@ -758,21 +769,24 @@ async function start() {
       h(SphereCore, null),
 
       // The mark sits in front of the particles at the sphere's centre.
-      h(
-        Billboard,
-        { position: [SPHERE.x, SPHERE.y, SPHERE.r * 0.5] },
-        h(
-          'mesh',
-          { renderOrder: 4 },
-          h('planeGeometry', { args: [1.15, 0.575] }),
-          h('meshBasicMaterial', {
-            map: wordmarkTexture,
-            transparent: true,
-            depthWrite: false,
-            toneMapped: false
-          })
-        )
-      ),
+      // With liquid metal on it is drawn by its own DOM canvas above this one.
+      liquidLogoOn
+        ? null
+        : h(
+            Billboard,
+            { position: [SPHERE.x, SPHERE.y, SPHERE.r * 0.5] },
+            h(
+              'mesh',
+              { renderOrder: 4 },
+              h('planeGeometry', { args: [1.15, 0.575] }),
+              h('meshBasicMaterial', {
+                map: wordmarkTexture,
+                transparent: true,
+                depthWrite: false,
+                toneMapped: false
+              })
+            )
+          ),
 
       CARDS.map((cfg, i) => h(Card, { key: `c${i}`, cfg, map: cardTextures[i] })),
       h(Card, { cfg: OUTPUT_CARD, map: outputTexture })
@@ -806,6 +820,35 @@ async function start() {
 
   render();
   orb.classList.add('is-3d');
+
+  /* Liquid-metal centre mark. It is a DOM canvas rather than a three.js
+     material, so it rides above the scene canvas. Its box is positioned to
+     land on the sphere's centre: the frustum is 7.27 x 6.6 world units at
+     z = 0, so the sphere at (0.45, 0.1) sits at 56.2% across and 48.5% down. */
+  if (liquidLogoOn) {
+    const logoMount = document.createElement('div');
+    logoMount.id = 'hero-liquid-logo';
+    logoMount.setAttribute('aria-hidden', 'true');
+    orb.appendChild(logoMount);
+
+    createRoot(logoMount).render(
+      h(LiquidMetal, {
+        image: 'assets/images/atic-logo.svg',
+        colorBack: '#00000000',
+        colorTint: '#EDE3FA',
+        speed: 0.7,
+        softness: 0.3,
+        repetition: 2.4,
+        shiftRed: 0.25,
+        shiftBlue: 0.3,
+        distortion: 0.12,
+        contour: 0.5,
+        angle: 60,
+        scale: 0.58,
+        style: { width: '100%', height: '100%' }
+      })
+    );
+  }
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
