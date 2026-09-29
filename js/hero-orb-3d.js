@@ -69,8 +69,7 @@ const CENTRE = { pos: [-0.08, -0.43, 0], r: 0.72 };
    to these; they exist so the scene has something between the nodes. */
 const PLAIN_BUBBLES = [
   { pos: [-1.35,  1.45, -1.30], r: 0.24, float: 1.8 },
-  { pos: [ 1.55, -0.95, -1.15], r: 0.20, float: 2.1 },
-  { pos: [ 1.30,  1.70, -1.45], r: 0.17, float: 2.3 }
+  { pos: [ 1.55, -0.95, -1.15], r: 0.20, float: 2.1 }
 ];
 
 const orb = document.querySelector('.hero-orb');
@@ -221,6 +220,10 @@ async function start() {
   const liquidLogoOn = USE_LIQUID_LOGO && !!LiquidMetal;
   const h = React.createElement;
 
+  /* What each bubble's refraction falls back to. Built once and shared, so
+     the materials are not allocating a colour every frame. */
+  const REFRACT_BG = new THREE.Color('#FFFFFF');
+
   const makeTexture = canvas => {
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
@@ -269,23 +272,29 @@ async function start() {
         { renderOrder: 1 },
         h('sphereGeometry', { args: [r, 64, 64] }),
         h(MeshTransmissionMaterial, {
-          transmissionSampler: true,
+          // transmissionSampler would refract whatever three has in its own
+          // scene buffer. On a transparent canvas with nothing behind the
+          // bubbles that buffer is empty — the glass refracts black and the
+          // whole thing reads grey. Rendering each bubble's own small buffer
+          // over an explicit white background is what keeps the glass white.
+          transmissionSampler: false,
+          background: REFRACT_BG,
           backside: false,
-          samples: 4,
-          resolution: 256,
+          samples: 2,
+          resolution: 128,
           transmission: 1,
           // Thin glass: a thick wall soaks up light and greys the bubble.
-          thickness: r * 0.5,
-          ior: 1.35,
-          chromaticAberration: 0.16,
+          thickness: r * 0.45,
+          ior: 1.32,
+          chromaticAberration: 0.14,
           anisotropy: 0.1,
-          distortion: 0.22,
-          distortionScale: 0.3,
-          temporalDistortion: 0.06,
+          distortion: 0.2,
+          distortionScale: 0.28,
+          temporalDistortion: 0.05,
           roughness: 0,
           clearcoat: 1,
           clearcoatRoughness: 0,
-          attenuationDistance: r * 18,
+          attenuationDistance: r * 24,
           attenuationColor: tint,
           color: '#FFFFFF'
         })
@@ -298,16 +307,18 @@ async function start() {
           color: '#FFFFFF',
           side: THREE.BackSide,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.4,
           depthWrite: false,
           blending: THREE.AdditiveBlending,
           roughness: 0,
           metalness: 0,
           clearcoat: 1,
-          iridescence: 1,
-          iridescenceIOR: 1.3,
-          iridescenceThicknessRange: [180, 900],
-          envMapIntensity: 2.2
+          // Iridescence tinted the rim, which is part of what looked grey
+          // against a light page. Weakened and narrowed to a paler band.
+          iridescence: 0.5,
+          iridescenceIOR: 1.25,
+          iridescenceThicknessRange: [300, 620],
+          envMapIntensity: 2.6
         })
       )
     );
