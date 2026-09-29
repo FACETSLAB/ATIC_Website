@@ -56,12 +56,34 @@
 #hero-orb-3d canvas { display: block; }
 
 /* Liquid-metal centre mark — its own canvas, centred over the bubble field */
-/* Centred on the sphere, not on the box: the frustum is 7.27 x 6.6 world
-   units at z = 0 and the sphere sits at (0.45, 0.1). */
+/* The ATIC mark over the orb. HTML, not a texture in the scene: it stays
+   pin sharp at any zoom and never swims with the glass under it.
+   Centred on the orb, not the box — the frustum is 7.27 x 6.6 world units
+   at z = 0 and the orb sits at (0.35, 0.05), which lands here. */
+.hero-orb .orb-mark {
+  position: absolute;
+  top: 49.2%;
+  left: 54.8%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  /* White on a pale orb needs the shadow to separate it */
+  text-shadow:
+    0 2px 10px rgba(70, 22, 107, 0.38),
+    0 6px 28px rgba(70, 22, 107, 0.28);
+  opacity: 0;
+  transition: opacity .9s ease .25s;
+}
+.hero-orb.is-3d .orb-mark { opacity: 1; }
+
 #hero-liquid-logo {
   position: absolute;
-  top: 48.5%;
-  left: 56.2%;
+  top: 49.2%;
+  left: 54.8%;
   width: 26%;
   aspect-ratio: 240 / 64;
   transform: translate(-50%, -50%);
@@ -133,7 +155,8 @@
 @media (prefers-reduced-motion: reduce) {
   #hero-shader,
   #hero-orb-3d,
-  #hero-liquid-logo { display: none; }
+  #hero-liquid-logo,
+  .hero-orb .orb-mark { display: none; }
   .hero-home::after { background: none; }
   .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
 }
@@ -141,6 +164,11 @@
 /* Below 768px the module never loads (battery, bandwidth, paint cost),
    so drop the scrim too and keep the original gradient. */
 @media (max-width: 767px) {
-  #hero-shader { display: none; }
+  #hero-shader,
+  #hero-orb-3d,
+  #hero-liquid-logo,
+  .hero-orb .orb-mark { display: none; }
   .hero-home::after { background: none; }
+  /* The static illustration is the mobile fallback, so it must come back */
+  .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
 }
