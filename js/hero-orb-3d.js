@@ -27,6 +27,11 @@
 
 const SHOW_PHOTOS = false;
 
+/* Centre mark rendered with @paper-design/shaders-react (the liquid-logo
+   project) instead of flat canvas text. Set to false to go back to the
+   plain wordmark if the metal reads too cold against the purple. */
+const USE_LIQUID_LOGO = true;
+
 /* Every dependency is pinned so esm.sh hands back ONE instance of react,
    three and @react-three/fiber across all modules on the page.
    Left unpinned, drei resolves "@react-three/fiber@>=8.0" by itself and a
@@ -39,30 +44,28 @@ const REACT_DOM = 'https://esm.sh/react-dom@18.3.1/client';
 const THREE_URL = 'https://esm.sh/three@0.170.0';
 const FIBER = `https://esm.sh/@react-three/fiber@8.17.10?${PINS}`;
 const DREI = `https://esm.sh/@react-three/drei@9.114.3?${PINS_R3F}`;
+const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3.1,react-dom@18.3.1';
 
 /* The Center's research areas, laid out as a loose cloud rather than a ring.
    z varies so the field reads as depth, not as a flat circle of discs.
    These words are decorative here — the same terms appear as real text in
    the About section below, so nothing is WebGL-only. */
 const BUBBLES = [
-  { label: 'AI',                    pos: [ 0.15,  1.95,  0.35], r: 0.70, float: 1.05, tint: '#EAD9FF' },
-  { label: 'Assistive\nTechnology', pos: [-2.35,  0.60, -0.25], r: 0.82, float: 1.35, tint: '#DCC7FB' },
-  { label: 'XR',                    pos: [ 2.45,  0.75,  0.15], r: 0.58, float: 0.95, tint: '#D8E6FF' },
-  { label: 'Neurodiversity',        pos: [-1.55, -1.70,  0.45], r: 0.78, float: 1.20, tint: '#E6D6FF' },
-  { label: 'Adaptive\nLearning',    pos: [ 2.05, -1.55, -0.30], r: 0.72, float: 1.10, tint: '#D7F2EF' },
-  { label: 'Mental\nHealth',        pos: [-2.55, -0.85, -1.15], r: 0.52, float: 1.55, tint: '#E9DCFF' },
-  { label: 'Accessibility',         pos: [ 1.35,  1.85, -1.25], r: 0.50, float: 1.45, tint: '#DDE9FF' }
+  { label: 'AI',                    pos: [ 0.15,  1.95,  0.45], r: 0.72, float: 1.05, tint: '#F3EAFF' },
+  { label: 'Assistive\nTechnology', pos: [-2.30,  0.60, -0.20], r: 0.84, float: 1.35, tint: '#EFE2FF' },
+  { label: 'XR',                    pos: [ 2.45,  0.75,  0.20], r: 0.60, float: 0.95, tint: '#E8F0FF' },
+  { label: 'Neurodiversity',        pos: [-1.55, -1.70,  0.50], r: 0.80, float: 1.20, tint: '#F2E9FF' },
+  { label: 'Adaptive\nLearning',    pos: [ 2.05, -1.55, -0.25], r: 0.74, float: 1.10, tint: '#E6F7F4' },
+  { label: 'Mental\nHealth',        pos: [-2.55, -0.85, -1.10], r: 0.54, float: 1.55, tint: '#F1E8FF' }
 ];
 
 /* Empty bubbles — no label, pure glass. They carry the depth. */
 const PLAIN_BUBBLES = [
-  { pos: [-0.95,  1.05, -1.45], r: 0.30, float: 1.8 },
-  { pos: [ 1.60, -0.55, -1.05], r: 0.22, float: 2.1 },
+  { pos: [-0.95,  1.10, -1.45], r: 0.30, float: 1.8 },
+  { pos: [ 1.60, -0.55, -1.05], r: 0.23, float: 2.1 },
   { pos: [-1.70, -0.30, -1.70], r: 0.26, float: 1.7 },
-  { pos: [ 0.85,  1.35,  0.95], r: 0.17, float: 2.3 },
-  { pos: [-0.55, -1.95, -0.85], r: 0.20, float: 1.95 },
-  { pos: [ 2.85, -0.35,  0.55], r: 0.15, float: 2.4 },
-  { pos: [-2.95,  1.45, -0.45], r: 0.19, float: 2.0 }
+  { pos: [ 1.45,  1.80, -1.20], r: 0.20, float: 2.3 },
+  { pos: [-0.55, -1.95, -0.85], r: 0.21, float: 1.95 }
 ];
 
 /* Only read when SHOW_PHOTOS is true. */
@@ -160,19 +163,22 @@ function wordmarkCanvas(size = 512) {
 }
 
 async function start() {
-  const [react, reactDom, THREE, fiber, drei] = await Promise.all([
+  const [react, reactDom, THREE, fiber, drei, paper] = await Promise.all([
     import(REACT),
     import(REACT_DOM),
     import(THREE_URL),
     import(FIBER),
-    import(DREI)
+    import(DREI),
+    USE_LIQUID_LOGO ? import(PAPER).catch(() => null) : Promise.resolve(null)
   ]);
 
   const React = react.default || react;
   const { useRef, useMemo } = React;
   const { createRoot } = reactDom;
   const { Canvas, useFrame } = fiber;
-  const { Float, Billboard } = drei;
+  const { Float, Billboard, MeshTransmissionMaterial, Environment, Lightformer } = drei;
+  const LiquidMetal = paper && paper.LiquidMetal;
+  const liquidLogoOn = USE_LIQUID_LOGO && !!LiquidMetal;
   const h = React.createElement;
 
   const makeTexture = canvas => {
@@ -220,30 +226,40 @@ async function start() {
   );
 
   /* ── the glass shell ─────────────────────────────────────────
-     No `transmission`: it makes three render the scene into a buffer
-     once per material, and a dozen of those would cost more than the
-     whole rest of the page. Iridescence plus clearcoat on a translucent
-     shell reads as a soap bubble for almost nothing.
-     depthWrite stays off so overlapping bubbles blend instead of
-     punching holes in each other. */
+     Real refraction. An earlier pass used a plain translucent material to
+     save the render cost, and the bubbles came out flat — refraction is
+     exactly what makes glass read as a volume rather than a tinted circle.
+
+     transmissionSampler shares three's own transmission buffer across every
+     bubble, so the scene is rendered once per frame instead of once per
+     material, which is what made a dozen transmissive spheres too expensive
+     before. chromaticAberration splits the light at the rim, distortion
+     makes the refraction crawl, and the two together are the Apple-style
+     liquid glass look. */
   function Shell({ r, tint = '#FFFFFF' }) {
     return h(
       'mesh',
       { renderOrder: 1 },
-      h('sphereGeometry', { args: [r, 48, 48] }),
-      h('meshPhysicalMaterial', {
-        color: tint,
-        transparent: true,
-        opacity: 0.34,
-        depthWrite: false,
-        roughness: 0,
-        metalness: 0,
+      h('sphereGeometry', { args: [r, 64, 64] }),
+      h(MeshTransmissionMaterial, {
+        transmissionSampler: true,
+        backside: false,
+        samples: 4,
+        resolution: 256,
+        transmission: 1,
+        thickness: r * 1.6,
+        ior: 1.42,
+        chromaticAberration: 0.28,
+        anisotropy: 0.25,
+        distortion: 0.35,
+        distortionScale: 0.45,
+        temporalDistortion: 0.12,
+        roughness: 0.02,
         clearcoat: 1,
-        clearcoatRoughness: 0,
-        iridescence: 1,
-        iridescenceIOR: 1.35,
-        iridescenceThicknessRange: [120, 800],
-        envMapIntensity: 1.4
+        clearcoatRoughness: 0.02,
+        attenuationDistance: r * 5,
+        attenuationColor: tint,
+        color: '#FFFFFF'
       })
     );
   }
@@ -331,12 +347,29 @@ async function start() {
     );
   }
 
-  function OrbitRing({ radius, tilt, color, opacity }) {
+  /* Reflections come from a small environment built right here out of
+     lightformers — no HDR file is fetched. Glass with nothing to reflect
+     looks dead, and this is the cheapest way to give it something. */
+  function Studio() {
     return h(
-      'mesh',
-      { rotation: tilt },
-      h('torusGeometry', { args: [radius, 0.006, 8, 160] }),
-      h('meshBasicMaterial', { color, transparent: true, opacity, toneMapped: false, depthWrite: false })
+      Environment,
+      { resolution: 256, frames: 1 },
+      h(Lightformer, {
+        form: 'rect', intensity: 3, color: '#FFFFFF',
+        position: [0, 4, -6], scale: [12, 6, 1]
+      }),
+      h(Lightformer, {
+        form: 'rect', intensity: 1.6, color: '#CFBAFF',
+        position: [-6, 1, -2], scale: [8, 8, 1], rotation: [0, Math.PI / 2, 0]
+      }),
+      h(Lightformer, {
+        form: 'rect', intensity: 1.4, color: '#B9E4E0',
+        position: [6, -2, -2], scale: [8, 8, 1], rotation: [0, -Math.PI / 2, 0]
+      }),
+      h(Lightformer, {
+        form: 'circle', intensity: 2.2, color: '#FFFFFF',
+        position: [2, 5, 3], scale: 4
+      })
     );
   }
 
@@ -366,16 +399,16 @@ async function start() {
     return h(
       'group',
       { ref: root },
-      h('ambientLight', { intensity: 1.15 }),
-      h('directionalLight', { position: [4, 5, 6], intensity: 1.6 }),
-      h('directionalLight', { position: [-5, -2, 3], intensity: 0.55, color: '#C8A9F2' }),
-      h('pointLight', { position: [0, 1, 4], intensity: 22, distance: 14, color: '#FFFFFF' }),
+      h(Studio, null),
+      h('ambientLight', { intensity: 0.85 }),
+      h('directionalLight', { position: [4, 5, 6], intensity: 1.2 }),
+      h('pointLight', { position: [0, 1, 4], intensity: 16, distance: 14, color: '#FFFFFF' }),
 
+      // The orbit rings are gone: as tubes they read as hard strokes drawn
+      // over the glass, which is the flat look we are getting away from.
       h(
         'group',
         { ref: spin },
-        h(OrbitRing, { radius: 2.72, tilt: [1.32, 0, 0.12], color: '#D9D9D9', opacity: 0.4 }),
-        h(OrbitRing, { radius: 1.88, tilt: [1.18, 0.25, -0.2], color: '#CFBAFF', opacity: 0.55 }),
         content,
         PLAIN_BUBBLES.map((cfg, i) => h(PlainBubble, { key: `g${i}`, cfg }))
       ),
@@ -385,21 +418,25 @@ async function start() {
         Float,
         { speed: 0.8, rotationIntensity: 0.1, floatIntensity: 0.5, floatingRange: [-0.08, 0.08] },
         h(Shell, { r: 0.86, tint: '#FFFFFF' }),
-        h(
-          Billboard,
-          null,
-          h(
-            'mesh',
-            { position: [0, 0, 0.5], renderOrder: 2 },
-            h('planeGeometry', { args: [1.18, 0.59] }),
-            h('meshBasicMaterial', {
-              map: wordmarkTexture,
-              transparent: true,
-              depthWrite: false,
-              toneMapped: false
-            })
-          )
-        ),
+        // With the liquid-metal mark on, the wordmark is drawn by
+        // @paper-design/shaders-react in its own layer above this canvas.
+        liquidLogoOn
+          ? null
+          : h(
+              Billboard,
+              null,
+              h(
+                'mesh',
+                { position: [0, 0, 0.5], renderOrder: 2 },
+                h('planeGeometry', { args: [1.18, 0.59] }),
+                h('meshBasicMaterial', {
+                  map: wordmarkTexture,
+                  transparent: true,
+                  depthWrite: false,
+                  toneMapped: false
+                })
+              )
+            ),
         h(Glint, { r: 0.86 })
       )
     );
@@ -432,6 +469,34 @@ async function start() {
 
   render();
   orb.classList.add('is-3d');
+
+  /* Liquid-metal centre mark. It is a DOM canvas of its own rather than a
+     three.js material, so it rides above the bubble canvas at the centre of
+     the field. The ATIC logo SVG is the mask the shader flows through. */
+  if (liquidLogoOn) {
+    const logoMount = document.createElement('div');
+    logoMount.id = 'hero-liquid-logo';
+    logoMount.setAttribute('aria-hidden', 'true');
+    orb.appendChild(logoMount);
+
+    createRoot(logoMount).render(
+      h(LiquidMetal, {
+        image: 'assets/images/atic-logo.svg',
+        colorBack: '#00000000',
+        colorTint: '#CBB4F0',
+        speed: 0.7,
+        softness: 0.3,
+        repetition: 2.4,
+        shiftRed: 0.25,
+        shiftBlue: 0.3,
+        distortion: 0.12,
+        contour: 0.5,
+        angle: 60,
+        scale: 0.58,
+        style: { width: '100%', height: '100%' }
+      })
+    );
+  }
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
