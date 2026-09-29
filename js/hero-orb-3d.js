@@ -1,18 +1,17 @@
 /* ============================================================
-   ATIC Website — 3D bubble field (yujung branch)
+   ATIC Website — 3D orbit (yujung branch)
 
-   Replaces the flat SVG orbit illustration in the home hero with a
-   three.js scene: iridescent soap bubbles drifting at different
-   depths, each carrying one of the Center's research areas as text.
+   The original hero illustration, rebuilt in three.js: the same five
+   photo nodes, the same three icon nodes and the same ATIC centre,
+   sitting where the SVG put them, but as glass bubbles that float and
+   drift in real space.
 
-   Why text and not photos:
-   a flat photo mapped onto a sphere stretches at the silhouette —
-   the wide-angle look. Two ways out, both kept below:
-     SHOW_PHOTOS = false  bubbles carry words (default, lighter)
-     SHOW_PHOTOS = true   photos ride as FLAT discs inside the glass,
-                          billboarded at the camera, so they stay round
-                          and undistorted instead of being wrapped
-   Flip the constant to switch; nothing else needs changing.
+   Positions are the SVG's own coordinates (viewBox 0 0 686 623)
+   mapped into world units, so the composition is unchanged.
+
+   Photos and icons ride as FLAT discs billboarded at the camera
+   inside each bubble — never wrapped onto the sphere, which is what
+   produced the wide-angle stretch in an earlier pass.
 
    Built on react-three-fiber + drei, loaded as ES modules from the
    esm.sh CDN, so the site keeps its no-build static hosting.
@@ -22,15 +21,13 @@
      - the visitor prefers reduced motion
      - the viewport is under 768px
      - WebGL is unavailable
-     - the CDN modules or textures fail to load
+     - the CDN modules fail to load
    ============================================================ */
 
-const SHOW_PHOTOS = false;
-
-/* Centre mark rendered with @paper-design/shaders-react (the liquid-logo
-   project) instead of flat canvas text. Set to false to go back to the
-   plain wordmark if the metal reads too cold against the purple. */
-const USE_LIQUID_LOGO = true;
+/* Centre mark drawn with @paper-design/shaders-react (the liquid-logo
+   project) instead of the plain wordmark. Off by default so the centre
+   matches the original; flip to true to see the liquid metal version. */
+const USE_LIQUID_LOGO = false;
 
 /* Every dependency is pinned so esm.sh hands back ONE instance of react,
    three and @react-three/fiber across all modules on the page.
@@ -46,41 +43,33 @@ const FIBER = `https://esm.sh/@react-three/fiber@8.17.10?${PINS}`;
 const DREI = `https://esm.sh/@react-three/drei@9.114.3?${PINS_R3F}`;
 const PAPER = 'https://esm.sh/@paper-design/shaders-react@0.0.81?deps=react@18.3.1,react-dom@18.3.1';
 
-/* The Center's research areas, laid out as a loose cloud rather than a ring.
-   z varies so the field reads as depth, not as a flat circle of discs.
-   These words are decorative here — the same terms appear as real text in
-   the About section below, so nothing is WebGL-only. */
-const BUBBLES = [
-  { label: 'AI',                    pos: [ 0.20,  2.00,  0.45], r: 0.70, float: 1.05, tint: '#FFFFFF' },
-  { label: 'Assistive\nTechnology', pos: [-2.35,  0.70, -0.20], r: 0.84, float: 1.35, tint: '#FFFFFF' },
-  { label: 'Neurodiversity',        pos: [-1.45, -1.80,  0.50], r: 0.78, float: 1.20, tint: '#FCFAFF' },
-  { label: 'Adaptive\nLearning',    pos: [ 2.15, -1.45, -0.25], r: 0.72, float: 1.10, tint: '#FFFFFF' },
-  { label: 'Mental\nHealth',        pos: [-2.60, -0.95, -1.10], r: 0.52, float: 1.55, tint: '#FDFBFF' }
+/* The five photo nodes, with the ring colour each one carries in the SVG.
+   z is the only value invented here — the flat artwork had no depth, and
+   staggering it is what turns the ring into an orbit. */
+const PHOTO_NODES = [
+  { src: 'assets/images/orb/node-ai.jpg',        pos: [-0.07,  2.33,  0.30], r: 0.56, ring: '#2BB7B1', float: 1.05 },
+  { src: 'assets/images/orb/node-lab.jpg',       pos: [-2.63,  0.70, -0.25], r: 0.56, ring: '#9D4CDB', float: 1.35 },
+  { src: 'assets/images/orb/node-xr.jpg',        pos: [ 2.50,  0.53,  0.22], r: 0.56, ring: '#2D77E5', float: 0.95 },
+  { src: 'assets/images/orb/node-community.jpg', pos: [-2.06, -2.21,  0.36], r: 0.56, ring: '#2D77E5', float: 1.20 },
+  { src: 'assets/images/orb/node-learning.jpg',  pos: [ 2.05, -2.13, -0.30], r: 0.56, ring: '#2D77E5', float: 1.10 }
 ];
 
-/* The three flat icons from the original illustration, kept as they are and
-   floated inside their own bubbles. */
-const ICON_BUBBLES = [
-  { src: 'assets/images/circle/atic_research_testing 1.svg',       pos: [ 2.40,  0.85,  0.25], r: 0.60, float: 0.95 },
-  { src: 'assets/images/circle/atic_community_partnership 1.svg',  pos: [ 1.15,  1.25, -1.15], r: 0.46, float: 1.45 },
-  { src: 'assets/images/circle/atic_assistive_technology 1.svg',   pos: [-0.35, -1.95, -0.95], r: 0.50, float: 1.30 }
+/* The three icon nodes, inside the photo ring exactly as in the SVG. */
+const ICON_NODES = [
+  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-1.28, -0.36, 0.85], r: 0.40, float: 1.55 },
+  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [ 0.92,  0.84, 0.80], r: 0.40, float: 1.40 },
+  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-0.05, -1.77, 0.90], r: 0.40, float: 1.65 }
 ];
 
-/* Empty bubbles — no label, pure glass. They carry the depth. */
+/* Centre of the composition, where the ATIC mark sits in the SVG. */
+const CENTRE = { pos: [-0.08, -0.43, 0], r: 0.72 };
+
+/* A few empty bubbles for depth. Nothing in the flat artwork corresponds
+   to these; they exist so the scene has something between the nodes. */
 const PLAIN_BUBBLES = [
-  { pos: [-0.95,  1.10, -1.45], r: 0.30, float: 1.8 },
-  { pos: [ 1.70, -0.60, -1.05], r: 0.23, float: 2.1 },
-  { pos: [-1.75, -0.30, -1.70], r: 0.26, float: 1.7 },
-  { pos: [ 1.50,  1.95, -1.25], r: 0.19, float: 2.3 }
-];
-
-/* Only read when SHOW_PHOTOS is true. */
-const PHOTOS = [
-  'assets/images/orb/node-ai.jpg',
-  'assets/images/orb/node-lab.jpg',
-  'assets/images/orb/node-xr.jpg',
-  'assets/images/orb/node-community.jpg',
-  'assets/images/orb/node-learning.jpg'
+  { pos: [-1.35,  1.45, -1.30], r: 0.24, float: 1.8 },
+  { pos: [ 1.55, -0.95, -1.15], r: 0.20, float: 2.1 },
+  { pos: [ 1.30,  1.70, -1.45], r: 0.17, float: 2.3 }
 ];
 
 const orb = document.querySelector('.hero-orb');
@@ -101,25 +90,23 @@ function shouldRun() {
   return webglAvailable();
 }
 
-/* ── canvas-drawn textures ─────────────────────────────────── */
+/* ── image loading ─────────────────────────────────────────── */
 
-/* The icon SVGs are used exactly as they ship — drawn once, unmodified,
-   into a canvas so three can take them as a texture. They are plain paths
-   with no <image> or <foreignObject>, so the canvas stays untainted. */
-function svgToCanvas(url, size = 320) {
+/* Draw any same-origin image — photo or icon SVG — into a square canvas.
+   Resolves null instead of rejecting: one missing file must never stall
+   the scene, which is what happened when this threw. */
+function imageToCanvas(url, size, inset) {
   return new Promise(resolve => {
     let settled = false;
-    const done = canvas => {
+    const done = value => {
       if (settled) return;
       settled = true;
-      resolve(canvas);
+      resolve(value);
     };
-
-    // Never let one icon hold up the scene: resolve null and carry on.
     const timer = setTimeout(() => {
-      console.warn('[hero-orb] icon timed out:', url);
+      console.warn('[hero-orb] timed out:', url);
       done(null);
-    }, 5000);
+    }, 6000);
 
     const img = new Image();
     img.onload = () => {
@@ -131,57 +118,23 @@ function svgToCanvas(url, size = 320) {
         // Some SVGs report no intrinsic size; fall back to the square box.
         const iw = img.naturalWidth || img.width || size;
         const ih = img.naturalHeight || img.height || size;
-        const scale = Math.min(size / iw, size / ih) * 0.82;
+        const scale = Math.max(size / iw, size / ih) * inset;
         const w = iw * scale;
-        const h = ih * scale;
-        ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+        const hh = ih * scale;
+        ctx.drawImage(img, (size - w) / 2, (size - hh) / 2, w, hh);
         done(canvas);
       } catch (err) {
-        console.warn('[hero-orb] icon draw failed:', url, err);
+        console.warn('[hero-orb] draw failed:', url, err);
         done(null);
       }
     };
     img.onerror = () => {
       clearTimeout(timer);
-      console.warn('[hero-orb] icon failed to load:', url);
+      console.warn('[hero-orb] failed to load:', url);
       done(null);
     };
     img.src = encodeURI(url);
   });
-}
-
-/* Label text, drawn with the page's own font so it matches the site.
-   A soft white halo sits under the glyphs: the bubble behind them is
-   translucent, and the halo keeps the purple readable whatever drifts
-   past underneath. */
-function labelCanvas(text, size = 512) {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const lines = text.split('\n');
-
-  let font = size * 0.19;
-  const maxWidth = size * 0.74;
-  const fit = () => {
-    ctx.font = `600 ${font}px "IBM Plex Sans", system-ui, sans-serif`;
-    return Math.max(...lines.map(l => ctx.measureText(l).width));
-  };
-  while (fit() > maxWidth && font > size * 0.06) font -= size * 0.008;
-
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const lineHeight = font * 1.16;
-  const top = size / 2 - ((lines.length - 1) * lineHeight) / 2;
-
-  ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
-  ctx.shadowBlur = size * 0.055;
-  ctx.fillStyle = '#46166B';
-  // Two passes: the first lays down the halo, the second the crisp glyphs.
-  for (let pass = 0; pass < 2; pass++) {
-    if (pass === 1) ctx.shadowBlur = 0;
-    lines.forEach((line, i) => ctx.fillText(line, size / 2, top + i * lineHeight));
-  }
-  return canvas;
 }
 
 /* The specular glint every real bubble has, up and to the left. */
@@ -204,7 +157,7 @@ function wordmarkCanvas(size = 512) {
   canvas.height = size / 2;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#46166B';
-  ctx.font = '600 132px "IBM Plex Sans", system-ui, sans-serif';
+  ctx.font = '600 128px "IBM Plex Sans", system-ui, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.shadowColor = 'rgba(255,255,255,0.95)';
@@ -226,7 +179,7 @@ async function start() {
   ]);
 
   const React = react.default || react;
-  const { useRef, useMemo } = React;
+  const { useRef } = React;
   const { createRoot } = reactDom;
   const { Canvas, useFrame } = fiber;
   const { Float, Billboard, MeshTransmissionMaterial, Environment, Lightformer } = drei;
@@ -241,37 +194,21 @@ async function start() {
     return tex;
   };
 
-  const labelTextures = BUBBLES.map(b => makeTexture(labelCanvas(b.label)));
+  /* Photos fill their disc (inset 1.0), icons sit inside theirs (0.8). */
+  const [photoCanvases, iconCanvases] = await Promise.all([
+    Promise.all(PHOTO_NODES.map(n => imageToCanvas(n.src, 512, 1.0))),
+    Promise.all(ICON_NODES.map(n => imageToCanvas(n.src, 320, 0.8)))
+  ]);
+
+  const photoTextures = photoCanvases.map(c => (c ? makeTexture(c) : null));
+  const iconTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
   const highlightTexture = makeTexture(highlightCanvas());
   const wordmarkTexture = makeTexture(wordmarkCanvas());
-  // null entries are simply skipped when the scene is built.
-  const iconCanvases = await Promise.all(ICON_BUBBLES.map(b => svgToCanvas(b.src)));
-  const iconTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
-  console.info(
-    `[hero-orb] icons loaded: ${iconTextures.filter(Boolean).length}/${ICON_BUBBLES.length}`
-  );
 
-  let photoTextures = [];
-  if (SHOW_PHOTOS) {
-    const loader = new THREE.TextureLoader();
-    photoTextures = await Promise.all(
-      PHOTOS.map(
-        url =>
-          new Promise((resolve, reject) =>
-            loader.load(
-              url,
-              tex => {
-                tex.colorSpace = THREE.SRGBColorSpace;
-                tex.anisotropy = 4;
-                resolve(tex);
-              },
-              undefined,
-              reject
-            )
-          )
-      )
-    );
-  }
+  console.info(
+    `[hero-orb] photos ${photoTextures.filter(Boolean).length}/${PHOTO_NODES.length}, ` +
+      `icons ${iconTextures.filter(Boolean).length}/${ICON_NODES.length}`
+  );
 
   /* ── pointer parallax ────────────────────────────────────── */
   const pointer = { x: 0, y: 0 };
@@ -284,22 +221,17 @@ async function start() {
     { passive: true }
   );
 
-  /* ── the glass shell ─────────────────────────────────────────
-     Real refraction. An earlier pass used a plain translucent material to
-     save the render cost, and the bubbles came out flat — refraction is
-     exactly what makes glass read as a volume rather than a tinted circle.
+  /* ── the glass ───────────────────────────────────────────── */
 
-     transmissionSampler shares three's own transmission buffer across every
-     bubble, so the scene is rendered once per frame instead of once per
-     material, which is what made a dozen transmissive spheres too expensive
-     before. chromaticAberration splits the light at the rim, distortion
-     makes the refraction crawl, and the two together are the Apple-style
-     liquid glass look. */
+  /* Body plus rim. The body is clear so the contents and the background
+     read through it; the rim is a back-facing shell blended additively,
+     which lights up exactly where the surface turns away from the camera.
+     That bright pearl edge is what makes a transparent circle read as a
+     sphere — without it, the clearer the glass, the more it disappears. */
   function Shell({ r, tint = '#FFFFFF' }) {
     return h(
       'group',
       null,
-      // 1. The body of the glass: clear, so whatever is behind shows through.
       h(
         'mesh',
         { renderOrder: 1 },
@@ -311,27 +243,21 @@ async function start() {
           resolution: 256,
           transmission: 1,
           // Thin glass: a thick wall soaks up light and greys the bubble.
-          thickness: r * 0.55,
+          thickness: r * 0.5,
           ior: 1.35,
           chromaticAberration: 0.16,
           anisotropy: 0.1,
-          distortion: 0.25,
-          distortionScale: 0.35,
-          temporalDistortion: 0.08,
+          distortion: 0.22,
+          distortionScale: 0.3,
+          temporalDistortion: 0.06,
           roughness: 0,
           clearcoat: 1,
           clearcoatRoughness: 0,
-          // Attenuation tints light passing through. Pushed far out so the
-          // glass stays white instead of picking up a purple cast.
           attenuationDistance: r * 18,
           attenuationColor: tint,
           color: '#FFFFFF'
         })
       ),
-      // 2. The rim. A back-facing shell blended additively lights up exactly
-      //    where the surface turns away from camera, which is the bright
-      //    pearl edge every soap bubble has. This is what makes the circle
-      //    read as a sphere while the middle stays clear.
       h(
         'mesh',
         { renderOrder: 2, scale: 1.012 },
@@ -340,7 +266,7 @@ async function start() {
           color: '#FFFFFF',
           side: THREE.BackSide,
           transparent: true,
-          opacity: 0.55,
+          opacity: 0.5,
           depthWrite: false,
           blending: THREE.AdditiveBlending,
           roughness: 0,
@@ -355,7 +281,7 @@ async function start() {
     );
   }
 
-  /* A soft bloom around each bubble, faked with one sprite so we never have
+  /* Soft bloom around each bubble, faked with one sprite so we never have
      to run a postprocessing pass. */
   function Halo({ r }) {
     return h(
@@ -364,11 +290,11 @@ async function start() {
       h(
         'mesh',
         { position: [0, 0, -r * 0.25], renderOrder: 0 },
-        h('planeGeometry', { args: [r * 3.4, r * 3.4] }),
+        h('planeGeometry', { args: [r * 3.2, r * 3.2] }),
         h('meshBasicMaterial', {
           map: highlightTexture,
           transparent: true,
-          opacity: 0.22,
+          opacity: 0.2,
           depthWrite: false,
           blending: THREE.AdditiveBlending,
           toneMapped: false
@@ -377,18 +303,41 @@ async function start() {
     );
   }
 
-  /* The glint, parked up-left on the shell and always camera-facing. */
   function Glint({ r }) {
     return h(
       Billboard,
       null,
       h(
         'mesh',
-        { position: [-r * 0.32, r * 0.40, r * 0.66], renderOrder: 4 },
+        { position: [-r * 0.32, r * 0.4, r * 0.66], renderOrder: 4 },
         h('planeGeometry', { args: [r * 0.78, r * 0.78] }),
         h('meshBasicMaterial', {
           map: highlightTexture,
           transparent: true,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          toneMapped: false
+        })
+      )
+    );
+  }
+
+  /* The coloured ring each node carries in the SVG, kept as a ring that
+     faces the camera so it always reads as a circle. It sits just outside
+     the sphere silhouette, so the glass never covers it. */
+  function NodeRing({ r, color }) {
+    return h(
+      Billboard,
+      null,
+      h(
+        'mesh',
+        { renderOrder: 3 },
+        h('ringGeometry', { args: [r * 1.03, r * 1.09, 64] }),
+        h('meshBasicMaterial', {
+          color,
+          transparent: true,
+          opacity: 0.9,
+          side: THREE.DoubleSide,
           depthWrite: false,
           toneMapped: false
         })
@@ -396,81 +345,51 @@ async function start() {
     );
   }
 
-  /* Content sits at +z INSIDE the shell, so it passes the depth test
-     against other bubbles normally while the shell never covers it. */
-  function LabelBubble({ cfg, map }) {
+  /* A photo node. The picture is a flat disc facing the camera, so it keeps
+     its own proportions — mapping it onto the sphere is what stretched it. */
+  function PhotoNode({ cfg, map }) {
     return h(
       Float,
-      { speed: cfg.float, rotationIntensity: 0.18, floatIntensity: 1.0, floatingRange: [-0.16, 0.16] },
+      { speed: cfg.float, rotationIntensity: 0.16, floatIntensity: 0.9, floatingRange: [-0.14, 0.14] },
       h(
         'group',
         { position: cfg.pos },
-        h(Shell, { r: cfg.r, tint: cfg.tint }),
-        h(
-          Billboard,
-          null,
-          h(
-            'mesh',
-            { position: [0, 0, cfg.r * 0.45], renderOrder: 2 },
-            h('planeGeometry', { args: [cfg.r * 1.72, cfg.r * 1.72] }),
-            h('meshBasicMaterial', {
-              map,
-              transparent: true,
-              depthWrite: false,
-              toneMapped: false
-            })
-          )
-        ),
         h(Halo, { r: cfg.r }),
-        h(Glint, { r: cfg.r })
-      )
-    );
-  }
-
-  /* Photo variant: a flat circular disc, billboarded, so the picture keeps
-     its own proportions. This is the fix for the wide-angle stretch that
-     mapping a photo straight onto the sphere produces. */
-  function PhotoBubble({ cfg, map }) {
-    return h(
-      Float,
-      { speed: cfg.float, rotationIntensity: 0.18, floatIntensity: 1.0, floatingRange: [-0.16, 0.16] },
-      h(
-        'group',
-        { position: cfg.pos },
-        h(Shell, { r: cfg.r, tint: '#FFFFFF' }),
+        h(Shell, { r: cfg.r }),
         h(
           Billboard,
           null,
           h(
             'mesh',
-            { position: [0, 0, cfg.r * 0.42], renderOrder: 2 },
-            h('circleGeometry', { args: [cfg.r * 0.78, 64] }),
+            { position: [0, 0, cfg.r * 0.4], renderOrder: 3 },
+            h('circleGeometry', { args: [cfg.r * 0.82, 64] }),
             h('meshBasicMaterial', { map, toneMapped: false })
           )
         ),
-        h(Halo, { r: cfg.r }),
+        h(NodeRing, { r: cfg.r, color: cfg.ring }),
         h(Glint, { r: cfg.r })
       )
     );
   }
 
-  /* The original flat icon, billboarded inside the glass so it never
-     distorts — same treatment the labels get. */
-  function IconBubble({ cfg, map }) {
+  /* An icon node. Same treatment, but the icon keeps its transparency so
+     the glass shows through around the artwork. */
+  function IconNode({ cfg, map }) {
     return h(
       Float,
-      { speed: cfg.float, rotationIntensity: 0.18, floatIntensity: 1.0, floatingRange: [-0.16, 0.16] },
+      { speed: cfg.float, rotationIntensity: 0.2, floatIntensity: 1.1, floatingRange: [-0.16, 0.16] },
       h(
         'group',
         { position: cfg.pos },
-        h(Shell, { r: cfg.r, tint: '#FFFFFF' }),
+        h(Halo, { r: cfg.r }),
+        h(Shell, { r: cfg.r }),
         h(
           Billboard,
           null,
           h(
             'mesh',
-            { position: [0, 0, cfg.r * 0.45], renderOrder: 2 },
-            h('planeGeometry', { args: [cfg.r * 1.15, cfg.r * 1.15] }),
+            { position: [0, 0, cfg.r * 0.4], renderOrder: 3 },
+            h('planeGeometry', { args: [cfg.r * 1.3, cfg.r * 1.3] }),
             h('meshBasicMaterial', {
               map,
               transparent: true,
@@ -479,7 +398,6 @@ async function start() {
             })
           )
         ),
-        h(Halo, { r: cfg.r }),
         h(Glint, { r: cfg.r })
       )
     );
@@ -489,8 +407,13 @@ async function start() {
     return h(
       Float,
       { speed: cfg.float, rotationIntensity: 0.35, floatIntensity: 1.5, floatingRange: [-0.22, 0.22] },
-      h('group', { position: cfg.pos }, h(Shell, { r: cfg.r }), h(Halo, { r: cfg.r }),
-        h(Glint, { r: cfg.r }))
+      h(
+        'group',
+        { position: cfg.pos },
+        h(Halo, { r: cfg.r }),
+        h(Shell, { r: cfg.r }),
+        h(Glint, { r: cfg.r })
+      )
     );
   }
 
@@ -505,8 +428,6 @@ async function start() {
         form: 'rect', intensity: 4, color: '#FFFFFF',
         position: [0, 4, -6], scale: [14, 7, 1]
       }),
-      // The coloured panels stay, but barely tinted — enough to keep the
-      // glass from looking grey, not enough to read as purple.
       h(Lightformer, {
         form: 'rect', intensity: 2, color: '#F4EDFF',
         position: [-6, 1, -2], scale: [8, 8, 1], rotation: [0, Math.PI / 2, 0]
@@ -530,21 +451,12 @@ async function start() {
     const root = useRef();
     const spin = useRef();
 
-    const content = useMemo(() => {
-      if (!SHOW_PHOTOS) {
-        return BUBBLES.map((cfg, i) => h(LabelBubble, { key: `l${i}`, cfg, map: labelTextures[i] }));
-      }
-      return PHOTOS.map((_, i) =>
-        h(PhotoBubble, { key: `p${i}`, cfg: BUBBLES[i], map: photoTextures[i] })
-      );
-    }, []);
-
     useFrame((state, delta) => {
       // One slow revolution takes about 80 seconds — movement, not motion sickness.
       if (spin.current) spin.current.rotation.y += delta * 0.078;
       if (root.current) {
         // Ease toward the pointer instead of snapping to it.
-        root.current.rotation.y += (pointer.x * 0.15 - root.current.rotation.y) * 0.04;
+        root.current.rotation.y += (pointer.x * 0.14 - root.current.rotation.y) * 0.04;
         root.current.rotation.x += (pointer.y * 0.09 - root.current.rotation.x) * 0.04;
       }
     });
@@ -553,18 +465,18 @@ async function start() {
       'group',
       { ref: root },
       h(Studio, null),
-      h('ambientLight', { intensity: 0.85 }),
+      h('ambientLight', { intensity: 0.9 }),
       h('directionalLight', { position: [4, 5, 6], intensity: 1.2 }),
       h('pointLight', { position: [0, 1, 4], intensity: 16, distance: 14, color: '#FFFFFF' }),
 
-      // The orbit rings are gone: as tubes they read as hard strokes drawn
-      // over the glass, which is the flat look we are getting away from.
       h(
         'group',
         { ref: spin },
-        content,
-        ICON_BUBBLES.map((cfg, i) =>
-          iconTextures[i] ? h(IconBubble, { key: `ic${i}`, cfg, map: iconTextures[i] }) : null
+        PHOTO_NODES.map((cfg, i) =>
+          photoTextures[i] ? h(PhotoNode, { key: `p${i}`, cfg, map: photoTextures[i] }) : null
+        ),
+        ICON_NODES.map((cfg, i) =>
+          iconTextures[i] ? h(IconNode, { key: `i${i}`, cfg, map: iconTextures[i] }) : null
         ),
         PLAIN_BUBBLES.map((cfg, i) => h(PlainBubble, { key: `g${i}`, cfg }))
       ),
@@ -573,28 +485,30 @@ async function start() {
       h(
         Float,
         { speed: 0.8, rotationIntensity: 0.1, floatIntensity: 0.5, floatingRange: [-0.08, 0.08] },
-        h(Shell, { r: 0.86, tint: '#FFFFFF' }),
-        // With the liquid-metal mark on, the wordmark is drawn by
-        // @paper-design/shaders-react in its own layer above this canvas.
-        liquidLogoOn
-          ? null
-          : h(
-              Billboard,
-              null,
-              h(
-                'mesh',
-                { position: [0, 0, 0.5], renderOrder: 2 },
-                h('planeGeometry', { args: [1.18, 0.59] }),
-                h('meshBasicMaterial', {
-                  map: wordmarkTexture,
-                  transparent: true,
-                  depthWrite: false,
-                  toneMapped: false
-                })
-              )
-            ),
-        h(Halo, { r: 0.86 }),
-        h(Glint, { r: 0.86 })
+        h(
+          'group',
+          { position: CENTRE.pos },
+          h(Halo, { r: CENTRE.r }),
+          h(Shell, { r: CENTRE.r }),
+          liquidLogoOn
+            ? null
+            : h(
+                Billboard,
+                null,
+                h(
+                  'mesh',
+                  { position: [0, 0, CENTRE.r * 0.45], renderOrder: 3 },
+                  h('planeGeometry', { args: [1.02, 0.51] }),
+                  h('meshBasicMaterial', {
+                    map: wordmarkTexture,
+                    transparent: true,
+                    depthWrite: false,
+                    toneMapped: false
+                  })
+                )
+              ),
+          h(Glint, { r: CENTRE.r })
+        )
       )
     );
   }
@@ -627,9 +541,9 @@ async function start() {
   render();
   orb.classList.add('is-3d');
 
-  /* Liquid-metal centre mark. It is a DOM canvas of its own rather than a
-     three.js material, so it rides above the bubble canvas at the centre of
-     the field. The ATIC logo SVG is the mask the shader flows through. */
+  /* Liquid-metal centre mark, when switched on. It is a DOM canvas of its
+     own rather than a three.js material, so it rides above the bubble
+     canvas. The ATIC logo SVG is the mask the shader flows through. */
   if (liquidLogoOn) {
     const logoMount = document.createElement('div');
     logoMount.id = 'hero-liquid-logo';
@@ -670,10 +584,10 @@ async function start() {
 }
 
 if (shouldRun()) {
-  // Wait for IBM Plex Sans before drawing labels, otherwise the text
-  // textures bake in the fallback font and never repaint.
-  const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-  ready
+  // Wait for IBM Plex Sans so the wordmark texture is not baked in the
+  // fallback font, but never let a slow font block the scene.
+  const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  Promise.race([fonts, new Promise(r => setTimeout(r, 2500))])
     .then(start)
     .catch(err => {
       // Fall back to the original SVG illustration, untouched.
