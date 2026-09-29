@@ -16,10 +16,13 @@
 
 const REACT = 'https://esm.sh/react@18.3.1';
 const REACT_DOM = 'https://esm.sh/react-dom@18.3.1/client';
-// Pin React on the dependency so esm.sh hands back the same instance we
-// imported above — two copies of React in one page break hooks.
+// Pin every shared dependency so esm.sh hands back the same instances the
+// rest of the page uses — two copies of React break hooks, and two copies of
+// three.js would ship the library twice. js/hero-orb-3d.js pins identically,
+// so both modules share one react, one three and one @react-three/fiber.
 const SHADERGRADIENT =
-  'https://esm.sh/@shadergradient/react@2?deps=react@18.3.1,react-dom@18.3.1';
+  'https://esm.sh/@shadergradient/react@2' +
+  '?deps=react@18.3.1,react-dom@18.3.1,three@0.170.0,@react-three/fiber@8.17.10';
 
 const mount = document.getElementById('hero-shader');
 const hero = document.querySelector('.hero-home');

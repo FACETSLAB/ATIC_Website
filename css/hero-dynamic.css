@@ -43,6 +43,26 @@
 /* Hero content rides above both layers */
 .hero-home > .container { position: relative; z-index: 2; }
 
+/* ── 3D orbit bubbles ──
+   The canvas is laid over the existing SVG illustration. The SVG is only
+   hidden once js/hero-orb-3d.js has actually mounted (.is-3d), so a failed
+   load leaves the original artwork in place. */
+#hero-orb-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+#hero-orb-3d canvas { display: block; }
+
+.hero-orb .orb-final {
+  transition: opacity .6s ease;
+}
+.hero-orb.is-3d .orb-final {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* ── Frosted-glass navbar (index only, via .has-dynamic-hero on <body>) ── */
 .has-dynamic-hero .navbar {
   background: rgba(255, 255, 255, .34);
@@ -96,8 +116,10 @@
    Reduced motion: no animated backdrop at all. The module also checks
    this before loading, so nothing is fetched either. */
 @media (prefers-reduced-motion: reduce) {
-  #hero-shader { display: none; }
+  #hero-shader,
+  #hero-orb-3d { display: none; }
   .hero-home::after { background: none; }
+  .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
 }
 
 /* Below 768px the module never loads (battery, bandwidth, paint cost),
