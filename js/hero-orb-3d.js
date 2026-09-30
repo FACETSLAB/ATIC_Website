@@ -1,9 +1,8 @@
 /* ============================================================
    ATIC Website — hero glass scene (yujung branch)
 
-   A softly deforming glass orb at the centre, accessibility icon
-   cards feeding quiet connector flows into it, and a few smaller
-   droplets floating at different depths.
+   A softly deforming glass orb at the centre, with accessibility icon
+   cards feeding quiet connector flows into it.
 
    Techniques taken from the reference projects:
      - glslrefractblob        surface deformation driving the optics
@@ -44,11 +43,6 @@ const ORB = { x: 0.28, y: 0.05, r: 2.08 };
 /* Slow cycles, 11 to 15 seconds, as angular speeds. */
 const CYCLE = t => (Math.PI * 2) / t;
 
-const DROPLETS = [
-  { pos: [-1.95, 2.05, 1.10], r: 0.34, cycle: 11, phase: 0.0, rise: 0.15 },
-  { pos: [2.45, 1.85, -0.95], r: 0.26, cycle: 14, phase: 2.1, rise: 0.12 },
-  { pos: [1.85, -2.20, 0.65], r: 0.30, cycle: 13, phase: 4.2, rise: 0.16 }
-];
 
 /* Accessibility icon cards, left. Three carry the site's own icons. */
 const CARDS = [
@@ -472,33 +466,6 @@ async function start() {
     );
   }
 
-  function Droplet({ cfg }) {
-    const group = useRef();
-    const [ref, geo] = useBlob(cfg.r, 32, CYCLE(cfg.cycle), cfg.phase);
-
-    useFrame(state => {
-      const t = state.clock.getElapsedTime();
-      if (group.current) {
-        // 0.15 world units is about 14px at this scale.
-        group.current.position.y =
-          cfg.pos[1] + Math.sin(t * CYCLE(cfg.cycle) + cfg.phase) * cfg.rise;
-        group.current.position.x =
-          cfg.pos[0] + Math.sin(t * CYCLE(cfg.cycle * 1.4) + cfg.phase) * cfg.rise * 0.45;
-      }
-    });
-
-    return h(
-      'group',
-      { ref: group, position: cfg.pos },
-      h(
-        'mesh',
-        { ref, geometry: geo, renderOrder: 2 },
-        h(MeshTransmissionMaterial, glass(cfg.r * 0.5, { resolution: 128, samples: 2 }))
-      ),
-      h(Rim, { geometry: geo, strength: 0.4 })
-    );
-  }
-
   function Backdrop() {
     return h(
       'mesh',
@@ -662,7 +629,6 @@ async function start() {
       h(Backdrop, null),
       streams.map((s, i) => h(Stream, Object.assign({ key: `s${i}` }, s))),
       h(GlassOrb, null),
-      DROPLETS.map((cfg, i) => h(Droplet, { key: `d${i}`, cfg })),
       CARDS.map((cfg, i) => h(Card, { key: `c${i}`, cfg, map: cardTextures[i] })),
       h(Card, { cfg: OUTPUT_CARD, map: outputTexture })
     );
