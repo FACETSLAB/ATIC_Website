@@ -46,12 +46,12 @@ const CYCLE = t => (Math.PI * 2) / t;
 
 /* Accessibility icon cards, left. Three carry the site's own icons. */
 const CARDS = [
-  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-3.00,  0.95, 0.35], s: 0.62, cycle: 12, phase: 0.4 },
-  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [-2.50, -0.35, 0.15], s: 0.56, cycle: 15, phase: 1.9 },
-  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-3.10, -1.40, 0.30], s: 0.58, cycle: 13, phase: 3.3 }
+  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-2.85,  1.35, 0.55], s: 0.98, cycle: 12, phase: 0.4 },
+  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [-2.55, -0.05, 0.35], s: 0.88, cycle: 15, phase: 1.9 },
+  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-2.90, -1.55, 0.50], s: 0.92, cycle: 13, phase: 3.3 }
 ];
 
-const OUTPUT_CARD = { pos: [3.10, 0.05, 0.2], s: 0.64, cycle: 14, phase: 5.0 };
+const OUTPUT_CARD = { pos: [2.95, 0.05, 0.4], s: 0.94, cycle: 14, phase: 5.0 };
 
 const orb = document.querySelector('.hero-orb');
 
@@ -118,48 +118,6 @@ function imageToCanvas(url, size, inset) {
     };
     img.src = encodeURI(url);
   });
-}
-
-/* A frosted tile, with the icon composited in so each card is one quad. */
-function cardCanvas(iconCanvas, size = 512) {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  const pad = size * 0.06;
-  const r = size * 0.2;
-  const box = size - pad * 2;
-
-  const round = (x, y, w, hh, rad) => {
-    ctx.beginPath();
-    ctx.moveTo(x + rad, y);
-    ctx.arcTo(x + w, y, x + w, y + hh, rad);
-    ctx.arcTo(x + w, y + hh, x, y + hh, rad);
-    ctx.arcTo(x, y + hh, x, y, rad);
-    ctx.arcTo(x, y, x + w, y, rad);
-    ctx.closePath();
-  };
-
-  const g = ctx.createLinearGradient(0, pad, 0, size - pad);
-  g.addColorStop(0, 'rgba(255,255,255,0.95)');
-  g.addColorStop(1, 'rgba(246,240,253,0.86)');
-  ctx.shadowColor = 'rgba(88, 48, 140, 0.15)';
-  ctx.shadowBlur = size * 0.07;
-  ctx.shadowOffsetY = size * 0.025;
-  round(pad, pad, box, box, r);
-  ctx.fillStyle = g;
-  ctx.fill();
-
-  ctx.shadowColor = 'transparent';
-  ctx.lineWidth = size * 0.007;
-  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-  round(pad, pad, box, box, r);
-  ctx.stroke();
-
-  if (iconCanvas) {
-    const inner = box * 0.56;
-    ctx.drawImage(iconCanvas, (size - inner) / 2, (size - inner) / 2, inner, inner);
-  }
-  return canvas;
 }
 
 function checkCanvas(size = 512) {
@@ -236,7 +194,7 @@ async function start() {
   const { useRef, useMemo } = React;
   const { createRoot } = reactDom;
   const { Canvas, useFrame } = fiber;
-  const { MeshTransmissionMaterial, Environment, Lightformer } = drei;
+  const { MeshTransmissionMaterial, Environment, Lightformer, RoundedBox } = drei;
   const h = React.createElement;
 
   const makeTexture = canvas => {
@@ -249,8 +207,10 @@ async function start() {
   const iconCanvases = await Promise.all(
     CARDS.map(c => (c.src ? imageToCanvas(c.src, 512, 0.9) : Promise.resolve(null)))
   );
-  const cardTextures = CARDS.map((c, i) => makeTexture(cardCanvas(iconCanvases[i])));
-  const outputTexture = makeTexture(cardCanvas(checkCanvas()));
+  // The glass slab is the tile now, so these carry the icon alone on
+  // transparency rather than a drawn-on frosted card.
+  const cardTextures = iconCanvases.map(c => (c ? makeTexture(c) : null));
+  const outputTexture = makeTexture(checkCanvas());
   const backdropTexture = makeTexture(backdropCanvas());
 
   console.info(`[hero] cards ${cardTextures.length}, icons ${iconCanvases.filter(Boolean).length}/3`);
@@ -591,21 +551,68 @@ async function start() {
 
   /* ── cards ───────────────────────────────────────────────── */
 
+  /* The cards are the same glass as the orb: a rounded slab of it with a
+     tinted slice inside, so each one refracts a little colour of its own.
+
+     The icon rides on the FRONT face, not inside the slab. Content behind a
+     refracting surface gets chewed up by the distortion — that is what made
+     the photographs unusable in an earlier pass, and an icon is finer
+     detail than a photograph. */
   function Card({ cfg, map }) {
     const ref = useRef();
+    const core = useRef();
+    const depth = cfg.s * 0.26;
+
+    const coreUniforms = useMemo(
+      () => ({
+        uTime: { value: 0 },
+        uA: { value: new THREE.Color('#D9C2FA') },
+        uB: { value: new THREE.Color('#FBD3E7') },
+        uC: { value: new THREE.Color('#C6EDF6') },
+        uD: { value: new THREE.Color('#FFF1DA') }
+      }),
+      []
+    );
+
     useFrame(state => {
       const t = state.clock.getElapsedTime();
       if (ref.current) {
         // About 10px of travel, each card on its own phase.
         ref.current.position.y = cfg.pos[1] + Math.sin(t * CYCLE(cfg.cycle) + cfg.phase) * 0.11;
+        // A slow tilt, so the glass catches the light from changing angles.
+        ref.current.rotation.y = Math.sin(t * CYCLE(cfg.cycle * 1.6) + cfg.phase) * 0.16;
+        ref.current.rotation.x = Math.cos(t * CYCLE(cfg.cycle * 2.1) + cfg.phase) * 0.08;
       }
+      if (core.current) core.current.uniforms.uTime.value = t;
     });
 
     return h(
-      'mesh',
-      { ref, position: cfg.pos, renderOrder: 4 },
-      h('planeGeometry', { args: [cfg.s, cfg.s] }),
-      h('meshBasicMaterial', { map, transparent: true, depthWrite: false, toneMapped: false })
+      'group',
+      { ref, position: cfg.pos },
+      // Tinted slice, just inside the slab
+      h(
+        RoundedBox,
+        { args: [cfg.s * 0.82, cfg.s * 0.82, depth * 0.45], radius: cfg.s * 0.16, smoothness: 4, renderOrder: 3 },
+        h('shaderMaterial', {
+          ref: core,
+          uniforms: coreUniforms,
+          vertexShader: coreVertex,
+          fragmentShader: coreFragment
+        })
+      ),
+      // The glass slab
+      h(
+        RoundedBox,
+        { args: [cfg.s, cfg.s, depth], radius: cfg.s * 0.2, smoothness: 5, renderOrder: 4 },
+        h(MeshTransmissionMaterial, glass(depth * 0.7, { resolution: 96, samples: 2, distortion: 0.1 }))
+      ),
+      // Icon on the front face
+      h(
+        'mesh',
+        { position: [0, 0, depth * 0.52 + 0.001], renderOrder: 5 },
+        h('planeGeometry', { args: [cfg.s * 0.56, cfg.s * 0.56] }),
+        h('meshBasicMaterial', { map, transparent: true, depthWrite: false, toneMapped: false })
+      )
     );
   }
 
@@ -629,7 +636,9 @@ async function start() {
       h(Backdrop, null),
       streams.map((s, i) => h(Stream, Object.assign({ key: `s${i}` }, s))),
       h(GlassOrb, null),
-      CARDS.map((cfg, i) => h(Card, { key: `c${i}`, cfg, map: cardTextures[i] })),
+      CARDS.map((cfg, i) =>
+        cardTextures[i] ? h(Card, { key: `c${i}`, cfg, map: cardTextures[i] }) : null
+      ),
       h(Card, { cfg: OUTPUT_CARD, map: outputTexture })
     );
   }
