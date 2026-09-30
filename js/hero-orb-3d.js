@@ -71,7 +71,9 @@ function prefersReducedMotion() {
 function shouldRun() {
   if (!orb) return false;
   if (prefersReducedMotion()) return false;
-  if (!window.matchMedia('(min-width: 768px)').matches) return false;
+  // styles.css hides .hero-illustration below 901px, so anything under that
+  // would download three.js and render into a display:none box. Match it.
+  if (!window.matchMedia('(min-width: 901px)').matches) return false;
   return webglAvailable();
 }
 

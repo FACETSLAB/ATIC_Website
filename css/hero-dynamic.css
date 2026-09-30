@@ -161,9 +161,9 @@
   .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
 }
 
-/* Below 768px the module never loads (battery, bandwidth, paint cost),
-   so drop the scrim too and keep the original gradient. */
-@media (max-width: 767px) {
+/* Below 901px the module never loads: styles.css hides the illustration
+   there, so downloading three.js for a display:none box is pure waste. */
+@media (max-width: 900px) {
   #hero-shader,
   #hero-orb-3d,
   #hero-liquid-logo,
