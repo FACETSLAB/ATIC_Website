@@ -39,15 +39,15 @@ const CREAM = '#FFF6E9';
 /* The frustum is 7.27 x 6.6 world units at z = 0, and the illustration box
    is 686px wide, so one world unit is about 94px on screen. Float distances
    below are written against that: 0.10 is roughly 9px, 0.17 roughly 16px. */
-const ORB = { x: 0.35, y: 0.05, r: 1.7 };
+const ORB = { x: 0.28, y: 0.05, r: 2.08 };
 
 /* Slow cycles, 11 to 15 seconds, as angular speeds. */
 const CYCLE = t => (Math.PI * 2) / t;
 
 const DROPLETS = [
-  { pos: [-1.55, 1.62, 0.95], r: 0.34, cycle: 11, phase: 0.0, rise: 0.15 },
-  { pos: [1.95, 1.28, -0.85], r: 0.26, cycle: 14, phase: 2.1, rise: 0.12 },
-  { pos: [1.35, -1.72, 0.55], r: 0.30, cycle: 13, phase: 4.2, rise: 0.16 }
+  { pos: [-1.95, 2.05, 1.10], r: 0.34, cycle: 11, phase: 0.0, rise: 0.15 },
+  { pos: [2.45, 1.85, -0.95], r: 0.26, cycle: 14, phase: 2.1, rise: 0.12 },
+  { pos: [1.85, -2.20, 0.65], r: 0.30, cycle: 13, phase: 4.2, rise: 0.16 }
 ];
 
 /* Accessibility icon cards, left. Three carry the site's own icons. */
@@ -211,11 +211,11 @@ function backdropCanvas(size = 512) {
     ctx.fillRect(0, 0, size, size);
   };
 
-  blob(c, c, size * 0.46, 'rgba(255,255,255,0.95)');
-  blob(size * 0.36, size * 0.34, size * 0.3, 'rgba(214,186,250,0.92)');
-  blob(size * 0.66, size * 0.4, size * 0.26, 'rgba(252,206,230,0.9)');
-  blob(size * 0.58, size * 0.68, size * 0.28, 'rgba(191,233,243,0.9)');
-  blob(size * 0.34, size * 0.66, size * 0.24, 'rgba(255,243,225,0.7)');
+  blob(c, c, size * 0.5, 'rgba(255,255,255,0.9)');
+  blob(size * 0.34, size * 0.32, size * 0.34, 'rgba(190,150,248,0.95)');
+  blob(size * 0.68, size * 0.38, size * 0.3, 'rgba(252,182,218,0.95)');
+  blob(size * 0.58, size * 0.70, size * 0.32, 'rgba(160,224,240,0.95)');
+  blob(size * 0.32, size * 0.68, size * 0.28, 'rgba(255,236,199,0.85)');
 
   // Circular mask so nothing reaches the corners
   ctx.globalCompositeOperation = 'destination-in';
@@ -329,18 +329,18 @@ async function start() {
         resolution: 192,
         transmission: 1,
         thickness,
-        ior: 1.36,
-        chromaticAberration: 0.045,
-        anisotropy: 0.08,
-        distortion: 0.08,
-        distortionScale: 0.2,
-        temporalDistortion: 0.03,
-        roughness: 0.04,
+        ior: 1.45,
+        chromaticAberration: 0.07,
+        anisotropy: 0.12,
+        distortion: 0.16,
+        distortionScale: 0.35,
+        temporalDistortion: 0.05,
+        roughness: 0,
         clearcoat: 1,
-        clearcoatRoughness: 0.03,
-        attenuationDistance: 3.0,
-        attenuationColor: '#E3D2FF',
-        envMapIntensity: 2.1,
+        clearcoatRoughness: 0,
+        attenuationDistance: 12,
+        attenuationColor: '#FFFFFF',
+        envMapIntensity: 1.5,
         color: '#FFFFFF'
       },
       extra
@@ -392,15 +392,81 @@ async function start() {
     );
   }
 
+  /* The colour lives INSIDE the shell.
+
+     Clear glass in front of a backdrop a couple of units away averages that
+     backdrop out to grey, however saturated it is — which is what kept
+     happening. A tinted core sitting just inside the surface is what every
+     liquid-glass render actually does: the shell refracts and distorts
+     something coloured that is right up against it.
+
+     It wobbles on its own cycle, so the colour inside shifts against the
+     silhouette instead of moving with it. */
+  const coreVertex = `
+    varying vec3 vPos;
+    void main() {
+      vPos = normalize(position);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const coreFragment = `
+    uniform float uTime;
+    uniform vec3 uA;
+    uniform vec3 uB;
+    uniform vec3 uC;
+    uniform vec3 uD;
+    varying vec3 vPos;
+
+    void main() {
+      // Bilinear blend across the surface, drifting slowly
+      float x = clamp(vPos.x * 0.5 + 0.5 + sin(uTime * 0.31 + vPos.y * 1.7) * 0.12, 0.0, 1.0);
+      float y = clamp(vPos.y * 0.5 + 0.5 + cos(uTime * 0.24 + vPos.z * 1.5) * 0.12, 0.0, 1.0);
+      vec3 col = mix(mix(uA, uB, x), mix(uC, uD, x), y);
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function InnerCore() {
+    const [ref, geo] = useBlob(ORB.r * 0.76, 48, CYCLE(17), 1.7);
+    const mat = useRef();
+    const uniforms = useMemo(
+      () => ({
+        uTime: { value: 0 },
+        uA: { value: new THREE.Color('#C6A2F7') }, // lavender
+        uB: { value: new THREE.Color('#FBB6DB') }, // blush
+        uC: { value: new THREE.Color('#A2E6F4') }, // pale cyan
+        uD: { value: new THREE.Color('#FFE9C6') } // pearlescent cream
+      }),
+      []
+    );
+
+    useFrame(state => {
+      if (mat.current) mat.current.uniforms.uTime.value = state.clock.getElapsedTime();
+    });
+
+    return h(
+      'mesh',
+      { ref, geometry: geo, renderOrder: 1 },
+      h('shaderMaterial', {
+        ref: mat,
+        uniforms,
+        vertexShader: coreVertex,
+        fragmentShader: coreFragment
+      })
+    );
+  }
+
   function GlassOrb() {
     const [ref, geo] = useBlob(ORB.r, 72, CYCLE(13), 0);
     return h(
       'group',
       { position: [ORB.x, ORB.y, 0] },
+      h(InnerCore, null),
       h(
         'mesh',
         { ref, geometry: geo, renderOrder: 2 },
-        h(MeshTransmissionMaterial, glass(ORB.r * 0.7, { resolution: 256, samples: 4 }))
+        h(MeshTransmissionMaterial, glass(ORB.r * 0.4, { resolution: 256, samples: 4 }))
       ),
       h(Rim, { geometry: geo, strength: 0.5 })
     );
@@ -427,7 +493,7 @@ async function start() {
       h(
         'mesh',
         { ref, geometry: geo, renderOrder: 2 },
-        h(MeshTransmissionMaterial, glass(cfg.r * 0.8, { resolution: 128, samples: 2 }))
+        h(MeshTransmissionMaterial, glass(cfg.r * 0.5, { resolution: 128, samples: 2 }))
       ),
       h(Rim, { geometry: geo, strength: 0.4 })
     );
@@ -441,7 +507,7 @@ async function start() {
       h('meshBasicMaterial', {
         map: backdropTexture,
         transparent: true,
-        opacity: 0.95,
+        opacity: 0.6,
         depthWrite: false,
         toneMapped: false
       })
@@ -455,9 +521,9 @@ async function start() {
       Environment,
       { resolution: 256, frames: 1 },
       h(Lightformer, { form: 'rect', intensity: 3.4, color: '#FFFFFF', position: [0, 5, -4], scale: [14, 8, 1] }),
-      h(Lightformer, { form: 'rect', intensity: 2.2, color: BLUSH, position: [-6, 1, 1], scale: [10, 10, 1], rotation: [0, Math.PI / 2, 0] }),
-      h(Lightformer, { form: 'rect', intensity: 2.0, color: CYAN, position: [6, -1, 1], scale: [10, 10, 1], rotation: [0, -Math.PI / 2, 0] }),
-      h(Lightformer, { form: 'circle', intensity: 2.6, color: CREAM, position: [3, 4, 4], scale: 6 }),
+      h(Lightformer, { form: 'rect', intensity: 3.0, color: '#F7B7D8', position: [-6, 1, 1], scale: [10, 10, 1], rotation: [0, Math.PI / 2, 0] }),
+      h(Lightformer, { form: 'rect', intensity: 2.8, color: '#9FE4F2', position: [6, -1, 1], scale: [10, 10, 1], rotation: [0, -Math.PI / 2, 0] }),
+      h(Lightformer, { form: 'circle', intensity: 3.0, color: '#FFE7BE', position: [3, 4, 4], scale: 6 }),
       h(Lightformer, { form: 'rect', intensity: 1.5, color: '#FFFFFF', position: [0, -5, 2], scale: [10, 6, 1], rotation: [Math.PI / 2, 0, 0] })
     );
   }
