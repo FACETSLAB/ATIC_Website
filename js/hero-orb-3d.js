@@ -46,12 +46,12 @@ const CYCLE = t => (Math.PI * 2) / t;
 
 /* Accessibility icon cards, left. Three carry the site's own icons. */
 const CARDS = [
-  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-2.85,  1.35, 0.55], s: 0.98, cycle: 12, phase: 0.4 },
-  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [-2.55, -0.05, 0.35], s: 0.88, cycle: 15, phase: 1.9 },
-  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-2.90, -1.55, 0.50], s: 0.92, cycle: 13, phase: 3.3 }
+  { src: 'assets/images/circle/atic_research_testing 1.svg',      pos: [-2.72,  1.42, 0.55], s: 1.04, cycle: 12, phase: 0.4 },
+  { src: 'assets/images/circle/atic_community_partnership 1.svg', pos: [-3.02, -0.18, 0.30], s: 0.86, cycle: 15, phase: 1.9 },
+  { src: 'assets/images/circle/atic_assistive_technology 1.svg',  pos: [-2.58, -1.68, 0.55], s: 0.94, cycle: 13, phase: 3.3 }
 ];
 
-const OUTPUT_CARD = { pos: [2.95, 0.05, 0.4], s: 0.94, cycle: 14, phase: 5.0 };
+const OUTPUT_CARD = { pos: [2.82, 0.08, 0.4], s: 0.90, cycle: 14, phase: 5.0 };
 
 const orb = document.querySelector('.hero-orb');
 
@@ -142,23 +142,29 @@ function cardCanvas(iconCanvas, size = 512) {
   };
 
   const g = ctx.createLinearGradient(0, pad, 0, size - pad);
-  g.addColorStop(0, 'rgba(255,255,255,0.95)');
-  g.addColorStop(1, 'rgba(246,240,253,0.86)');
-  ctx.shadowColor = 'rgba(88, 48, 140, 0.15)';
-  ctx.shadowBlur = size * 0.07;
-  ctx.shadowOffsetY = size * 0.025;
+  g.addColorStop(0, 'rgba(255,255,255,0.98)');
+  g.addColorStop(0.55, 'rgba(250,245,255,0.94)');
+  g.addColorStop(1, 'rgba(238,228,251,0.92)');
+  ctx.shadowColor = 'rgba(70, 22, 107, 0.22)';
+  ctx.shadowBlur = size * 0.1;
+  ctx.shadowOffsetY = size * 0.04;
   round(pad, pad, box, box, r);
   ctx.fillStyle = g;
   ctx.fill();
 
   ctx.shadowColor = 'transparent';
-  ctx.lineWidth = size * 0.007;
-  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  // Bright rim along the top, a faint brand edge elsewhere
+  ctx.lineWidth = size * 0.008;
+  ctx.strokeStyle = 'rgba(255,255,255,0.98)';
+  round(pad, pad, box, box, r);
+  ctx.stroke();
+  ctx.lineWidth = size * 0.004;
+  ctx.strokeStyle = 'rgba(122, 78, 178, 0.18)';
   round(pad, pad, box, box, r);
   ctx.stroke();
 
   if (iconCanvas) {
-    const inner = box * 0.56;
+    const inner = box * 0.64;
     ctx.drawImage(iconCanvas, (size - inner) / 2, (size - inner) / 2, inner, inner);
   }
   return canvas;
@@ -429,9 +435,9 @@ async function start() {
     const uniforms = useMemo(
       () => ({
         uTime: { value: 0 },
-        uA: { value: new THREE.Color('#C6A2F7') }, // lavender
-        uB: { value: new THREE.Color('#FBB6DB') }, // blush
-        uC: { value: new THREE.Color('#A2E6F4') }, // pale cyan
+        uA: { value: new THREE.Color('#BC90F5') }, // lavender
+        uB: { value: new THREE.Color('#FBA6D3') }, // blush
+        uC: { value: new THREE.Color('#93E2F4') }, // pale cyan
         uD: { value: new THREE.Color('#FFE9C6') } // pearlescent cream
       }),
       []
@@ -465,6 +471,24 @@ async function start() {
         h(MeshTransmissionMaterial, glass(ORB.r * 0.4, { resolution: 256, samples: 4 }))
       ),
       h(Rim, { geometry: geo, strength: 0.5 })
+    );
+  }
+
+  /* Contact shadow. The orb had no weight without one: a pale mass on a
+     pale page with nothing beneath it reads as a sticker. */
+  function GroundShadow() {
+    return h(
+      'mesh',
+      { position: [ORB.x + 0.1, ORB.y - ORB.r * 1.02, -0.4], rotation: [0, 0, 0], renderOrder: 0 },
+      h('planeGeometry', { args: [ORB.r * 2.1, ORB.r * 0.55] }),
+      h('meshBasicMaterial', {
+        map: backdropTexture,
+        color: '#8E6BC4',
+        transparent: true,
+        opacity: 0.18,
+        depthWrite: false,
+        toneMapped: false
+      })
     );
   }
 
@@ -517,7 +541,7 @@ async function start() {
 
     void main() {
       float p = fract(vT - uTime * uSpeed + uSeed);
-      float pulse = pow(max(0.0, 1.0 - abs(p - 0.5) * 2.0), 12.0);
+      float pulse = pow(max(0.0, 1.0 - abs(p - 0.5) * 2.0), 7.0);
       float ends = smoothstep(0.0, 0.2, vT) * smoothstep(1.0, 0.8, vT);
       gl_FragColor = vec4(uColor, (uBase + pulse * 0.4) * ends);
     }
@@ -532,7 +556,7 @@ async function start() {
         uSeed: { value: seed },
         uSpeed: { value: speed },
         uBase: { value: base },
-        uColor: { value: new THREE.Color(LILAC) }
+        uColor: { value: new THREE.Color('#A87BE8') }
       }),
       [seed, speed, base]
     );
@@ -569,8 +593,8 @@ async function start() {
           curve: new THREE.CatmullRomCurve3([start, mid, end]),
           seed: Math.random(),
           speed: 0.09 + Math.random() * 0.04,
-          base: 0.07,
-          radius: 0.0055
+          base: 0.16,
+          radius: 0.0075
         });
       }
     });
@@ -584,8 +608,8 @@ async function start() {
         curve: new THREE.CatmullRomCurve3([start, mid, end]),
         seed: Math.random(),
         speed: 0.1 + Math.random() * 0.03,
-        base: 0.08,
-        radius: 0.006
+        base: 0.18,
+        radius: 0.008
       });
     }
     return list;
@@ -629,6 +653,7 @@ async function start() {
       h(Studio, null),
       h('ambientLight', { intensity: 0.9 }),
       h(Backdrop, null),
+      h(GroundShadow, null),
       streams.map((s, i) => h(Stream, Object.assign({ key: `s${i}` }, s))),
       h(GlassOrb, null),
       CARDS.map((cfg, i) => h(Card, { key: `c${i}`, cfg, map: cardTextures[i] })),
@@ -659,7 +684,7 @@ async function start() {
       h(
         Canvas,
         {
-          camera: { position: [0, 0, 8.6], fov: 42 },
+          camera: { position: [0, 0, 8.2], fov: 42 },
           dpr: [1, 1.5],
           gl: { antialias: true, alpha: true },
           onCreated: ({ gl }) => gl.setClearColor(0x000000, 0),
