@@ -6,9 +6,9 @@
   <title>ATIC — Accessibility Technology &amp; Innovation Center</title>
   <meta name="description" content="ATIC advances accessibility through AI-powered technology, assistive technology, neurodiversity, XR, and mental health innovation." />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/hero-dynamic.css" />
+  <link rel="stylesheet" href="css/hero-glass.css" />
 </head>
-<body class="page-body has-dynamic-hero">
+<body class="page-body has-glass-hero">
 
 <!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="navbar">
@@ -26,6 +26,9 @@
       <a href="community-resources.html">Community Resources</a>
       <a href="atic-testing-laboratory.html">ATIC Testing Laboratory</a>
     </div>
+    <a href="our-work.html" class="gh-nav-cta">Collaborate With Us
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 12l4-4-4-4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -43,122 +46,41 @@
      heading: font-weight 300, 64px
      buttons: #46166B filled + #46166B outline
 -->
-<section class="hero-home">
-  <!-- Animated WebGL backdrop; filled by js/hero-shader.js, decorative only -->
-  <div id="hero-shader" aria-hidden="true"></div>
-  <div class="container hero-grid">
+<section class="hero-home glass-hero">
+  <div class="gh-bg" aria-hidden="true"></div>
+  <div class="container gh-grid">
 
-    <div class="hero-content">
+    <div class="gh-copy">
       <h1 class="h-hero">Advancing<br>Accessibility<br>Through Innovation</h1>
       <p class="hero-desc">ATIC advances accessibility through AI, assistive technology and community-centered research. We collaborate with individuals, organizations, and communities to build a more inclusive future.</p>
       <div class="hero-actions">
         <a href="our-work.html"    class="btn-primary">Collaborate With Us</a>
         <a href="participate.html" class="btn-outline">Participate
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>
+
+      <dl class="gh-stats">
+        <div class="gh-stat"><dd>5</dd><dt>Research Projects</dt></div>
+        <div class="gh-stat"><dd>6</dd><dt>Publications</dt></div>
+        <div class="gh-stat"><dd>9</dd><dt>Partner Organizations</dt></div>
+        <div class="gh-stat"><dd>6</dd><dt>Evaluation Stages</dt></div>
+      </dl>
     </div>
 
-    <!-- Orbital illustration -->
-    <div class="hero-illustration" aria-hidden="true">
-      <div class="hero-orb">
-        <svg class="orb-final" viewBox="0 0 686 623" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="clip-orbit-top"><circle cx="335" cy="61" r="55"/></clipPath>
-            <clipPath id="clip-orbit-left"><circle cx="61" cy="236" r="55"/></clipPath>
-            <clipPath id="clip-orbit-right"><circle cx="610.82" cy="253.82" r="55"/></clipPath>
-            <clipPath id="clip-orbit-bottom-left"><circle cx="121.82" cy="547.82" r="55"/></clipPath>
-            <clipPath id="clip-orbit-bottom-right"><circle cx="562.82" cy="539.82" r="55"/></clipPath>
-          </defs>
+    <!-- Decorative: the site's own logo, icons and research photographs -->
+    <div class="gh-art" aria-hidden="true">
+      <div class="gh-art-grid"></div>
 
-          <image href="assets/images/circle/Ellipse%20622.svg" x="40.82" y="49.01" width="588.61" height="588.61"/>
-          <path
-            d="M121.82 547.82 A294.31 294.31 0 0 1 335.13 49.01 A294.31 294.31 0 0 1 562.82 539.82"
-            fill="none"
-            stroke="#D9D9D9"
-            stroke-width="1"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <image href="assets/images/circle/Ellipse%20609.svg" x="114" y="123" width="441.46" height="441.46"/>
-          <image href="assets/images/circle/Ellipse%20635.svg" x="172.91" y="181.1" width="268.59" height="324.9"/>
-          <path
-            d="M335.13 505.54 A162.22 162.22 0 1 1 439.40 219.00"
-            fill="none"
-            stroke="#D9D9D9"
-            stroke-width="1"
-            stroke-linecap="round"
-          />
-
-          <g stroke="#CFBAFF" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round" opacity="0.92">
-            <line x1="334.09" y1="357.5" x2="335" y2="61"/>
-            <line x1="334.09" y1="357.5" x2="61" y2="236"/>
-            <line x1="334.09" y1="357.5" x2="610.82" y2="253.82"/>
-            <line x1="334.09" y1="357.5" x2="121.82" y2="547.82"/>
-            <line x1="334.09" y1="357.5" x2="562.82" y2="539.82"/>
-            <line x1="334.09" y1="357.5" x2="206" y2="350"/>
-            <line x1="334.09" y1="357.5" x2="441.26" y2="221.26"/>
-            <line x1="334.09" y1="357.5" x2="337.54" y2="500.5"/>
-          </g>
-
-          <image href="assets/images/circle/Group%201707481581.svg" x="80.59" y="108" width="507" height="507"/>
-
-          <g>
-            <circle cx="335" cy="61" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-            <circle cx="335" cy="61" r="56" fill="none" stroke="#2BB7B1" stroke-width="3"/>
-            <g clip-path="url(#clip-orbit-top)">
-              <image href="assets/images/image%2084.svg" x="279" y="5" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-            </g>
-          </g>
-
-          <g>
-            <circle cx="61" cy="236" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-            <circle cx="61" cy="236" r="56" fill="none" stroke="#9D4CDB" stroke-width="3"/>
-            <g clip-path="url(#clip-orbit-left)">
-              <image href="assets/images/image%2082.svg" x="5" y="180" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-            </g>
-          </g>
-
-          <g>
-            <circle cx="610.82" cy="253.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-            <circle cx="610.82" cy="253.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
-            <g clip-path="url(#clip-orbit-right)">
-              <image href="assets/images/image-83.svg" x="554.82" y="197.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-            </g>
-          </g>
-
-          <g>
-            <circle cx="121.82" cy="547.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-            <circle cx="121.82" cy="547.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
-            <g clip-path="url(#clip-orbit-bottom-left)">
-              <image href="assets/images/image%2083%20(3).svg" x="65.82" y="491.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-            </g>
-          </g>
-
-          <g>
-            <circle cx="562.82" cy="539.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
-            <circle cx="562.82" cy="539.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
-            <g clip-path="url(#clip-orbit-bottom-right)">
-              <image href="assets/images/image%2083%20(2).svg" x="506.82" y="483.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
-            </g>
-          </g>
-
-          <g>
-            <circle cx="206" cy="350" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
-            <image href="assets/images/circle/atic_research_testing%201.svg" x="171" y="315" width="70" height="70"/>
-          </g>
-
-          <g>
-            <circle cx="441.26" cy="221.26" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
-            <image href="assets/images/circle/atic_community_partnership%201.svg" x="406.26" y="186.26" width="70" height="70"/>
-          </g>
-
-          <g>
-            <circle cx="337.54" cy="500.5" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
-            <image href="assets/images/circle/atic_assistive_technology%201.svg" x="302.54" y="465.5" width="70" height="70"/>
-          </g>
-        </svg>
+      <div class="gh-card">
+        <img src="assets/images/atic_logo_svg.svg" alt="">
       </div>
+
+      <span class="gh-pill gh-pill-1"><img src="assets/images/orb/node-ai.jpg" alt="">Assistive Tech</span>
+      <span class="gh-pill gh-pill-2"><img src="assets/images/orb/node-xr.jpg" alt="">XR Research</span>
+      <span class="gh-pill gh-pill-3 is-icon"><img src="assets/images/circle/atic_research_testing 1.svg" alt="">Testing Lab</span>
+      <span class="gh-pill gh-pill-4 is-icon"><img src="assets/images/circle/atic_community_partnership 1.svg" alt="">Community</span>
+      <span class="gh-pill gh-pill-5"><img src="assets/images/orb/node-learning.jpg" alt="">Adaptive Learning</span>
     </div>
 
   </div>
@@ -441,7 +363,5 @@
 </footer>
 
 <script src="js/main.js"></script>
-<script type="module" src="js/hero-shader.js"></script>
-<script type="module" src="js/hero-orb-3d.js"></script>
 </body>
 </html>
