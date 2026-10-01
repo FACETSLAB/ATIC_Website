@@ -80,3 +80,11 @@
   .nav-inner { padding: 8px 10px 8px 18px; }
   .nav-links + .gh-nav-cta { display: none; } /* the sheet carries it */
 }
+
+/* Set by main.js for the first two frames only: the bar has a 0.3s
+   transition, and without this a reload at a scrolled position animates the
+   capsule from one state to the other in full view. */
+.navbar.nav-boot,
+.navbar.nav-boot .nav-inner {
+  transition: none !important;
+}

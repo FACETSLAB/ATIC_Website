@@ -14,9 +14,23 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── Navbar scroll shadow ── */
   const navbar = document.querySelector('.navbar');
   if (navbar) {
-    window.addEventListener('scroll', () => {
+    const syncNavbar = () => {
       navbar.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
+    };
+
+    /* Set the state up front, not only on scroll. A reload restores the
+       previous scroll position, so the bar would otherwise paint in its
+       top-of-page style and then animate to the scrolled one a frame later,
+       which reads as the header changing every time you refresh.
+       nav-boot kills the transition for that first application, so even if
+       it lands a frame late nothing visibly moves. */
+    navbar.classList.add('nav-boot');
+    syncNavbar();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => navbar.classList.remove('nav-boot'));
+    });
+
+    window.addEventListener('scroll', syncNavbar, { passive: true });
   }
 
   /* ── Hamburger / Mobile Nav ── */
