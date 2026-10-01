@@ -1,0 +1,174 @@
+/* ============================================================
+   ATIC Website — Dynamic hero (yujung branch)
+   Layers an animated ShaderGradient backdrop behind the home
+   hero and gives the navbar a frosted-glass treatment.
+
+   Progressive enhancement only: every rule here sits on top of
+   the static gradient in styles.css. If the WebGL module never
+   loads, the page looks exactly as it does on main.
+   ============================================================ */
+
+/* ── Hero stacking context ── */
+.hero-home { position: relative; isolation: isolate; }
+
+/* Shader canvas mount — behind everything, never interactive */
+#hero-shader {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;                       /* fades in once the first frame is drawn */
+  transition: opacity .9s ease;
+}
+#hero-shader.is-live { opacity: .9; }
+#hero-shader canvas { display: block; }
+
+/* Scrim: guarantees hero copy keeps full contrast over any shader frame.
+   Left side stays near-white where the text sits, clears toward the orb. */
+.hero-home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, .95) 0%,
+    rgba(255, 255, 255, .82) 34%,
+    rgba(255, 255, 255, .30) 62%,
+    rgba(255, 255, 255, 0)   82%
+  );
+}
+
+/* Hero content rides above both layers */
+.hero-home > .container { position: relative; z-index: 2; }
+
+/* ── 3D orbit bubbles ──
+   The canvas is laid over the existing SVG illustration. The SVG is only
+   hidden once js/hero-orb-3d.js has actually mounted (.is-3d), so a failed
+   load leaves the original artwork in place. */
+#hero-orb-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+#hero-orb-3d canvas { display: block; }
+
+/* Liquid-metal centre mark — its own canvas, centred over the bubble field */
+/* The ATIC mark over the orb. HTML, not a texture in the scene: it stays
+   pin sharp at any zoom and never swims with the glass under it.
+   Centred on the orb, not the box — the frustum is 7.27 x 6.6 world units
+   at z = 0 and the orb sits at (0.35, 0.05), which lands here. */
+.hero-orb .orb-mark {
+  position: absolute;
+  top: 49.2%;
+  left: 54.8%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  /* White on a pale orb needs the shadow to separate it */
+  text-shadow:
+    0 2px 10px rgba(70, 22, 107, 0.38),
+    0 6px 28px rgba(70, 22, 107, 0.28);
+  opacity: 0;
+  transition: opacity .9s ease .25s;
+}
+.hero-orb.is-3d .orb-mark { opacity: 1; }
+
+#hero-liquid-logo {
+  position: absolute;
+  top: 49.2%;
+  left: 54.8%;
+  width: 26%;
+  aspect-ratio: 240 / 64;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+}
+#hero-liquid-logo canvas { display: block; width: 100%; height: 100%; }
+
+.hero-orb .orb-final {
+  transition: opacity .6s ease;
+}
+.hero-orb.is-3d .orb-final {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ── Frosted-glass navbar (index only, via .has-dynamic-hero on <body>) ── */
+.has-dynamic-hero .navbar {
+  background: rgba(255, 255, 255, .34);
+  border-bottom: 1px solid rgba(255, 255, 255, .5);
+  box-shadow: 0 1px 0 rgba(70, 22, 107, .04);
+}
+.has-dynamic-hero .navbar.scrolled {
+  background: rgba(255, 255, 255, .74);
+  border-bottom: 1px solid rgba(70, 22, 107, .10);
+  box-shadow: 0 6px 24px rgba(70, 22, 107, .09);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .has-dynamic-hero .navbar {
+    -webkit-backdrop-filter: blur(14px) saturate(165%);
+    backdrop-filter: blur(14px) saturate(165%);
+  }
+  .has-dynamic-hero .navbar.scrolled {
+    -webkit-backdrop-filter: blur(22px) saturate(185%);
+    backdrop-filter: blur(22px) saturate(185%);
+  }
+}
+/* No backdrop-filter (older Firefox, some Android) — stay legible with solid fills */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .has-dynamic-hero .navbar { background: rgba(255, 255, 255, .88); }
+  .has-dynamic-hero .navbar.scrolled { background: rgba(255, 255, 255, .97); }
+}
+
+/* Rim highlight along the glass edge */
+.has-dynamic-hero .navbar::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, .95) 50%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+/* ── Hero CTA: soft glass lift, brand colours unchanged ── */
+.has-dynamic-hero .hero-actions .btn-primary {
+  box-shadow: 0 6px 20px rgba(70, 22, 107, .28);
+}
+.has-dynamic-hero .hero-actions .btn-primary:hover {
+  box-shadow: 0 10px 28px rgba(70, 22, 107, .34);
+}
+
+/* ── Motion and small screens ──
+   Reduced motion: no animated backdrop at all. The module also checks
+   this before loading, so nothing is fetched either. */
+@media (prefers-reduced-motion: reduce) {
+  #hero-shader,
+  #hero-orb-3d,
+  #hero-liquid-logo,
+  .hero-orb .orb-mark { display: none; }
+  .hero-home::after { background: none; }
+  .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
+}
+
+/* Below 901px the module never loads: styles.css hides the illustration
+   there, so downloading three.js for a display:none box is pure waste. */
+@media (max-width: 900px) {
+  #hero-shader,
+  #hero-orb-3d,
+  #hero-liquid-logo,
+  .hero-orb .orb-mark { display: none; }
+  .hero-home::after { background: none; }
+  /* The static illustration is the mobile fallback, so it must come back */
+  .hero-orb.is-3d .orb-final { opacity: 1; visibility: visible; }
+}

@@ -6,9 +6,9 @@
   <title>ATIC — Accessibility Technology &amp; Innovation Center</title>
   <meta name="description" content="ATIC advances accessibility through AI-powered technology, assistive technology, neurodiversity, XR, and mental health innovation." />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="css/liquid-glass.css" />
+  <link rel="stylesheet" href="css/hero-dynamic.css" />
 </head>
-<body class="page-body">
+<body class="page-body has-dynamic-hero">
 
 <!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="navbar">
@@ -44,6 +44,8 @@
      buttons: #46166B filled + #46166B outline
 -->
 <section class="hero-home">
+  <!-- Animated WebGL backdrop; filled by js/hero-shader.js, decorative only -->
+  <div id="hero-shader" aria-hidden="true"></div>
   <div class="container hero-grid">
 
     <div class="hero-content">
@@ -439,6 +441,7 @@
 </footer>
 
 <script src="js/main.js"></script>
-<script src="js/liquid-glass.js"></script>
+<script type="module" src="js/hero-shader.js"></script>
+<script type="module" src="js/hero-orb-3d.js"></script>
 </body>
 </html>
