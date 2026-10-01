@@ -87,7 +87,7 @@
   position: absolute;
   left: 20%;
   top: 30%;
-  width: 54%;
+  width: 62%;
   aspect-ratio: 1.6 / 1;
   border-radius: 22px;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(232, 222, 251, 0.86) 100%);
@@ -127,7 +127,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  padding: 6px 20px 6px 6px;
+  padding: 6px 22px 6px 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.95);
@@ -140,8 +140,8 @@
   white-space: nowrap;
 }
 .gh-pill img {
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   object-fit: cover;
   flex: 0 0 auto;

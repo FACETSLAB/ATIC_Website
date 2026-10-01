@@ -35,6 +35,18 @@
   }
 }
 
+/* styles.css turns the full-width bar opaque on scroll, which puts a white
+   band across the whole viewport behind the capsule. Only the capsule should
+   be visible, so the bar stays transparent in both states and the scrolled
+   treatment moves onto the capsule alone. */
+.navbar.scrolled {
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 .navbar.scrolled .nav-inner {
   background: rgba(255, 255, 255, 0.95);
   box-shadow:
