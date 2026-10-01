@@ -1,0 +1,82 @@
+/* ============================================================
+   ATIC Website — floating pill navbar (yujung branch)
+
+   The capsule nav, shared by every page. Loaded after styles.css
+   so it overrides the flat fixed bar defined there.
+   ============================================================ */
+/* ── 2. Floating pill navbar ───────────────────────────────── */
+.navbar {
+  background: transparent;
+  box-shadow: none;
+  border-bottom: none;
+  padding: 18px 0;
+  height: auto;
+}
+
+.nav-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 8px 10px 8px 24px;
+  box-shadow:
+    0 10px 30px rgba(70, 22, 107, 0.1),
+    0 2px 6px rgba(70, 22, 107, 0.06);
+  height: auto;
+  gap: 20px;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav-inner {
+    -webkit-backdrop-filter: blur(18px) saturate(165%);
+    backdrop-filter: blur(18px) saturate(165%);
+    background: rgba(255, 255, 255, 0.68);
+  }
+}
+
+.navbar.scrolled .nav-inner {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 14px 36px rgba(70, 22, 107, 0.14),
+    0 2px 8px rgba(70, 22, 107, 0.08);
+}
+
+.nav-logo-img { height: 34px; width: auto; }
+
+/* The CTA that lives inside the capsule, as in the reference */
+.gh-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--purple);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: var(--ease);
+}
+.gh-nav-cta:hover { background: #341153; color: #fff; transform: translateY(-1px); }
+.gh-nav-cta svg { flex: 0 0 auto; }
+
+/* Below the pill's breakpoint the hamburger menu carries the CTA, so the
+   mobile sheet gets its own copy of it. */
+.mobile-nav .gh-nav-cta {
+  align-self: flex-start;
+  margin-top: 8px;
+  color: #fff;
+}
+.mobile-nav .gh-nav-cta:hover { color: #fff; }
+
+@media (max-width: 1180px) {
+  .nav-links { gap: 0; }
+  .nav-links a { padding: 11px 7px; font-size: 0.8125rem; }
+  .gh-nav-cta { padding: 11px 15px; font-size: 0.8125rem; }
+}
+
+@media (max-width: 900px) {
+  .nav-inner { padding: 8px 10px 8px 18px; }
+  .nav-links + .gh-nav-cta { display: none; } /* the sheet carries it */
+}
