@@ -108,7 +108,17 @@
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.78) 0%, rgba(232, 222, 251, 0.62) 100%);
   }
 }
-.gh-card img { width: 100%; height: auto; opacity: 0.92; }
+/* Just the ATIC letterforms, no subtitle. Filled with a translucent white
+   gradient rather than a flat colour, so the strokes read as glass: brighter
+   where a pane catches the light, thinner through the middle. The shadow is
+   what separates white letters from the pale card behind them. */
+.gh-card-mark {
+  width: 72%;
+  height: auto;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.7))
+    drop-shadow(0 4px 12px rgba(70, 22, 107, 0.32));
+}
 
 /* Floating badges — a round thumbnail and a short label, as the
    reference floats avatars with amounts */
