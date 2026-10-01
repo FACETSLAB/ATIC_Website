@@ -127,21 +127,21 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  padding: 7px 16px 7px 7px;
+  padding: 6px 20px 6px 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow:
     0 10px 24px rgba(70, 22, 107, 0.14),
     0 2px 5px rgba(70, 22, 107, 0.07);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text);
   white-space: nowrap;
 }
 .gh-pill img {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   flex: 0 0 auto;
