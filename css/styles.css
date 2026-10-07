@@ -645,8 +645,8 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
 .pub-item{padding:18px 20px;border:1px solid var(--border);transition:var(--ease)}
 .pub-item:hover{border-color:var(--purple)}
 .pub-item p{font-size:.9375rem;color:var(--text);margin-bottom:10px;line-height:1.65}
-.pub-tags{display:flex;gap:8px;flex-wrap:wrap}
-.tag-pdf{background:#FEE2E2;color:#DC2626;padding:3px 10px;border-radius:4px;font-size:.75rem;font-weight:700}
+.pub-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag-pdf{display:inline-flex;align-items:center;justify-content:center;background:#FEE2E2;color:#DC2626;padding:2px 14px;border-radius:16px;font-size:1rem;font-weight:700;line-height:1.5}
 .pagination-bar{text-align:center;margin-top:24px;font-size:.875rem;color:var(--text-muted)}
 .load-more{display:block;margin:16px auto 0;padding:9px 32px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:.875rem;font-weight:500;color:var(--text-muted);transition:var(--ease)}
 .load-more:hover{border-color:var(--purple);color:var(--purple)}
