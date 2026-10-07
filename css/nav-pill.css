@@ -89,8 +89,51 @@
 }
 
 @media (max-width: 900px) {
-  .nav-inner { padding: 8px 10px 8px 18px; }
+  /* Phone: a plain full-width bar, not a capsule. Height stays --nav-h so
+     .mobile-nav, which is positioned at top: var(--nav-h), still sits flush
+     under it. */
+  .navbar {
+    height: var(--nav-h);
+    padding: 0;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #eee;
+  }
+  .navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 2px 10px rgba(70, 22, 107, 0.07);
+  }
+  .nav-inner,
+  .navbar.scrolled .nav-inner {
+    max-width: none;
+    margin: 0;
+    height: 100%;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
   .nav-links + .gh-nav-cta { display: none; } /* the sheet carries it */
+
+  /* .mobile-nav a sets display:block, which flattened the sheet's CTA —
+     its label sat hard against the left edge of a full-width pill. */
+  .mobile-nav .gh-nav-cta {
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+    margin-top: 16px;
+    padding: 14px 20px;
+    border-bottom: 0;
+    /* match the menu links above it; the capsule's 13px looked shrunken
+       inside a full-width pill */
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  /* the other sheet links carry no chevron */
+  .mobile-nav .gh-nav-cta svg { display: none; }
 }
 
 /* Set by main.js for the first two frames only: the bar has a 0.3s

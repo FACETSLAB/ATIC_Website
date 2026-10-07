@@ -821,3 +821,132 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
   .footer-nav{gap:8px 20px}
   .lab-grid{grid-template-columns:1fr}
 }
+
+/* ── Project poster pages ── */
+.proj-back{margin-bottom:12px;font-size:0.875rem}
+.proj-back a{color:var(--purple)}
+.poster-fig{margin:0}
+.poster-fig img{width:100%;height:auto;display:block;border:1px solid var(--border);border-radius:var(--r-sm)}
+.poster-fig figcaption{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin-top:16px;font-size:0.9375rem;color:var(--text-muted)}
+.w-body h4 a{color:inherit}
+.w-body h4 a:hover{color:var(--purple)}
+/* Stretched link: the title is the real link, its ::after covers the whole
+   card so the entire box is clickable. Cards without a linked title (no
+   poster yet) are untouched. */
+.w-card{position:relative}
+.w-body h4 a::after{content:"";position:absolute;inset:0;z-index:1}
+.w-card:has(.w-body h4 a){cursor:pointer}
+.w-card:has(.w-body h4 a):hover h4 a{color:var(--purple)}
+
+/* ── Hero orbit: CSS-only depth and drift ──
+   Transform and filter only, so nothing reflows. The whole diagram tilts
+   slowly on one axis while each node floats on its own cycle; the offset
+   periods keep them from pulsing in unison. */
+
+/* No rotateX/rotateY on the SVG: a 3D transform makes the browser rasterise
+   the whole diagram to a texture and resample it, which is what blurred the
+   node photographs. Depth now comes from shadow and parallax instead, and
+   every node stays vector-crisp. */
+/* The top node's circle starts at y=0.5 in a viewBox that starts at y=0, so
+   its float and drop-shadow were clipped by the SVG root. */
+.orb-final{backface-visibility:hidden;overflow:visible}
+.orb-node{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:orb-float 14s ease-in-out infinite;
+  filter:drop-shadow(0 6px 14px rgba(70,22,107,.16));
+}
+.orb-node-1{animation-duration:13s}
+.orb-node-2{animation-duration:16s;animation-delay:-3s}
+.orb-node-3{animation-duration:15s;animation-delay:-6s}
+.orb-node-4{animation-duration:17s;animation-delay:-9s}
+.orb-node-5{animation-duration:14s;animation-delay:-4s}
+/* inner icon nodes sit nearer the viewer: lighter shadow, shorter travel */
+.orb-node-6,.orb-node-7,.orb-node-8{
+  filter:drop-shadow(0 4px 9px rgba(70,22,107,.13));
+  animation-name:orb-float-near;
+}
+.orb-node-6{animation-duration:12s;animation-delay:-2s}
+.orb-node-7{animation-duration:15s;animation-delay:-7s}
+.orb-node-8{animation-duration:13s;animation-delay:-5s}
+
+@keyframes orb-float{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%    {transform:translateY(-9px) scale(1.025)}
+}
+@keyframes orb-float-near{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%    {transform:translateY(-5px) scale(1.015)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .orb-final,.orb-node{animation:none}
+}
+
+/* ── Hero orbit: technical read ──
+   Dashes travel along the connectors, so the links look like live traffic
+   between the nodes rather than static rules. stroke-dashoffset only —
+   no geometry recalculated. */
+.orb-links{animation:orb-dash 3.2s linear infinite}
+@keyframes orb-dash{to{stroke-dashoffset:-16}}
+
+/* Crisper nodes: tighter ring, cooler shadow */
+.orb-node{filter:drop-shadow(0 5px 10px rgba(45,119,229,.18))}
+.orb-node-6,.orb-node-7,.orb-node-8{filter:drop-shadow(0 3px 7px rgba(45,119,229,.15))}
+
+@media (prefers-reduced-motion: reduce){
+  .orb-links{animation:none}
+}
+
+
+
+/* ── Hero gradient: same ramp, vivid in slow waves ──
+   The section keeps its original linear-gradient. This overlay repeats that
+   exact geometry in saturated stops and fades in and out over 20s, so the
+   colour deepens gradually instead of sitting flat. Opacity only. */
+.hero-home{position:relative}
+.hero-home::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:linear-gradient(111.95deg,#FFFFFF 37.01%,#D9BFFA 55%,#BFD8F7 78%);
+  opacity:0;
+  animation:hero-vivid 20s ease-in-out infinite;
+}
+.hero-home > .container{position:relative;z-index:1}
+
+@keyframes hero-vivid{
+  0%,100%{opacity:0}
+  50%    {opacity:.55}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-home::before{animation:none;opacity:.2}
+}
+
+/* ── ATIC core label ──
+   HTML, not SVG: the sphere under it is displaced by a turbulence filter,
+   and anything inside that filter churns with it. Kept above, so the word
+   stays still and crisp while the glass moves. Centre of the core is
+   (334.09, 357.5) in a 686x623 viewBox. */
+.atic-core-label{
+  position:absolute;
+  left:48.7%;
+  top:57.4%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+  pointer-events:none;
+  font-weight:600;
+  font-size:clamp(1.45rem,3vw,2.1rem);
+  letter-spacing:.04em;
+  color:#FFFFFF;
+  /* dark halo, since the core beneath is now saturated rather than white */
+  text-shadow:0 1px 3px rgba(32,10,60,.45), 0 0 14px rgba(32,10,60,.3);
+}
+
+/* Reduced motion: keep the glass, drop the churn */
+@media (prefers-reduced-motion: reduce){
+  .atic-core circle[filter]{filter:none}
+}
