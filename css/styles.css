@@ -608,7 +608,10 @@ footer{background:var(--footer-bg);padding:56px 0 28px}
   border-bottom:1px solid #eee;
   margin-bottom:40px;
   overflow-x:auto;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
+.tabs-bar::-webkit-scrollbar{display:none}
 .tab-btn{
   padding:20px 0;
   font-size:.875rem;font-weight:400;
