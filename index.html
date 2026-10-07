@@ -7,9 +7,8 @@
   <meta name="description" content="ATIC advances accessibility through AI-powered technology, assistive technology, neurodiversity, XR, and mental health innovation." />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/nav-pill.css" />
-  <link rel="stylesheet" href="css/hero-glass.css" />
 </head>
-<body class="page-body has-glass-hero">
+<body class="page-body">
 
 <!-- ═══════════ NAVBAR ═══════════ -->
 <nav class="navbar">
@@ -50,44 +49,120 @@
      heading: font-weight 300, 64px
      buttons: #46166B filled + #46166B outline
 -->
-<section class="hero-home glass-hero">
-  <div class="gh-bg" aria-hidden="true"></div>
-  <div class="container gh-grid">
+<section class="hero-home">
+  <div class="container hero-grid">
 
-    <div class="gh-copy">
+    <div class="hero-content">
       <h1 class="h-hero">Advancing<br>Accessibility<br>Through Innovation</h1>
       <p class="hero-desc">ATIC advances accessibility through AI, assistive technology and community-centered research. We collaborate with individuals, organizations, and communities to build a more inclusive future.</p>
       <div class="hero-actions">
         <a href="our-work.html"    class="btn-primary">Collaborate With Us</a>
         <a href="participate.html" class="btn-outline">Participate
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="#46166B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </div>
-
     </div>
 
-    <!-- Decorative: the site's own logo, icons and research photographs -->
-    <div class="gh-art" aria-hidden="true">
-      <div class="gh-art-grid"></div>
-
-      <div class="gh-card">
-        <svg class="gh-card-mark" viewBox="-0.49 20.84 102.27 36.21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- Orbital illustration -->
+    <div class="hero-illustration" aria-hidden="true">
+      <div class="hero-orb">
+        <svg class="orb-final" viewBox="0 0 686 623" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="gh-mark-glass" x1="0" y1="0" x2="0.35" y2="1">
-              <stop offset="0" stop-color="#ffffff" stop-opacity="0.96"/>
-              <stop offset="0.52" stop-color="#ffffff" stop-opacity="0.58"/>
-              <stop offset="1" stop-color="#ffffff" stop-opacity="0.86"/>
-            </linearGradient>
+            <clipPath id="clip-orbit-top"><circle cx="335" cy="61" r="55"/></clipPath>
+            <clipPath id="clip-orbit-left"><circle cx="61" cy="236" r="55"/></clipPath>
+            <clipPath id="clip-orbit-right"><circle cx="610.82" cy="253.82" r="55"/></clipPath>
+            <clipPath id="clip-orbit-bottom-left"><circle cx="121.82" cy="547.82" r="55"/></clipPath>
+            <clipPath id="clip-orbit-bottom-right"><circle cx="562.82" cy="539.82" r="55"/></clipPath>
           </defs>
-          <path d="M29.348 55H23.92L21.114 46.306H9.108L6.256 55H1.012L11.96 22.892H18.446L29.348 55ZM19.826 41.844L16.652 32.322L15.18 27.676H14.95L13.478 32.322L10.304 41.844H19.826ZM52.7954 27.492H43.2274V55H38.0294V27.492H28.4614V22.892H52.7954V27.492ZM70.1047 55H56.2127V50.768H60.5367V27.124H56.2127V22.892H70.1047V27.124H65.7347V50.768H70.1047V55ZM88.6916 55.552C85.9009 55.552 83.4936 54.9387 81.4696 53.712C79.4456 52.4547 77.8969 50.6147 76.8236 48.192C75.7503 45.7693 75.2136 42.7487 75.2136 39.13C75.2136 35.542 75.7503 32.506 76.8236 30.022C77.8969 27.5073 79.4456 25.606 81.4696 24.318C83.4936 22.9993 85.9009 22.34 88.6916 22.34C91.4516 22.34 93.7669 22.9533 95.6376 24.18C97.5389 25.4067 99.0416 27.216 100.146 29.608L95.7756 32C95.2236 30.4667 94.3649 29.2553 93.1996 28.366C92.0649 27.446 90.5623 26.986 88.6916 26.986C86.2076 26.986 84.2603 27.8447 82.8496 29.562C81.4389 31.2793 80.7336 33.6253 80.7336 36.6V41.522C80.7336 44.466 81.4389 46.766 82.8496 48.422C84.2603 50.078 86.2076 50.906 88.6916 50.906C90.5929 50.906 92.1569 50.4153 93.3836 49.434C94.6103 48.422 95.5149 47.134 96.0976 45.57L100.284 48.1C99.2103 50.4 97.6923 52.2247 95.7296 53.574C93.7976 54.8927 91.4516 55.552 88.6916 55.552Z" fill="url(#gh-mark-glass)"/>
+
+          <image href="assets/images/circle/Ellipse%20622.svg" x="40.82" y="49.01" width="588.61" height="588.61"/>
+          <path
+            d="M121.82 547.82 A294.31 294.31 0 0 1 335.13 49.01 A294.31 294.31 0 0 1 562.82 539.82"
+            fill="none"
+            stroke="#D9D9D9"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <image href="assets/images/circle/Ellipse%20609.svg" x="114" y="123" width="441.46" height="441.46"/>
+          <image href="assets/images/circle/Ellipse%20635.svg" x="172.91" y="181.1" width="268.59" height="324.9"/>
+          <path
+            d="M335.13 505.54 A162.22 162.22 0 1 1 439.40 219.00"
+            fill="none"
+            stroke="#D9D9D9"
+            stroke-width="1"
+            stroke-linecap="round"
+          />
+
+          <g stroke="#CFBAFF" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round" opacity="0.92">
+            <line x1="334.09" y1="357.5" x2="335" y2="61"/>
+            <line x1="334.09" y1="357.5" x2="61" y2="236"/>
+            <line x1="334.09" y1="357.5" x2="610.82" y2="253.82"/>
+            <line x1="334.09" y1="357.5" x2="121.82" y2="547.82"/>
+            <line x1="334.09" y1="357.5" x2="562.82" y2="539.82"/>
+            <line x1="334.09" y1="357.5" x2="206" y2="350"/>
+            <line x1="334.09" y1="357.5" x2="441.26" y2="221.26"/>
+            <line x1="334.09" y1="357.5" x2="337.54" y2="500.5"/>
+          </g>
+
+          <image href="assets/images/circle/Group%201707481581.svg" x="80.59" y="108" width="507" height="507"/>
+
+          <g>
+            <circle cx="335" cy="61" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="335" cy="61" r="56" fill="none" stroke="#2BB7B1" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-top)">
+              <image href="assets/images/image%2084.svg" x="279" y="5" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="61" cy="236" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="61" cy="236" r="56" fill="none" stroke="#9D4CDB" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-left)">
+              <image href="assets/images/image%2082.svg" x="5" y="180" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="610.82" cy="253.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="610.82" cy="253.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-right)">
+              <image href="assets/images/image-83.svg" x="554.82" y="197.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="121.82" cy="547.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="121.82" cy="547.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-bottom-left)">
+              <image href="assets/images/image%2083%20(3).svg" x="65.82" y="491.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="562.82" cy="539.82" r="60.5" fill="none" stroke="#D9D9D9" stroke-width="1"/>
+            <circle cx="562.82" cy="539.82" r="56" fill="none" stroke="#2D77E5" stroke-width="3"/>
+            <g clip-path="url(#clip-orbit-bottom-right)">
+              <image href="assets/images/image%2083%20(2).svg" x="506.82" y="483.82" width="112" height="112" preserveAspectRatio="xMidYMid slice"/>
+            </g>
+          </g>
+
+          <g>
+            <circle cx="206" cy="350" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_research_testing%201.svg" x="171" y="315" width="70" height="70"/>
+          </g>
+
+          <g>
+            <circle cx="441.26" cy="221.26" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_community_partnership%201.svg" x="406.26" y="186.26" width="70" height="70"/>
+          </g>
+
+          <g>
+            <circle cx="337.54" cy="500.5" r="40.27" fill="#FFFFFF" fill-opacity="0.25" stroke="#D9D9D9" stroke-width="1"/>
+            <image href="assets/images/circle/atic_assistive_technology%201.svg" x="302.54" y="465.5" width="70" height="70"/>
+          </g>
         </svg>
       </div>
-
-      <span class="gh-pill gh-pill-1"><img src="assets/images/orb/node-ai.jpg" alt="">Assistive Tech</span>
-      <span class="gh-pill gh-pill-2"><img src="assets/images/orb/node-xr.jpg" alt="">XR Research</span>
-      <span class="gh-pill gh-pill-3 is-icon"><img src="assets/images/circle/atic_research_testing 1.svg" alt="">Testing Lab</span>
-      <span class="gh-pill gh-pill-4 is-icon"><img src="assets/images/circle/atic_community_partnership 1.svg" alt="">Community</span>
-      <span class="gh-pill gh-pill-5"><img src="assets/images/orb/node-learning.jpg" alt="">Adaptive Learning</span>
     </div>
 
   </div>
