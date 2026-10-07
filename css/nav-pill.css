@@ -70,17 +70,25 @@
   white-space: nowrap;
   transition: var(--ease);
 }
+.gh-nav-cta-label {
+  display: inline;
+  visibility: visible;
+  opacity: 1;
+  flex: 0 0 auto;
+}
 .gh-nav-cta:hover { background: #341153; color: #fff; transform: translateY(-1px); }
 .gh-nav-cta svg { flex: 0 0 auto; }
 
 /* Below the pill's breakpoint the hamburger menu carries the CTA, so the
    mobile sheet gets its own copy of it. */
-.mobile-nav .gh-nav-cta {
+.mobile-nav a.gh-nav-cta,
+.mobile-nav a.gh-nav-cta:hover,
+.mobile-nav a.gh-nav-cta:focus,
+.mobile-nav a.gh-nav-cta:active {
   align-self: flex-start;
   margin-top: 8px;
   color: #fff;
 }
-.mobile-nav .gh-nav-cta:hover { color: #fff; }
 
 @media (max-width: 1180px) {
   .nav-links { gap: 0; }
@@ -120,7 +128,7 @@
 
   /* .mobile-nav a sets display:block, which flattened the sheet's CTA —
      its label sat hard against the left edge of a full-width pill. */
-  .mobile-nav .gh-nav-cta {
+  .mobile-nav a.gh-nav-cta {
     display: flex;
     justify-content: center;
     align-self: stretch;
