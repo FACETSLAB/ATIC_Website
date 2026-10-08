@@ -420,6 +420,8 @@ section{padding:72px 0}
 /* Card: border: 1px solid #A9ACB0 (from Figma) */
 .r-card{border:1px solid var(--border);display:flex;flex-direction:column;transition:var(--ease)}
 .r-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+a.r-card{color:inherit;text-decoration:none}
+a.r-card:focus-visible{outline:2px solid var(--purple);outline-offset:3px}
 /* Image area (from Figma: background: #EDEDED, height ~200px) */
 .r-img{height:200px;background:var(--ededed);overflow:hidden;position:relative;flex-shrink:0}
 .r-img img{width:100%;height:100%;object-fit:cover}
